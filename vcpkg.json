@@ -1,1 +1,29 @@
-{}
+{
+  "dependencies": [
+    "entt",
+    "glm",
+    {
+      "name": "imgui",
+      "features": [
+        "sdl3-binding",
+        "sdl3-renderer-binding"
+      ]
+    },
+    "nlohmann-json",
+    "sdl3",
+    {
+      "name": "sdl3-image",
+      "features": [
+        "png"
+      ]
+    },
+    {
+      "name": "sdl3-mixer",
+      "features": [
+        "mpg123"
+      ]
+    },
+    "sdl3-ttf",
+    "spdlog"
+  ]
+}
