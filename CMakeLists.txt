@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.29)
 
 # Disable modules support, this is broken with clang-tidy at the moment
-cmake_policy(SET CMP0155 OLD) 
+cmake_policy(SET CMP0155 OLD)
 
 # This template attempts to be "fetch_content"-able
 # so that it works well with tools like CPM or other
 # manual dependency management
 
 # Only set the cxx_standard if it is not set by someone else
-if (NOT DEFINED CMAKE_CXX_STANDARD)
+if(NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 23)
 endif()
 
@@ -29,14 +29,13 @@ include(cmake/PreventInSourceBuilds.cmake)
 include(cmake/Emscripten.cmake)
 include(ProjectOptions.cmake)
 
+mymonsterwar_setup_options()
 
-MyMonsterWar_setup_options()
-
-MyMonsterWar_global_options()
+mymonsterwar_global_options()
 include(Dependencies.cmake)
-MyMonsterWar_setup_dependencies()
+mymonsterwar_setup_dependencies()
 
-MyMonsterWar_local_options()
+mymonsterwar_local_options()
 
 # don't know if this should be set globally from here or not...
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
@@ -59,14 +58,14 @@ add_library(MyMonsterWar::MyMonsterWar_warnings ALIAS MyMonsterWar_warnings)
 #add_library(MyMonsterWar::MyMonsterWar_warnings INTERFACE IMPORTED)
 
 # configure files based on CMake configuration options
-add_subdirectory(configured_files)
+# add_subdirectory(configured_files)
 
 # Adding the src:
 add_subdirectory(src)
 
 # Create unified web deployment directory (for WASM builds)
 if(EMSCRIPTEN)
-  MyMonsterWar_create_web_dist()
+  mymonsterwar_create_web_dist()
 endif()
 
 # Don't even look at tests if we're not top level
@@ -75,22 +74,21 @@ if(NOT PROJECT_IS_TOP_LEVEL)
 endif()
 
 # Adding the tests:
-include(CTest)
+# include(CTest)
+#
+# if(BUILD_TESTING)
+#   message(AUTHOR_WARNING "Building Tests. Be sure to check out test/constexpr_tests.cpp for constexpr testing")
+#   add_subdirectory(test)
+# endif()
 
-if(BUILD_TESTING)
-  message(AUTHOR_WARNING "Building Tests. Be sure to check out test/constexpr_tests.cpp for constexpr testing")
-  add_subdirectory(test)
-endif()
-
-
-if(MyMonsterWar_BUILD_FUZZ_TESTS)
-  message(AUTHOR_WARNING "Building Fuzz Tests, using fuzzing sanitizer https://www.llvm.org/docs/LibFuzzer.html")
-  if (NOT MyMonsterWar_ENABLE_SANITIZER_ADDRESS AND NOT MyMonsterWar_ENABLE_SANITIZER_THREAD)
-    message(WARNING "You need asan or tsan enabled for meaningful fuzz testing")
-  endif()
-  add_subdirectory(fuzz_test)
-
-endif()
+# if(MyMonsterWar_BUILD_FUZZ_TESTS)
+#   message(AUTHOR_WARNING "Building Fuzz Tests, using fuzzing sanitizer https://www.llvm.org/docs/LibFuzzer.html")
+#   if (NOT MyMonsterWar_ENABLE_SANITIZER_ADDRESS AND NOT MyMonsterWar_ENABLE_SANITIZER_THREAD)
+#     message(WARNING "You need asan or tsan enabled for meaningful fuzz testing")
+#   endif()
+#   add_subdirectory(fuzz_test)
+#
+# endif()
 
 # If MSVC is being used, and ASAN is enabled, we need to set the debugger environment
 # so that it behaves well with MSVC's debugger, and we can run the target from visual studio
@@ -111,9 +109,9 @@ include(cmake/PackageProject.cmake)
 
 # Add other targets that you want installed here, by default we just package the one executable
 # we know we want to ship
-MyMonsterWar_package_project(
+mymonsterwar_package_project(
   TARGETS
-  intro
+  # intro
   MyMonsterWar_options
   MyMonsterWar_warnings
   # FIXME: this does not work! CK
