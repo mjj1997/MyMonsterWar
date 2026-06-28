@@ -1,0 +1,108 @@
+#pragma once
+
+#include <functional>
+#include <memory>
+
+struct SDL_Window;
+struct SDL_Renderer;
+
+namespace engine::resource {
+class ResourceManager;
+}
+
+namespace engine::render {
+class Renderer;
+class Camera;
+class TextRenderer;
+} // namespace engine::render
+
+namespace engine::input {
+class InputManager;
+}
+
+namespace engine::scene {
+class SceneManager;
+}
+
+namespace engine::audio {
+class AudioPlayer;
+}
+
+namespace engine::core { // 命名空间的最佳实践：与文件路径一致
+
+class FrameTimeController;
+class Configurator;
+class Context;
+class GameState;
+
+/**
+ * @brief 主游戏应用程序类，初始化SDL，管理游戏循环。
+ */
+class GameApp final // final 表示该类不能被继承
+{
+public:
+    GameApp();
+    ~GameApp();
+
+    // 禁止拷贝和移动
+    GameApp(const GameApp&) = delete;
+    GameApp& operator=(const GameApp&) = delete;
+    GameApp(GameApp&&) = delete;
+    GameApp& operator=(GameApp&&) = delete;
+
+    /**
+     * @brief 运行游戏应用程序，其中会调用 init()，然后进入主循环，离开循环后自动调用 clean()。
+     */
+    void run();
+
+    /**
+     * @brief 注册设置初始场景的函数对象。
+     *        这个函数对象将在 SceneManager 初始化后被调用。
+     * @param func 一个接收 SceneManager 引用的函数对象。
+     */
+    void registerSceneSetupFunc(std::function<void(engine::scene::SceneManager&)> func);
+
+private:
+    [[nodiscard]] bool init(); // nodiscard属性 表示该函数返回值不应该被忽略
+    void handleEvents();
+    void update(float deltaTime);
+    void render();
+    void clean();
+
+    // 各模块的初始化/创建函数，在 init() 中调用
+    [[nodiscard]] bool initSDL();
+    [[nodiscard]] bool initFrameTimeController();
+    [[nodiscard]] bool initResourceManager();
+    [[nodiscard]] bool initRenderer();
+    [[nodiscard]] bool initCamera();
+    [[nodiscard]] bool initConfigurator();
+    [[nodiscard]] bool initInputManager();
+    [[nodiscard]] bool initGameState();
+    [[nodiscard]] bool initContext();
+    [[nodiscard]] bool initSceneManager();
+    [[nodiscard]] bool initAudioPlayer();
+    [[nodiscard]] bool initTextRenderer();
+
+private:
+    SDL_Window* m_window{ nullptr };
+    SDL_Renderer* m_sdlRenderer{ nullptr };
+    bool m_isRunning{ false };
+
+    /// @brief 在运行游戏前设置初始场景的函数对象 (GameApp不再决定初始场景是什么)
+    std::function<void(engine::scene::SceneManager&)> m_sceneSetupFunc;
+
+    // 引擎组件
+    std::unique_ptr<engine::core::FrameTimeController> m_frameTimeController;
+    std::unique_ptr<engine::resource::ResourceManager> m_resourceManager;
+    std::unique_ptr<engine::render::Renderer> m_renderer;
+    std::unique_ptr<engine::render::Camera> m_camera;
+    std::unique_ptr<engine::core::Configurator> m_configurator;
+    std::unique_ptr<engine::input::InputManager> m_inputManager;
+    std::unique_ptr<engine::core::Context> m_context;
+    std::unique_ptr<engine::scene::SceneManager> m_sceneManager;
+    std::unique_ptr<engine::audio::AudioPlayer> m_audioPlayer;
+    std::unique_ptr<engine::render::TextRenderer> m_textRenderer;
+    std::unique_ptr<engine::core::GameState> m_gameState;
+};
+
+} // namespace engine::core

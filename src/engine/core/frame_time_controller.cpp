@@ -1,0 +1,90 @@
+#include "frame_time_controller.h"
+
+#include <SDL3/SDL_timer.h> // 用于 SDL_GetTicksNS()
+#include <spdlog/spdlog.h>
+
+namespace engine::core {
+
+FrameTimeController::FrameTimeController()
+    : m_lastFrameEndTimestamp{ SDL_GetTicksNS() }
+// 初始化 lastFrameEndTimestamp 为当前时间，避免第一帧 DeltaTime 过大
+{
+    spdlog::trace("FrameTimeController 初始化。Last frame endtimestamp: {}",
+                  m_lastFrameEndTimestamp);
+}
+
+void FrameTimeController::update()
+{
+    m_currentFrameStartTimestamp = SDL_GetTicksNS(); // 记录进入 update 时的时间戳
+    auto currentDeltaTime = static_cast<float>(m_currentFrameStartTimestamp
+                                               - m_lastFrameEndTimestamp)
+                            / 1.0e9;
+    // 如果设置了目标帧率，则限制帧率；否则 m_deltaTime = currentDeltaTime
+    if (m_targetFrameTime > 0.0) {
+        limitFrameRate(currentDeltaTime);
+    } else {
+        m_deltaTime = currentDeltaTime;
+    }
+
+    m_lastFrameEndTimestamp = SDL_GetTicksNS(); // 记录离开 update 时的时间戳
+}
+
+void FrameTimeController::limitFrameRate(float currentDeltaTime)
+{
+    // 如果当前帧耗费的时间小于目标帧时间，则等待剩余时间
+    if (currentDeltaTime < m_targetFrameTime) {
+        const float secondsToWait{ m_targetFrameTime - currentDeltaTime }; // 需要等待的时间差（秒）
+        const Uint64 nanoSecondsToWait{ static_cast<Uint64>(secondsToWait * 1.0e9) }; // 转换为纳秒
+        SDL_DelayNS(nanoSecondsToWait);
+        m_deltaTime = static_cast<float>(SDL_GetTicksNS() - m_lastFrameEndTimestamp) / 1.0e9;
+    }
+}
+
+float FrameTimeController::deltaTime() const
+{
+    return m_deltaTime * m_timeScale;
+}
+
+float FrameTimeController::unscaledDeltaTime() const
+{
+    return m_deltaTime;
+}
+
+void FrameTimeController::setTimeScale(float scale)
+{
+    if (scale < 0.0F) {
+        spdlog::warn("Time scale 不能为负。Clamping to 0.");
+        scale = 0.0F; // 防止负时间缩放
+    }
+    m_timeScale = scale;
+}
+
+float FrameTimeController::timeScale() const
+{
+    return m_timeScale;
+}
+
+void FrameTimeController::setTargetFps(int fps)
+{
+    if (fps < 0) {
+        spdlog::warn("Target FPS 不能为负。Setting to 0 (unlimited).");
+        m_targetFps = 0;
+    } else {
+        m_targetFps = fps;
+    }
+
+    if (m_targetFps > 0) {
+        m_targetFrameTime = 1.0F / static_cast<float>(m_targetFps);
+        spdlog::info("Target FPS 设置为: {} (Frame time: {:.6f}s)", m_targetFps, m_targetFrameTime);
+    } else {
+        m_targetFrameTime = 0.0F;
+        spdlog::info("Target FPS 设置为: Unlimited");
+    }
+}
+
+int FrameTimeController::targetFps() const
+{
+    return m_targetFps;
+}
+
+} // namespace engine::core
