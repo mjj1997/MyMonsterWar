@@ -1,0 +1,70 @@
+#pragma once
+
+#include "../utils/math.h"
+
+#include <optional>
+
+namespace engine::component {
+class TransformComponent;
+}
+
+namespace engine::render {
+
+/**
+ * @brief 相机类负责管理相机位置和视口大小，并提供坐标转换功能。
+ * 它还包含限制相机移动范围的边界。
+ */
+class Camera final
+{
+public:
+    /**
+     * @brief 构造相机对象
+     * @param viewportSize 视口大小
+     * @param position 相机位置
+     * @param limitBounds 限制相机的移动范围
+     */
+    explicit Camera(glm::vec2 viewportSize,
+                    glm::vec2 position = glm::vec2(0.0F),
+                    std::optional<engine::utils::Rect> limitBounds = std::nullopt);
+
+    // 禁用拷贝和移动语义
+    Camera(const Camera&) = delete;
+    Camera& operator=(const Camera&) = delete;
+    Camera(Camera&&) = delete;
+    Camera& operator=(Camera&&) = delete;
+
+    void update(float deltaTime);       ///< @brief 更新相机位置
+    void move(const glm::vec2& offset); ///< @brief 移动相机
+
+    glm::vec2 worldToScreen(const glm::vec2& worldPos) const; ///< @brief 世界坐标转屏幕坐标
+    ///< @brief 世界坐标转屏幕坐标，考虑视差滚动
+    glm::vec2 worldToScreenWithParallax(const glm::vec2& worldPos,
+                                        const glm::vec2& scrollFactor) const;
+    glm::vec2 screenToWorld(const glm::vec2& screenPos) const; ///< @brief 屏幕坐标转世界坐标
+
+    // --- getters and setters ---
+    const glm::vec2& viewportSize() const;                         ///< @brief 获取视口大小
+    const glm::vec2& position() const;                             ///< @brief 获取相机位置
+    const std::optional<engine::utils::Rect>& limitBounds() const; ///< @brief 获取限制相机的移动范围
+    ///< @brief 获取相机跟随目标的变换组件
+    const engine::component::TransformComponent* target() const;
+
+    void setPosition(glm::vec2 position); ///< @brief 设置相机位置
+    ///< @brief 设置限制相机的移动范围
+    void setLimitBounds(std::optional<engine::utils::Rect> limitBounds);
+    ///< @brief 设置相机跟随目标的变换组件
+    void setTarget(engine::component::TransformComponent* target);
+
+private:
+    void clampPosition(); ///< @brief 限制相机位置在边界内
+
+    glm::vec2 m_viewportSize; ///< @brief 视口大小（屏幕大小）
+    glm::vec2 m_position;     ///< @brief 相机左上角的世界坐标
+    ///< @brief 限制相机的移动范围，空值表示不限制
+    std::optional<engine::utils::Rect> m_limitBounds{ std::nullopt };
+    float m_smoothSpeed{ 5.0F }; ///< @brief 相机移动的平滑速度
+    ///< @brief 相机跟随目标的变换组件，空值表示不跟随
+    engine::component::TransformComponent* m_target{ nullptr };
+};
+
+} // namespace engine::render

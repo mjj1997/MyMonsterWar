@@ -2,7 +2,44 @@ add_executable(MonsterWar)
 
 target_sources(
   MonsterWar
-  PRIVATE main.cpp)
+  PRIVATE main.cpp
+          engine/core/game_app.cpp
+          engine/core/frame_time_controller.cpp
+          engine/resource/texture_manager.cpp
+          engine/resource/audio_manager.cpp
+          engine/resource/font_manager.cpp
+          engine/resource/resource_manager.cpp
+          engine/render/camera.cpp
+          engine/render/renderer.cpp
+          engine/core/configurator.cpp
+          engine/input/input_manager.cpp
+          engine/object/game_object.cpp
+          engine/core/context.cpp
+          engine/component/transform_component.cpp
+          engine/component/sprite_component.cpp
+          engine/scene/scene_base.cpp
+          engine/scene/scene_manager.cpp
+          engine/component/parallax_component.cpp
+          engine/scene/level_loader.cpp
+          engine/component/tilelayer_component.cpp
+          engine/render/animation.cpp
+          engine/component/animation_component.cpp
+          engine/component/health_component.cpp
+          engine/audio/audio_player.cpp
+          engine/component/audio_component.cpp
+          engine/render/text_renderer.cpp
+          engine/ui/ui_element_base.cpp
+          engine/ui/ui_panel.cpp
+          engine/ui/ui_manager.cpp
+          engine/ui/ui_image.cpp
+          engine/ui/ui_label.cpp
+          engine/ui/ui_interactive_element_base.cpp
+          engine/ui/state/ui_normal_state.cpp
+          engine/ui/state/ui_hover_state.cpp
+          engine/ui/state/ui_pressed_state.cpp
+          engine/ui/ui_button.cpp
+          engine/core/game_state.cpp
+          game/scene/game_scene.cpp)
 
 target_link_libraries(
   MonsterWar
