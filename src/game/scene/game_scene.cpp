@@ -34,15 +34,28 @@ void GameScene::clean()
         .disconnect<&GameScene::jump>(this);
 }
 
-void GameScene::attack()
+void GameScene::pushScene()
 {
-    spdlog::info("attack");
-    m_context.dispatcher().enqueue<engine::utils::QuitEvent>();
+    spdlog::info("发出 pushScene signal, 压入场景");
+    emitPushSceneSignal(std::make_unique<GameScene>(m_context));
 }
 
-void GameScene::jump()
+void GameScene::popScene()
 {
-    spdlog::info("jump");
+    spdlog::info("发出 popScene signal, 弹出场景");
+    emitPopSceneSignal();
+}
+
+void GameScene::replaceScene()
+{
+    spdlog::info("发出 replaceScene signal, 替换场景");
+    emitReplaceSceneSignal(std::make_unique<GameScene>(m_context));
+}
+
+void GameScene::quit()
+{
+    spdlog::info("发出 quit signal, 退出游戏");
+    emitQuitSignal();
 }
 
 } // namespace game::scene

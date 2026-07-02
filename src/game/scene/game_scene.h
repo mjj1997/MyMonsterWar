@@ -14,9 +14,11 @@ public:
     void clean() override;
 
 private:
-    // --- 测试输入回调事件 ---
-    void attack();
-    void jump();
+    // --- 测试输入回调事件 (场景切换测试) ---
+    void pushScene();
+    void popScene();
+    void replaceScene();
+    void quit();
 };
 
 } // namespace game::scene
