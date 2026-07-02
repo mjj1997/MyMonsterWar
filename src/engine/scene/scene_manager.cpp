@@ -159,6 +159,12 @@ void SceneManager::popScene()
         m_sceneStack.back()->clean(); // 显式调用清理
     }
     m_sceneStack.pop_back();
+
+    // 如果弹出最后一个场景，触发退出事件
+    if (m_sceneStack.empty()) {
+        spdlog::warn("弹出最后一个场景，退出游戏。");
+        m_context.dispatcher().enqueue<engine::utils::QuitEvent>();
+    }
 }
 
 void SceneManager::replaceScene(std::unique_ptr<SceneBase>&& scene)
