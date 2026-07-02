@@ -46,6 +46,15 @@ void InputManager::update()
     while (SDL_PollEvent(&event)) {
         processEvent(event);
     }
+
+    // 3. 触发回调
+    for (auto& [action, state] : m_actionStates) {
+        if (state != ActionState::Inactive) { // 如果动作状态不是 Inactive，且有绑定回调函数
+            if (auto iter = m_actionToCallbacks.find(action); iter != m_actionToCallbacks.end()) {
+                iter->second.at(static_cast<std::size_t>(state)).publish(); // 触发回调
+            }
+        }
+    }
 }
 
 // --- 状态查询方法 ---
