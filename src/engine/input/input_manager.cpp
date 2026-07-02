@@ -57,6 +57,14 @@ void InputManager::update()
     }
 }
 
+entt::sink<entt::sigh<void()>> InputManager::actionSignal(std::string_view actionName,
+                                                          ActionState actionState)
+{
+    auto [iter, isInserted] = m_actionToCallbacks.try_emplace(std::string(actionName),
+                                                              std::array<entt::sigh<void()>, 3>{});
+    return iter->second.at(static_cast<std::size_t>(actionState));
+}
+
 // --- 状态查询方法 ---
 
 bool InputManager::isActionDown(std::string_view action) const

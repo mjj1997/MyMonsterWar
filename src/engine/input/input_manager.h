@@ -40,6 +40,15 @@ public:
 
     void update(); ///< @brief 更新输入状态，每轮循环最先调用
 
+    /**
+     * @brief 注册一个动作的回调函数
+     * @param actionName 动作名称
+     * @param actionState 动作状态, 默认为按下瞬间
+     * @return 一个 sink 对象，用于注册回调函数
+     */
+    entt::sink<entt::sigh<void()>> actionSignal(std::string_view actionName,
+                                                ActionState actionState = ActionState::Pressed);
+
     // 动作状态检查
     ///< @brief 动作当前是否触发 (持续按下或本帧按下)
     bool isActionDown(std::string_view action) const;
