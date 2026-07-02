@@ -79,6 +79,15 @@ public:
     }
 
 protected:
+    ///< @brief 发送压入一个新场景的信号。
+    void emitPushSceneSignal(std::unique_ptr<SceneBase>&& scene);
+    ///< @brief 发送弹出当前场景的信号。
+    void emitPopSceneSignal();
+    ///< @brief 发送替换当前场景的信号。
+    void emitReplaceSceneSignal(std::unique_ptr<SceneBase>&& scene);
+    ///< @brief 发送退出游戏的信号。
+    void emitQuitSignal();
+
     void processPendingAdditions(); ///< @brief 处理待添加的游戏对象。（每轮更新的最后调用）
 
     std::string m_sceneName;                            ///< @brief 场景名称（构造时传入）

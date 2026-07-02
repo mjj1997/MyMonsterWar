@@ -4,7 +4,9 @@
 #include "../object/game_object.h"
 #include "../render/camera.h"
 #include "../ui/ui_manager.h"
+#include "../utils/events.h"
 
+#include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
 
 #include <algorithm> // for std::remove_if
@@ -182,6 +184,28 @@ engine::object::GameObject* SceneBase::findGameObjectByName(std::string_view nam
         return (*iter).get();
     }
     return nullptr;
+}
+
+void SceneBase::emitPushSceneSignal(std::unique_ptr<SceneBase>&& scene)
+{
+    m_context.dispatcher().trigger<engine::utils::PushSceneEvent>(
+        engine::utils::PushSceneEvent{ std::move(scene) });
+}
+
+void SceneBase::emitPopSceneSignal()
+{
+    m_context.dispatcher().trigger<engine::utils::PopSceneEvent>();
+}
+
+void SceneBase::emitReplaceSceneSignal(std::unique_ptr<SceneBase>&& scene)
+{
+    m_context.dispatcher().trigger<engine::utils::ReplaceSceneEvent>(
+        engine::utils::ReplaceSceneEvent{ std::move(scene) });
+}
+
+void SceneBase::emitQuitSignal()
+{
+    m_context.dispatcher().trigger<engine::utils::QuitEvent>();
 }
 
 void SceneBase::processPendingAdditions()
