@@ -2,44 +2,71 @@
 
 #include "../../engine/core/context.h"
 #include "../../engine/input/input_manager.h"
+#include "../../engine/utils/events.h"
 
+#include <entt/signal/dispatcher.hpp>
 #include <entt/signal/sigh.hpp>
 #include <spdlog/spdlog.h>
 
 namespace game::scene {
 
-GameScene::GameScene(engine::core::Context& context, engine::scene::SceneManager& sceneManager)
-    : SceneBase{ "GameScene", context, sceneManager }
+GameScene::GameScene(engine::core::Context& context)
+    : SceneBase{ "GameScene", context }
 {}
 
 GameScene::~GameScene() = default;
 
 void GameScene::init()
 {
-    // 注册输入回调事件 (J,K 键)
+    static int count{ 0 };
+    ++count;
+    m_sceneNum = count;
+    spdlog::info("场景编号：{}", m_sceneNum);
+
+    // 注册输入事件处理回调函数
     auto& inputManager = m_context.inputManager();
-    inputManager.actionSignal("attack").connect<&GameScene::attack>(this); // 默认绑定 Pressed
-    inputManager.actionSignal("jump", engine::input::ActionState::Released)
-        .connect<&GameScene::jump>(this);
+    inputManager.actionSignal("mouseLeftClick").connect<&GameScene::pushScene>(this); // 鼠标左键点击
+    inputManager.actionSignal("mouseRightClick").connect<&GameScene::popScene>(this); // 鼠标右键点击
+    inputManager.actionSignal("jump").connect<&GameScene::replaceScene>(this);        // J 键
+    inputManager.actionSignal("pause").connect<&GameScene::quit>(this);               // P 键
+
+    SceneBase::init();
 }
 
 void GameScene::clean()
 {
-    // 断开输入回调事件 (谁连接，谁负责断开)
+    // 反注册输入事件处理回调函数 (谁连接，谁负责断开)
     auto& inputManager = m_context.inputManager();
-    inputManager.actionSignal("attack").disconnect<&GameScene::attack>(this);
-    inputManager.actionSignal("jump", engine::input::ActionState::Released)
-        .disconnect<&GameScene::jump>(this);
+    inputManager.actionSignal("mouseLeftClick").disconnect<&GameScene::pushScene>(this);
+    inputManager.actionSignal("mouseRightClick").disconnect<&GameScene::popScene>(this);
+    inputManager.actionSignal("jump").disconnect<&GameScene::replaceScene>(this);
+    inputManager.actionSignal("pause").disconnect<&GameScene::quit>(this);
+
+    SceneBase::clean();
 }
 
-void GameScene::attack()
+void GameScene::pushScene()
 {
-    spdlog::info("attack");
+    spdlog::info("发出 pushScene signal, 压入场景");
+    emitPushSceneSignal(std::make_unique<GameScene>(m_context));
 }
 
-void GameScene::jump()
+void GameScene::popScene()
 {
-    spdlog::info("jump");
+    spdlog::info("发出 popScene signal, 弹出场景");
+    emitPopSceneSignal();
+}
+
+void GameScene::replaceScene()
+{
+    spdlog::info("发出 replaceScene signal, 替换场景");
+    emitReplaceSceneSignal(std::make_unique<GameScene>(m_context));
+}
+
+void GameScene::quit()
+{
+    spdlog::info("发出 quit signal, 退出游戏");
+    emitQuitSignal();
 }
 
 } // namespace game::scene

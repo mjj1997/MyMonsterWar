@@ -1,5 +1,7 @@
 #pragma once
 
+#include <entt/signal/fwd.hpp>
+
 #include <functional>
 #include <memory>
 
@@ -57,10 +59,10 @@ public:
 
     /**
      * @brief 注册设置初始场景的函数对象。
-     *        这个函数对象将在 SceneManager 初始化后被调用。
-     * @param func 一个接收 SceneManager 引用的函数对象。
+     *        这个函数对象将在 Context 初始化后被调用。
+     * @param func 一个接收 Context 引用的函数对象。
      */
-    void registerSceneSetupFunc(std::function<void(engine::scene::SceneManager&)> func);
+    void registerSceneSetupFunc(std::function<void(engine::core::Context&)> func);
 
 private:
     [[nodiscard]] bool init(); // nodiscard属性 表示该函数返回值不应该被忽略
@@ -82,6 +84,10 @@ private:
     [[nodiscard]] bool initSceneManager();
     [[nodiscard]] bool initAudioPlayer();
     [[nodiscard]] bool initTextRenderer();
+    [[nodiscard]] bool initDispatcher();
+
+    // 事件处理函数
+    void quit();
 
 private:
     SDL_Window* m_window{ nullptr };
@@ -89,7 +95,7 @@ private:
     bool m_isRunning{ false };
 
     /// @brief 在运行游戏前设置初始场景的函数对象 (GameApp不再决定初始场景是什么)
-    std::function<void(engine::scene::SceneManager&)> m_sceneSetupFunc;
+    std::function<void(engine::core::Context&)> m_sceneSetupFunc;
 
     // 引擎组件
     std::unique_ptr<engine::core::FrameTimeController> m_frameTimeController;
@@ -103,6 +109,7 @@ private:
     std::unique_ptr<engine::audio::AudioPlayer> m_audioPlayer;
     std::unique_ptr<engine::render::TextRenderer> m_textRenderer;
     std::unique_ptr<engine::core::GameState> m_gameState;
+    std::unique_ptr<entt::dispatcher> m_dispatcher;
 };
 
 } // namespace engine::core

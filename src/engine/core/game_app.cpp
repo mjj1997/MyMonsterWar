@@ -10,12 +10,14 @@
 #include "../render/text_renderer.h"
 #include "../resource/resource_manager.h"
 #include "../scene/scene_manager.h"
+#include "../utils/events.h"
 #include "configurator.h"
 #include "context.h"
 #include "frame_time_controller.h"
 #include "game_state.h"
 
 #include <SDL3/SDL.h>
+#include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
 
 namespace engine::core {
@@ -52,7 +54,7 @@ void GameApp::run()
     clean();
 }
 
-void GameApp::registerSceneSetupFunc(std::function<void(engine::scene::SceneManager&)> func)
+void GameApp::registerSceneSetupFunc(std::function<void(engine::core::Context&)> func)
 {
     m_sceneSetupFunc = std::move(func);
     spdlog::trace("已注册设置初始场景的函数对象。");
@@ -97,6 +99,9 @@ bool GameApp::init()
     if (!initGameState()) {
         return false;
     }
+    if (!initDispatcher()) {
+        return false;
+    }
     if (!initContext()) {
         return false;
     }
@@ -105,7 +110,10 @@ bool GameApp::init()
     }
 
     // 调用设置初始场景的函数对象
-    m_sceneSetupFunc(*m_sceneManager);
+    m_sceneSetupFunc(*m_context);
+
+    // 注册退出事件处理函数（回调函数可以无参数，代表不使用事件结构体中的数据）
+    m_dispatcher->sink<engine::utils::QuitEvent>().connect<&GameApp::quit>(this);
 
     m_isRunning = true;
     spdlog::trace("GameApp 初始化成功。");
@@ -127,6 +135,8 @@ void GameApp::handleEvents()
 void GameApp::update(float deltaTime)
 {
     m_sceneManager->update(deltaTime);
+    // 分发事件
+    m_dispatcher->update();
 }
 
 void GameApp::render()
@@ -144,6 +154,9 @@ void GameApp::render()
 void GameApp::clean()
 {
     spdlog::trace("关闭 GameApp ...");
+
+    // 反注册退出事件处理函数
+    m_dispatcher->sink<engine::utils::QuitEvent>().disconnect<&GameApp::quit>(this);
 
     // 先关闭场景管理器，确保所有场景都被清理
     m_sceneManager->clean();
@@ -305,7 +318,8 @@ bool GameApp::initContext()
                                                             *m_resourceManager,
                                                             *m_audioPlayer,
                                                             *m_textRenderer,
-                                                            *m_gameState);
+                                                            *m_gameState,
+                                                            *m_dispatcher);
     } catch (const std::exception& e) {
         spdlog::error("初始化上下文失败: {}", e.what());
         return false;
@@ -352,6 +366,24 @@ bool GameApp::initTextRenderer()
     }
     spdlog::trace("文字渲染引擎初始化成功。");
     return true;
+}
+
+bool GameApp::initDispatcher()
+{
+    try {
+        m_dispatcher = std::make_unique<entt::dispatcher>();
+    } catch (const std::exception& e) {
+        spdlog::error("初始化事件分发器失败: {}", e.what());
+        return false;
+    }
+    spdlog::trace("事件分发器初始化成功。");
+    return true;
+}
+
+void GameApp::quit()
+{
+    spdlog::trace("GameApp 收到来自事件分发器的退出请求。");
+    m_isRunning = false;
 }
 
 } // namespace engine::core

@@ -7,16 +7,20 @@ namespace game::scene {
 class GameScene final : public engine::scene::SceneBase
 {
 public:
-    GameScene(engine::core::Context& context, engine::scene::SceneManager& sceneManager);
-    ~GameScene();
+    explicit GameScene(engine::core::Context& context);
+    ~GameScene() override;
 
     void init() override;
     void clean() override;
 
 private:
-    // --- 测试输入回调事件 ---
-    void attack();
-    void jump();
+    // --- 测试输入回调事件 (场景切换测试) ---
+    void pushScene();
+    void popScene();
+    void replaceScene();
+    void quit();
+
+    int m_sceneNum{ 0 };
 };
 
 } // namespace game::scene

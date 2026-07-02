@@ -2,6 +2,7 @@
 #include "../core/context.h"
 #include "scene_base.h"
 
+#include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
 
 namespace engine::scene {
@@ -9,6 +10,17 @@ namespace engine::scene {
 SceneManager::SceneManager(engine::core::Context& context)
     : m_context{ context }
 {
+    // 注册事件处理函数
+    m_context.dispatcher()
+        .sink<engine::utils::PushSceneEvent>()
+        .connect<&SceneManager::requestPushScene>(this);
+    m_context.dispatcher()
+        .sink<engine::utils::PopSceneEvent>()
+        .connect<&SceneManager::requestPopScene>(this);
+    m_context.dispatcher()
+        .sink<engine::utils::ReplaceSceneEvent>()
+        .connect<&SceneManager::requestReplaceScene>(this);
+
     spdlog::trace("场景管理器已创建。");
 }
 
@@ -68,12 +80,17 @@ void SceneManager::clean()
         }
         m_sceneStack.pop_back();
     }
+
+    // 反注册事件处理函数 (一次断开所有和当前实例绑定的回调函数)
+    m_context.dispatcher().disconnect(this);
 }
 
-void SceneManager::requestPushScene(std::unique_ptr<SceneBase>&& scene)
+// --- Private Methods ---
+
+void SceneManager::requestPushScene(engine::utils::PushSceneEvent& event)
 {
     m_pendingAction = PendingAction::Push;
-    m_pendingScene = std::move(scene);
+    m_pendingScene = std::move(event.scene);
 }
 
 void SceneManager::requestPopScene()
@@ -81,13 +98,11 @@ void SceneManager::requestPopScene()
     m_pendingAction = PendingAction::Pop;
 }
 
-void SceneManager::requestReplaceScene(std::unique_ptr<SceneBase>&& scene)
+void SceneManager::requestReplaceScene(engine::utils::ReplaceSceneEvent& event)
 {
     m_pendingAction = PendingAction::Replace;
-    m_pendingScene = std::move(scene);
+    m_pendingScene = std::move(event.scene);
 }
-
-// --- Private Methods ---
 
 void SceneManager::processPendingActions()
 {
@@ -144,6 +159,12 @@ void SceneManager::popScene()
         m_sceneStack.back()->clean(); // 显式调用清理
     }
     m_sceneStack.pop_back();
+
+    // 如果弹出最后一个场景，触发退出事件
+    if (m_sceneStack.empty()) {
+        spdlog::warn("弹出最后一个场景，退出游戏。");
+        m_context.dispatcher().enqueue<engine::utils::QuitEvent>();
+    }
 }
 
 void SceneManager::replaceScene(std::unique_ptr<SceneBase>&& scene)
