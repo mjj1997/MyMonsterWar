@@ -104,6 +104,9 @@ bool GameApp::init()
     if (!initSceneManager()) {
         return false;
     }
+    if (!initDispatcher()) {
+        return false;
+    }
 
     // 调用设置初始场景的函数对象
     m_sceneSetupFunc(*m_sceneManager);
@@ -128,6 +131,8 @@ void GameApp::handleEvents()
 void GameApp::update(float deltaTime)
 {
     m_sceneManager->update(deltaTime);
+    // 分发事件
+    m_dispatcher->update();
 }
 
 void GameApp::render()
