@@ -42,7 +42,6 @@ void GameApp::run()
     while (m_isRunning) {
         m_frameTimeController->update();
         const float deltaTime{ m_frameTimeController->deltaTime() };
-        m_inputManager->update(); // 每帧首先更新输入管理器
 
         handleEvents();
         update(deltaTime);
@@ -123,11 +122,8 @@ bool GameApp::init()
 
 void GameApp::handleEvents()
 {
-    if (m_inputManager->shouldQuit()) {
-        spdlog::trace("GameApp 收到来自 InputManager 的退出信号。");
-        m_isRunning = false;
-        return;
-    }
+    // 处理并分发输入事件
+    m_inputManager->update();
 
     m_sceneManager->handleInput();
 }
@@ -286,6 +282,7 @@ bool GameApp::initInputManager()
 {
     try {
         m_inputManager = std::make_unique<engine::input::InputManager>(m_sdlRenderer,
+                                                                       m_dispatcher.get(),
                                                                        m_configurator.get());
     } catch (const std::exception& e) {
         spdlog::error("初始化输入管理器失败: {}", e.what());

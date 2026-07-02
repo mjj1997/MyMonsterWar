@@ -1,7 +1,9 @@
 #include "input_manager.h"
 #include "../core/configurator.h"
+#include "../utils/events.h"
 
 #include <SDL3/SDL.h>
+#include <entt/signal/dispatcher.hpp>
 #include <glm/vec2.hpp>
 #include <spdlog/spdlog.h>
 
@@ -9,8 +11,11 @@
 
 namespace engine::input {
 
-InputManager::InputManager(SDL_Renderer* sdlRenderer, const engine::core::Configurator* config)
-    : m_sdlRenderer(sdlRenderer)
+InputManager::InputManager(SDL_Renderer* sdlRenderer,
+                           entt::dispatcher* dispatcher,
+                           const engine::core::Configurator* config)
+    : m_sdlRenderer{ sdlRenderer }
+    , m_dispatcher{ dispatcher }
 {
     if (m_sdlRenderer == nullptr) {
         spdlog::error("输入管理器: SDL_Renderer 为空指针");
@@ -51,17 +56,24 @@ void InputManager::update()
     for (auto& [action, state] : m_actionStates) {
         if (state != ActionState::Inactive) { // 如果动作状态不是 Inactive，且有绑定回调函数
             if (auto iter = m_actionToCallbacks.find(action); iter != m_actionToCallbacks.end()) {
-                iter->second.at(static_cast<std::size_t>(state)).publish(); // 触发回调
+                /**
+                 * collect() 会依次分发信号给回调函数，并获取回调函数的返回值，放入 lambda 函数的参数 result 中。
+                 * 当 lambda 函数的返回值为 true 时，停止分发信号。
+                 * 分发信号的顺序为“先绑定后调用”。
+                 */
+                iter->second.at(static_cast<std::size_t>(state)).collect([](bool result) {
+                    return result;
+                });
             }
         }
     }
 }
 
-entt::sink<entt::sigh<void()>> InputManager::actionSignal(std::string_view actionName,
-                                                          ActionState actionState)
+entt::sink<entt::sigh<bool()>> InputManager::actionSink(std::string_view actionName,
+                                                        ActionState actionState)
 {
     auto [iter, isInserted] = m_actionToCallbacks.try_emplace(std::string(actionName),
-                                                              std::array<entt::sigh<void()>, 3>{});
+                                                              std::array<entt::sigh<bool()>, 3>{});
     return iter->second.at(static_cast<std::size_t>(actionState));
 }
 
@@ -153,6 +165,11 @@ void InputManager::initInputMappings(const engine::core::Configurator* config)
     spdlog::trace("输入映射初始化完成.");
 }
 
+void InputManager::emitQuitSignal()
+{
+    m_dispatcher->trigger<engine::utils::QuitEvent>();
+}
+
 void InputManager::processEvent(const SDL_Event& event)
 {
     switch (event.type) {
@@ -182,15 +199,25 @@ void InputManager::processEvent(const SDL_Event& event)
                 updateActionState(action, isDown, false); // 更新action状态
             }
         }
-        // 在点击时更新鼠标位置
+        // 在点击时更新鼠标位置，同时更新逻辑坐标
         m_mousePosition = glm::vec2{ event.button.x, event.button.y };
+        SDL_RenderCoordinatesFromWindow(m_sdlRenderer,
+                                        m_mousePosition.x,
+                                        m_mousePosition.y,
+                                        &m_logicalMousePosition.x,
+                                        &m_logicalMousePosition.y);
         break;
     }
     case SDL_EVENT_MOUSE_MOTION: // 处理鼠标运动
         m_mousePosition = glm::vec2{ event.motion.x, event.motion.y };
+        SDL_RenderCoordinatesFromWindow(m_sdlRenderer,
+                                        m_mousePosition.x,
+                                        m_mousePosition.y,
+                                        &m_logicalMousePosition.x,
+                                        &m_logicalMousePosition.y);
         break;
     case SDL_EVENT_QUIT:
-        m_shouldQuit = true;
+        emitQuitSignal();
         break;
     default:
         break;
@@ -247,16 +274,6 @@ void InputManager::updateActionState(std::string_view action, bool isInputActive
     }
 }
 
-bool InputManager::shouldQuit() const
-{
-    return m_shouldQuit;
-}
-
-void InputManager::setShouldQuit(bool shouldQuit)
-{
-    m_shouldQuit = shouldQuit;
-}
-
 glm::vec2 InputManager::mousePosition() const
 {
     return m_mousePosition;
@@ -264,14 +281,8 @@ glm::vec2 InputManager::mousePosition() const
 
 glm::vec2 InputManager::logicalMousePosition() const
 {
-    glm::vec2 logicalPos;
-    // 通过窗口坐标获取渲染坐标（逻辑坐标）
-    SDL_RenderCoordinatesFromWindow(m_sdlRenderer,
-                                    m_mousePosition.x,
-                                    m_mousePosition.y,
-                                    &logicalPos.x,
-                                    &logicalPos.y);
-    return logicalPos;
+    // 每帧最多计算一次，避免每次调用时计算
+    return m_logicalMousePosition;
 }
 
 } // namespace engine::input
