@@ -9,6 +9,9 @@ class GameScene final : public engine::scene::SceneBase
 public:
     GameScene(engine::core::Context& context, engine::scene::SceneManager& sceneManager);
     ~GameScene();
+
+    void init() override;
+    void clean() override;
 };
 
 } // namespace game::scene
