@@ -2,6 +2,7 @@
 #include "../core/context.h"
 #include "scene_base.h"
 
+#include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
 
 namespace engine::scene {
@@ -9,6 +10,17 @@ namespace engine::scene {
 SceneManager::SceneManager(engine::core::Context& context)
     : m_context{ context }
 {
+    // 注册事件处理函数
+    m_context.dispatcher()
+        .sink<engine::utils::PushSceneEvent>()
+        .connect<&SceneManager::requestPushScene>(this);
+    m_context.dispatcher()
+        .sink<engine::utils::PopSceneEvent>()
+        .connect<&SceneManager::requestPopScene>(this);
+    m_context.dispatcher()
+        .sink<engine::utils::ReplaceSceneEvent>()
+        .connect<&SceneManager::requestReplaceScene>(this);
+
     spdlog::trace("场景管理器已创建。");
 }
 
@@ -68,6 +80,9 @@ void SceneManager::clean()
         }
         m_sceneStack.pop_back();
     }
+
+    // 反注册事件处理函数 (一次断开所有和当前实例绑定的回调函数)
+    m_context.dispatcher().disconnect(this);
 }
 
 // --- Private Methods ---
