@@ -18,7 +18,7 @@ InputManager::InputManager(SDL_Renderer* sdlRenderer, const engine::core::Config
     }
 
     // 初始化映射表
-    initMappings(config);
+    initInputMappings(config);
 
     // 获取初始鼠标位置
     float x{ 0.0F };
@@ -34,9 +34,9 @@ void InputManager::update()
 {
     // 1. 根据上一帧的值更新默认的动作状态
     for (auto& [action, state] : m_actionStates) {
-        if (state == ActionState::PressedThisFrame) {
-            state = ActionState::HeldDown; // 当某个键按下不动时，并不会生成SDL_Event。
-        } else if (state == ActionState::ReleasedThisFrame) {
+        if (state == ActionState::Pressed) {
+            state = ActionState::Held; // 当某个键按下不动时，并不会生成SDL_Event。
+        } else if (state == ActionState::Released) {
             state = ActionState::Inactive;
         }
     }
@@ -53,8 +53,7 @@ void InputManager::update()
 bool InputManager::isActionDown(std::string_view action) const
 {
     if (auto iter = m_actionStates.find(action); iter != m_actionStates.end()) {
-        return iter->second == ActionState::PressedThisFrame
-               || iter->second == ActionState::HeldDown;
+        return iter->second == ActionState::Pressed || iter->second == ActionState::Held;
     }
     return false;
 }
@@ -62,7 +61,7 @@ bool InputManager::isActionDown(std::string_view action) const
 bool InputManager::isActionPressed(std::string_view action) const
 {
     if (auto iter = m_actionStates.find(action); iter != m_actionStates.end()) {
-        return iter->second == ActionState::PressedThisFrame;
+        return iter->second == ActionState::Pressed;
     }
     return false;
 }
@@ -70,14 +69,14 @@ bool InputManager::isActionPressed(std::string_view action) const
 bool InputManager::isActionReleased(std::string_view action) const
 {
     if (auto iter = m_actionStates.find(action); iter != m_actionStates.end()) {
-        return iter->second == ActionState::ReleasedThisFrame;
+        return iter->second == ActionState::Released;
     }
     return false;
 }
 
 // --- 初始化输入映射 ---
 
-void InputManager::initMappings(const engine::core::Configurator* config)
+void InputManager::initInputMappings(const engine::core::Configurator* config)
 {
     spdlog::trace("初始化输入映射...");
     if (config == nullptr) {
@@ -85,22 +84,23 @@ void InputManager::initMappings(const engine::core::Configurator* config)
         throw std::runtime_error("输入管理器: Config 为空指针");
     }
 
-    m_actionToKeyNames = config->m_inputMappings; // 获取配置中的输入映射（动作 -> 按键名称）
     m_inputKeyToActions.clear();
     m_actionStates.clear();
 
+    // 获取配置中的输入映射（动作 -> 按键名称）
+    auto actionToKeyNames = config->m_inputMappings;
     // 如果配置中没有定义鼠标按钮动作(通常不需要配置),则添加默认映射, 用于 UI
-    if (!m_actionToKeyNames.contains("mouseLeftClick")) {
+    if (!actionToKeyNames.contains("mouseLeftClick")) {
         spdlog::debug("配置中没有定义 'mouseLeftClick' 动作,添加默认映射到 'MouseLeft'.");
-        m_actionToKeyNames["mouseLeftClick"] = { "MouseLeft" }; // 如果缺失则添加默认映射
+        actionToKeyNames["mouseLeftClick"] = { "MouseLeft" }; // 如果缺失则添加默认映射
     }
-    if (!m_actionToKeyNames.contains("mouseRightClick")) {
+    if (!actionToKeyNames.contains("mouseRightClick")) {
         spdlog::debug("配置中没有定义 'mouseRightClick' 动作,添加默认映射到 'MouseRight'.");
-        m_actionToKeyNames["mouseRightClick"] = { "MouseRight" }; // 如果缺失则添加默认映射
+        actionToKeyNames["mouseRightClick"] = { "MouseRight" }; // 如果缺失则添加默认映射
     }
 
     // 遍历 动作 -> 按键名称 的映射
-    for (const auto& [action, keyNames] : m_actionToKeyNames) {
+    for (const auto& [action, keyNames] : actionToKeyNames) {
         // 每个动作对应一个动作状态，初始化为 Inactive
         m_actionStates[action] = ActionState::Inactive;
 
@@ -221,12 +221,12 @@ void InputManager::updateActionState(std::string_view action, bool isInputActive
 
     if (isInputActive) { // 输入被激活（按下）
         if (isRepeatEvent) {
-            iter->second = ActionState::HeldDown;
+            iter->second = ActionState::Held;
         } else { // 非重复事件
-            iter->second = ActionState::PressedThisFrame;
+            iter->second = ActionState::Pressed;
         }
     } else { // 输入被释放（松开）
-        iter->second = ActionState::ReleasedThisFrame;
+        iter->second = ActionState::Released;
     }
 }
 

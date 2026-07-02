@@ -17,10 +17,10 @@ class Configurator;
 namespace engine::input {
 
 enum class ActionState {
-    Inactive,         ///< @brief 动作未激活
-    PressedThisFrame, ///< @brief 动作在本帧刚刚被按下
-    HeldDown,         ///< @brief 动作被持续按下
-    ReleasedThisFrame ///< @brief 动作在本帧刚刚被释放
+    Pressed,  ///< @brief 动作在本帧刚刚被按下
+    Held,     ///< @brief 动作被持续按下
+    Released, ///< @brief 动作在本帧刚刚被释放
+    Inactive  ///< @brief 动作未激活
 };
 
 using InputKey = std::variant<SDL_Scancode, Uint32>;
@@ -51,8 +51,8 @@ public:
     glm::vec2 logicalMousePosition() const; ///< @brief 获取鼠标位置 （逻辑坐标）
 
 private:
-    ///< @brief 根据 Configurator配置初始化映射表
-    void initMappings(const engine::core::Configurator* config);
+    ///< @brief 根据 Configurator 配置初始化输入映射表
+    void initInputMappings(const engine::core::Configurator* config);
     ///< @brief 处理 SDL 事件（将按键转换为动作状态）
     void processEvent(const SDL_Event& event);
 
@@ -63,12 +63,9 @@ private:
     ///< @brief 辅助更新动作状态
     void updateActionState(std::string_view action, bool isInputActive, bool isRepeatEvent);
 
-private:
     ///< @brief 用于获取逻辑坐标的 SDL_Renderer 指针
     SDL_Renderer* m_sdlRenderer;
 
-    ///< @brief 存储动作名称到按键名称列表的映射
-    std::unordered_map<std::string, std::vector<std::string>> m_actionToKeyNames;
     ///< @brief 从键盘（Scancode）或鼠标按钮 (Uint32) 到关联的动作名称列表
     std::unordered_map<InputKey, std::vector<std::string>> m_inputKeyToActions;
 
