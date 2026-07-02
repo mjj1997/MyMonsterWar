@@ -4,6 +4,7 @@
 #include "../../engine/input/input_manager.h"
 
 #include <entt/signal/sigh.hpp>
+#include <spdlog/spdlog.h>
 
 namespace game::scene {
 
@@ -29,6 +30,16 @@ void GameScene::clean()
     inputManager.actionSignal("attack").disconnect<&GameScene::attack>(this);
     inputManager.actionSignal("jump", engine::input::ActionState::Released)
         .disconnect<&GameScene::jump>(this);
+}
+
+void GameScene::attack()
+{
+    spdlog::info("attack");
+}
+
+void GameScene::jump()
+{
+    spdlog::info("jump");
 }
 
 } // namespace game::scene

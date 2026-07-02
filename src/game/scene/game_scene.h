@@ -12,6 +12,11 @@ public:
 
     void init() override;
     void clean() override;
+
+private:
+    // --- 测试输入回调事件 ---
+    void attack();
+    void jump();
 };
 
 } // namespace game::scene
