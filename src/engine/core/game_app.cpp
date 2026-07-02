@@ -99,13 +99,13 @@ bool GameApp::init()
     if (!initGameState()) {
         return false;
     }
+    if (!initDispatcher()) {
+        return false;
+    }
     if (!initContext()) {
         return false;
     }
     if (!initSceneManager()) {
-        return false;
-    }
-    if (!initDispatcher()) {
         return false;
     }
 
