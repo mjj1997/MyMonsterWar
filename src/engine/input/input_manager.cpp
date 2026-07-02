@@ -69,8 +69,8 @@ void InputManager::update()
     }
 }
 
-entt::sink<entt::sigh<bool()>> InputManager::actionSignal(std::string_view actionName,
-                                                          ActionState actionState)
+entt::sink<entt::sigh<bool()>> InputManager::actionSink(std::string_view actionName,
+                                                        ActionState actionState)
 {
     auto [iter, isInserted] = m_actionToCallbacks.try_emplace(std::string(actionName),
                                                               std::array<entt::sigh<bool()>, 3>{});

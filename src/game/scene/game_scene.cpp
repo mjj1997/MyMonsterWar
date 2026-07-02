@@ -25,10 +25,10 @@ void GameScene::init()
 
     // 注册输入事件处理回调函数
     auto& inputManager = m_context.inputManager();
-    inputManager.actionSignal("mouseLeftClick").connect<&GameScene::pushScene>(this); // 鼠标左键点击
-    inputManager.actionSignal("mouseRightClick").connect<&GameScene::popScene>(this); // 鼠标右键点击
-    inputManager.actionSignal("jump").connect<&GameScene::replaceScene>(this);        // J 键
-    inputManager.actionSignal("pause").connect<&GameScene::quit>(this);               // P 键
+    inputManager.actionSink("mouseLeftClick").connect<&GameScene::pushScene>(this); // 鼠标左键点击
+    inputManager.actionSink("mouseRightClick").connect<&GameScene::popScene>(this); // 鼠标右键点击
+    inputManager.actionSink("jump").connect<&GameScene::replaceScene>(this);        // J 键
+    inputManager.actionSink("pause").connect<&GameScene::quit>(this);               // P 键
 
     SceneBase::init();
 }
@@ -37,10 +37,10 @@ void GameScene::clean()
 {
     // 反注册输入事件处理回调函数 (谁连接，谁负责断开)
     auto& inputManager = m_context.inputManager();
-    inputManager.actionSignal("mouseLeftClick").disconnect<&GameScene::pushScene>(this);
-    inputManager.actionSignal("mouseRightClick").disconnect<&GameScene::popScene>(this);
-    inputManager.actionSignal("jump").disconnect<&GameScene::replaceScene>(this);
-    inputManager.actionSignal("pause").disconnect<&GameScene::quit>(this);
+    inputManager.actionSink("mouseLeftClick").disconnect<&GameScene::pushScene>(this);
+    inputManager.actionSink("mouseRightClick").disconnect<&GameScene::popScene>(this);
+    inputManager.actionSink("jump").disconnect<&GameScene::replaceScene>(this);
+    inputManager.actionSink("pause").disconnect<&GameScene::quit>(this);
 
     SceneBase::clean();
 }

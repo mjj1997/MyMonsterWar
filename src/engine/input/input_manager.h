@@ -49,8 +49,8 @@ public:
      * @param actionState 动作状态, 默认为按下瞬间
      * @return 一个 sink 对象，用于注册回调函数
      */
-    entt::sink<entt::sigh<bool()>> actionSignal(std::string_view actionName,
-                                                ActionState actionState = ActionState::Pressed);
+    entt::sink<entt::sigh<bool()>> actionSink(std::string_view actionName,
+                                              ActionState actionState = ActionState::Pressed);
 
     // 动作状态检查
     ///< @brief 动作当前是否触发 (持续按下或本帧按下)
