@@ -7,8 +7,8 @@ namespace game::scene {
 class GameScene final : public engine::scene::SceneBase
 {
 public:
-    GameScene(engine::core::Context& context, engine::scene::SceneManager& sceneManager);
-    ~GameScene();
+    explicit GameScene(engine::core::Context& context);
+    ~GameScene() override;
 
     void init() override;
     void clean() override;

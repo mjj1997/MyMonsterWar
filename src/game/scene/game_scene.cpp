@@ -10,8 +10,8 @@
 
 namespace game::scene {
 
-GameScene::GameScene(engine::core::Context& context, engine::scene::SceneManager& sceneManager)
-    : SceneBase{ "GameScene", context, sceneManager }
+GameScene::GameScene(engine::core::Context& context)
+    : SceneBase{ "GameScene", context }
 {}
 
 GameScene::~GameScene() = default;
