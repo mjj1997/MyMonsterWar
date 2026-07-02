@@ -2,7 +2,9 @@
 
 #include "../../engine/core/context.h"
 #include "../../engine/input/input_manager.h"
+#include "../../engine/utils/events.h"
 
+#include <entt/signal/dispatcher.hpp>
 #include <entt/signal/sigh.hpp>
 #include <spdlog/spdlog.h>
 
@@ -35,6 +37,7 @@ void GameScene::clean()
 void GameScene::attack()
 {
     spdlog::info("attack");
+    m_context.dispatcher().enqueue<engine::utils::QuitEvent>();
 }
 
 void GameScene::jump()
