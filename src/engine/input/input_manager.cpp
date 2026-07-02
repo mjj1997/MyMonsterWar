@@ -254,16 +254,6 @@ void InputManager::updateActionState(std::string_view action, bool isInputActive
     }
 }
 
-bool InputManager::shouldQuit() const
-{
-    return m_shouldQuit;
-}
-
-void InputManager::setShouldQuit(bool shouldQuit)
-{
-    m_shouldQuit = shouldQuit;
-}
-
 glm::vec2 InputManager::mousePosition() const
 {
     return m_mousePosition;

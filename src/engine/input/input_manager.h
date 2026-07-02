@@ -55,9 +55,6 @@ public:
     bool isActionPressed(std::string_view action) const;  ///< @brief 动作是否在本帧刚刚按下
     bool isActionReleased(std::string_view action) const; ///< @brief 动作是否在本帧刚刚释放
 
-    bool shouldQuit() const;             ///< @brief 查询退出状态
-    void setShouldQuit(bool shouldQuit); ///< @brief 设置退出状态
-
     glm::vec2 mousePosition() const;        ///< @brief 获取鼠标位置 （屏幕坐标）
     glm::vec2 logicalMousePosition() const; ///< @brief 获取鼠标位置 （逻辑坐标）
 
@@ -90,7 +87,6 @@ private:
      */
     std::unordered_map<std::string, std::array<entt::sigh<bool()>, 3>> m_actionToCallbacks;
 
-    bool m_shouldQuit{ false };              ///< @brief 退出标志
     glm::vec2 m_mousePosition{ 0.0F, 0.0F }; ///< @brief 鼠标位置 (针对屏幕坐标)
 };
 
