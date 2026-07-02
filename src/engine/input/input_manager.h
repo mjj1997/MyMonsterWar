@@ -64,6 +64,9 @@ public:
 private:
     ///< @brief 根据 Configurator 配置初始化输入映射表
     void initInputMappings(const engine::core::Configurator* config);
+
+    ///< @brief 触发退出信号
+    void emitQuitSignal();
     ///< @brief 处理 SDL 事件（将按键转换为动作状态）
     void processEvent(const SDL_Event& event);
 

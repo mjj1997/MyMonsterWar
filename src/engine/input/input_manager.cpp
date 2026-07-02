@@ -1,7 +1,9 @@
 #include "input_manager.h"
 #include "../core/configurator.h"
+#include "../utils/events.h"
 
 #include <SDL3/SDL.h>
+#include <entt/signal/dispatcher.hpp>
 #include <glm/vec2.hpp>
 #include <spdlog/spdlog.h>
 
@@ -163,6 +165,11 @@ void InputManager::initInputMappings(const engine::core::Configurator* config)
     spdlog::trace("输入映射初始化完成.");
 }
 
+void InputManager::emitQuitSignal()
+{
+    m_dispatcher->trigger<engine::utils::QuitEvent>();
+}
+
 void InputManager::processEvent(const SDL_Event& event)
 {
     switch (event.type) {
@@ -200,7 +207,7 @@ void InputManager::processEvent(const SDL_Event& event)
         m_mousePosition = glm::vec2{ event.motion.x, event.motion.y };
         break;
     case SDL_EVENT_QUIT:
-        m_shouldQuit = true;
+        emitQuitSignal();
         break;
     default:
         break;
