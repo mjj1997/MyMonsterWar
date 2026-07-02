@@ -19,6 +19,8 @@ private:
     void popScene();
     void replaceScene();
     void quit();
+
+    int m_sceneNum{ 0 };
 };
 
 } // namespace game::scene

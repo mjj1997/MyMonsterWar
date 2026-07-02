@@ -18,6 +18,11 @@ GameScene::~GameScene() = default;
 
 void GameScene::init()
 {
+    static int count{ 0 };
+    ++count;
+    m_sceneNum = count;
+    spdlog::info("场景编号：{}", m_sceneNum);
+
     // 注册输入事件处理回调函数
     auto& inputManager = m_context.inputManager();
     inputManager.actionSignal("mouseLeftClick").connect<&GameScene::pushScene>(this); // 鼠标左键点击
