@@ -54,7 +54,7 @@ void GameApp::run()
     clean();
 }
 
-void GameApp::registerSceneSetupFunc(std::function<void(engine::scene::SceneManager&)> func)
+void GameApp::registerSceneSetupFunc(std::function<void(engine::core::Context&)> func)
 {
     m_sceneSetupFunc = std::move(func);
     spdlog::trace("已注册设置初始场景的函数对象。");
@@ -110,7 +110,7 @@ bool GameApp::init()
     }
 
     // 调用设置初始场景的函数对象
-    m_sceneSetupFunc(*m_sceneManager);
+    m_sceneSetupFunc(*m_context);
 
     // 注册退出事件处理函数（回调函数可以无参数，代表不使用事件结构体中的数据）
     m_dispatcher->sink<engine::utils::QuitEvent>().connect<&GameApp::quit>(this);
