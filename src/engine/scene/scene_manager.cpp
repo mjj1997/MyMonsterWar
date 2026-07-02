@@ -70,10 +70,12 @@ void SceneManager::clean()
     }
 }
 
-void SceneManager::requestPushScene(std::unique_ptr<SceneBase>&& scene)
+// --- Private Methods ---
+
+void SceneManager::requestPushScene(engine::utils::PushSceneEvent& event)
 {
     m_pendingAction = PendingAction::Push;
-    m_pendingScene = std::move(scene);
+    m_pendingScene = std::move(event.scene);
 }
 
 void SceneManager::requestPopScene()
@@ -81,13 +83,11 @@ void SceneManager::requestPopScene()
     m_pendingAction = PendingAction::Pop;
 }
 
-void SceneManager::requestReplaceScene(std::unique_ptr<SceneBase>&& scene)
+void SceneManager::requestReplaceScene(engine::utils::ReplaceSceneEvent& event)
 {
     m_pendingAction = PendingAction::Replace;
-    m_pendingScene = std::move(scene);
+    m_pendingScene = std::move(event.scene);
 }
-
-// --- Private Methods ---
 
 void SceneManager::processPendingActions()
 {
