@@ -86,6 +86,9 @@ private:
     [[nodiscard]] bool initTextRenderer();
     [[nodiscard]] bool initDispatcher();
 
+    // 事件处理函数
+    void quit();
+
 private:
     SDL_Window* m_window{ nullptr };
     SDL_Renderer* m_sdlRenderer{ nullptr };

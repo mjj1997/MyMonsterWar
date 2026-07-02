@@ -372,4 +372,10 @@ bool GameApp::initDispatcher()
     return true;
 }
 
+void GameApp::quit()
+{
+    spdlog::trace("GameApp 收到来自事件分发器的退出请求。");
+    m_isRunning = false;
+}
+
 } // namespace engine::core
