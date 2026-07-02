@@ -33,10 +33,13 @@ public:
     /**
      * @brief 构造函数
      * @param sdlRenderer 指向 SDL_Renderer 的指针
-     * @param config 配置对象
+     * @param dispatcher 指向 entt::dispatcher 的指针
+     * @param config 指向配置对象的指针
      * @throws std::runtime_error 如果任一指针为 nullptr。
      */
-    InputManager(SDL_Renderer* sdlRenderer, const engine::core::Configurator* config);
+    InputManager(SDL_Renderer* sdlRenderer,
+                 entt::dispatcher* dispatcher,
+                 const engine::core::Configurator* config);
 
     void update(); ///< @brief 更新输入状态，每轮循环最先调用
 
@@ -73,6 +76,8 @@ private:
 
     ///< @brief 用于获取逻辑坐标的 SDL_Renderer 指针
     SDL_Renderer* m_sdlRenderer;
+    ///< @brief 用于发送事件的 entt::dispatcher 指针
+    entt::dispatcher* m_dispatcher;
 
     ///< @brief 从键盘（Scancode）或鼠标按钮 (Uint32) 到关联的动作名称列表
     std::unordered_map<InputKey, std::vector<std::string>> m_inputKeyToActions;

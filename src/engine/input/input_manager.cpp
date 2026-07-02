@@ -9,8 +9,11 @@
 
 namespace engine::input {
 
-InputManager::InputManager(SDL_Renderer* sdlRenderer, const engine::core::Configurator* config)
-    : m_sdlRenderer(sdlRenderer)
+InputManager::InputManager(SDL_Renderer* sdlRenderer,
+                           entt::dispatcher* dispatcher,
+                           const engine::core::Configurator* config)
+    : m_sdlRenderer{ sdlRenderer }
+    , m_dispatcher{ dispatcher }
 {
     if (m_sdlRenderer == nullptr) {
         spdlog::error("输入管理器: SDL_Renderer 为空指针");
