@@ -10,6 +10,7 @@
 #include "../render/text_renderer.h"
 #include "../resource/resource_manager.h"
 #include "../scene/scene_manager.h"
+#include "../utils/events.h"
 #include "configurator.h"
 #include "context.h"
 #include "frame_time_controller.h"
@@ -111,6 +112,9 @@ bool GameApp::init()
     // 调用设置初始场景的函数对象
     m_sceneSetupFunc(*m_sceneManager);
 
+    // 注册退出事件处理函数（回调函数可以无参数，代表不使用事件结构体中的数据）
+    m_dispatcher->sink<engine::utils::QuitEvent>().connect<&GameApp::quit>(this);
+
     m_isRunning = true;
     spdlog::trace("GameApp 初始化成功。");
 
@@ -150,6 +154,9 @@ void GameApp::render()
 void GameApp::clean()
 {
     spdlog::trace("关闭 GameApp ...");
+
+    // 反注册退出事件处理函数
+    m_dispatcher->sink<engine::utils::QuitEvent>().disconnect<&GameApp::quit>(this);
 
     // 先关闭场景管理器，确保所有场景都被清理
     m_sceneManager->clean();
