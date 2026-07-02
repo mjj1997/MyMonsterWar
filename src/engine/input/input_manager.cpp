@@ -51,17 +51,24 @@ void InputManager::update()
     for (auto& [action, state] : m_actionStates) {
         if (state != ActionState::Inactive) { // 如果动作状态不是 Inactive，且有绑定回调函数
             if (auto iter = m_actionToCallbacks.find(action); iter != m_actionToCallbacks.end()) {
-                iter->second.at(static_cast<std::size_t>(state)).publish(); // 触发回调
+                /**
+                 * collect() 会依次分发信号给回调函数，并获取回调函数的返回值，放入 lambda 函数的参数 result 中。
+                 * 当 lambda 函数的返回值为 true 时，停止分发信号。
+                 * 分发信号的顺序为“先绑定后调用”。
+                 */
+                iter->second.at(static_cast<std::size_t>(state)).collect([](bool result) {
+                    return result;
+                });
             }
         }
     }
 }
 
-entt::sink<entt::sigh<void()>> InputManager::actionSignal(std::string_view actionName,
+entt::sink<entt::sigh<bool()>> InputManager::actionSignal(std::string_view actionName,
                                                           ActionState actionState)
 {
     auto [iter, isInserted] = m_actionToCallbacks.try_emplace(std::string(actionName),
-                                                              std::array<entt::sigh<void()>, 3>{});
+                                                              std::array<entt::sigh<bool()>, 3>{});
     return iter->second.at(static_cast<std::size_t>(actionState));
 }
 

@@ -46,7 +46,7 @@ public:
      * @param actionState 动作状态, 默认为按下瞬间
      * @return 一个 sink 对象，用于注册回调函数
      */
-    entt::sink<entt::sigh<void()>> actionSignal(std::string_view actionName,
+    entt::sink<entt::sigh<bool()>> actionSignal(std::string_view actionName,
                                                 ActionState actionState = ActionState::Pressed);
 
     // 动作状态检查
@@ -88,7 +88,7 @@ private:
      * @note 每个动作有3个状态: Pressed, Held, Released，每个状态对应一个回调函数
      * @note 绑定动作时再插入元素（懒加载），初始化时为空
      */
-    std::unordered_map<std::string, std::array<entt::sigh<void()>, 3>> m_actionToCallbacks;
+    std::unordered_map<std::string, std::array<entt::sigh<bool()>, 3>> m_actionToCallbacks;
 
     bool m_shouldQuit{ false };              ///< @brief 退出标志
     glm::vec2 m_mousePosition{ 0.0F, 0.0F }; ///< @brief 鼠标位置 (针对屏幕坐标)

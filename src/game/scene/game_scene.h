@@ -15,10 +15,10 @@ public:
 
 private:
     // --- 测试输入回调事件 (场景切换测试) ---
-    void pushScene();
-    void popScene();
-    void replaceScene();
-    void quit();
+    bool pushScene();
+    bool popScene();
+    bool replaceScene();
+    bool quit();
 
     int m_sceneNum{ 0 };
 };

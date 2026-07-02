@@ -45,28 +45,36 @@ void GameScene::clean()
     SceneBase::clean();
 }
 
-void GameScene::pushScene()
+bool GameScene::pushScene()
 {
     spdlog::info("发出 pushScene signal, 压入场景");
     emitPushSceneSignal(std::make_unique<GameScene>(m_context));
+
+    return true;
 }
 
-void GameScene::popScene()
+bool GameScene::popScene()
 {
     spdlog::info("发出 popScene signal, 弹出场景");
     emitPopSceneSignal();
+
+    return true;
 }
 
-void GameScene::replaceScene()
+bool GameScene::replaceScene()
 {
     spdlog::info("发出 replaceScene signal, 替换场景");
     emitReplaceSceneSignal(std::make_unique<GameScene>(m_context));
+
+    return true;
 }
 
-void GameScene::quit()
+bool GameScene::quit()
 {
     spdlog::info("发出 quit signal, 退出游戏");
     emitQuitSignal();
+
+    return true;
 }
 
 } // namespace game::scene
