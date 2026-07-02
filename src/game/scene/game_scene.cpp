@@ -24,7 +24,7 @@ void GameScene::init()
     spdlog::info("场景编号：{}", m_sceneNum);
 
     // 注册输入事件处理回调函数
-    auto& inputManager = m_context.inputManager();
+    auto& inputManager = context().inputManager();
     inputManager.actionSink("mouseLeftClick").connect<&GameScene::pushScene>(this); // 鼠标左键点击
     inputManager.actionSink("mouseRightClick").connect<&GameScene::popScene>(this); // 鼠标右键点击
     inputManager.actionSink("jump").connect<&GameScene::replaceScene>(this);        // J 键
@@ -36,7 +36,7 @@ void GameScene::init()
 void GameScene::clean()
 {
     // 反注册输入事件处理回调函数 (谁连接，谁负责断开)
-    auto& inputManager = m_context.inputManager();
+    auto& inputManager = context().inputManager();
     inputManager.actionSink("mouseLeftClick").disconnect<&GameScene::pushScene>(this);
     inputManager.actionSink("mouseRightClick").disconnect<&GameScene::popScene>(this);
     inputManager.actionSink("jump").disconnect<&GameScene::replaceScene>(this);
@@ -48,7 +48,7 @@ void GameScene::clean()
 bool GameScene::pushScene()
 {
     spdlog::info("发出 pushScene signal, 压入场景");
-    emitPushSceneSignal(std::make_unique<GameScene>(m_context));
+    emitPushSceneSignal(std::make_unique<GameScene>(context()));
 
     return true;
 }
@@ -64,7 +64,7 @@ bool GameScene::popScene()
 bool GameScene::replaceScene()
 {
     spdlog::info("发出 replaceScene signal, 替换场景");
-    emitReplaceSceneSignal(std::make_unique<GameScene>(m_context));
+    emitReplaceSceneSignal(std::make_unique<GameScene>(context()));
 
     return true;
 }
