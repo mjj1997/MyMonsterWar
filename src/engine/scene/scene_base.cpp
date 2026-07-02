@@ -11,12 +11,9 @@
 
 namespace engine::scene {
 
-SceneBase::SceneBase(std::string_view name,
-                     engine::core::Context& context,
-                     engine::scene::SceneManager& sceneManager)
+SceneBase::SceneBase(std::string_view name, engine::core::Context& context)
     : m_sceneName{ name }
     , m_context{ context }
-    , m_sceneManager{ sceneManager }
     , m_uiManager{ std::make_unique<engine::ui::UiManager>() }
 {
     spdlog::trace("场景 '{}' 构造完成。", m_sceneName);
