@@ -1,15 +1,13 @@
+#include "engine/core/context.h"
 #include "engine/core/game_app.h"
-#include "engine/scene/scene_manager.h"
 #include "game/scene/game_scene.h"
 
 #include <spdlog/spdlog.h>
 
-void setupInitialScene(engine::scene::SceneManager& sceneManager)
+void setupInitialScene(engine::core::Context& context)
 {
     // GameApp在调用run方法之前，先创建并设置初始场景
-    auto initialScene = std::make_unique<game::scene::GameScene>(sceneManager.context(),
-                                                                 sceneManager);
-    sceneManager.requestPushScene(std::move(initialScene));
+    auto initialScene = std::make_unique<game::scene::GameScene>(context);
 }
 
 int main(int /*argc*/, char* /*argv*/[])
