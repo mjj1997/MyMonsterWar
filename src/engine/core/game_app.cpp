@@ -318,7 +318,8 @@ bool GameApp::initContext()
                                                             *m_resourceManager,
                                                             *m_audioPlayer,
                                                             *m_textRenderer,
-                                                            *m_gameState);
+                                                            *m_gameState,
+                                                            *m_dispatcher);
     } catch (const std::exception& e) {
         spdlog::error("初始化上下文失败: {}", e.what());
         return false;
