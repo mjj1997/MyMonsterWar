@@ -95,7 +95,8 @@ private:
      */
     std::unordered_map<std::string, std::array<entt::sigh<bool()>, 3>> m_actionToCallbacks;
 
-    glm::vec2 m_mousePosition{ 0.0F, 0.0F }; ///< @brief 鼠标位置 (针对屏幕坐标)
+    glm::vec2 m_mousePosition{ 0.0F, 0.0F };        ///< @brief 鼠标位置 (针对屏幕坐标)
+    glm::vec2 m_logicalMousePosition{ 0.0F, 0.0F }; ///< @brief 鼠标位置 (针对逻辑坐标)
 };
 
 } // namespace engine::input

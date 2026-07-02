@@ -199,12 +199,22 @@ void InputManager::processEvent(const SDL_Event& event)
                 updateActionState(action, isDown, false); // 更新action状态
             }
         }
-        // 在点击时更新鼠标位置
+        // 在点击时更新鼠标位置，同时更新逻辑坐标
         m_mousePosition = glm::vec2{ event.button.x, event.button.y };
+        SDL_RenderCoordinatesFromWindow(m_sdlRenderer,
+                                        m_mousePosition.x,
+                                        m_mousePosition.y,
+                                        &m_logicalMousePosition.x,
+                                        &m_logicalMousePosition.y);
         break;
     }
     case SDL_EVENT_MOUSE_MOTION: // 处理鼠标运动
         m_mousePosition = glm::vec2{ event.motion.x, event.motion.y };
+        SDL_RenderCoordinatesFromWindow(m_sdlRenderer,
+                                        m_mousePosition.x,
+                                        m_mousePosition.y,
+                                        &m_logicalMousePosition.x,
+                                        &m_logicalMousePosition.y);
         break;
     case SDL_EVENT_QUIT:
         emitQuitSignal();
@@ -271,14 +281,8 @@ glm::vec2 InputManager::mousePosition() const
 
 glm::vec2 InputManager::logicalMousePosition() const
 {
-    glm::vec2 logicalPos;
-    // 通过窗口坐标获取渲染坐标（逻辑坐标）
-    SDL_RenderCoordinatesFromWindow(m_sdlRenderer,
-                                    m_mousePosition.x,
-                                    m_mousePosition.y,
-                                    &logicalPos.x,
-                                    &logicalPos.y);
-    return logicalPos;
+    // 每帧最多计算一次，避免每次调用时计算
+    return m_logicalMousePosition;
 }
 
 } // namespace engine::input
