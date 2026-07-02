@@ -1,5 +1,7 @@
 #pragma once
 
+#include <entt/signal/fwd.hpp>
+
 #include <functional>
 #include <memory>
 
@@ -82,6 +84,7 @@ private:
     [[nodiscard]] bool initSceneManager();
     [[nodiscard]] bool initAudioPlayer();
     [[nodiscard]] bool initTextRenderer();
+    [[nodiscard]] bool initDispatcher();
 
 private:
     SDL_Window* m_window{ nullptr };
@@ -103,6 +106,7 @@ private:
     std::unique_ptr<engine::audio::AudioPlayer> m_audioPlayer;
     std::unique_ptr<engine::render::TextRenderer> m_textRenderer;
     std::unique_ptr<engine::core::GameState> m_gameState;
+    std::unique_ptr<entt::dispatcher> m_dispatcher;
 };
 
 } // namespace engine::core

@@ -16,6 +16,7 @@
 #include "game_state.h"
 
 #include <SDL3/SDL.h>
+#include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
 
 namespace engine::core {
@@ -351,6 +352,18 @@ bool GameApp::initTextRenderer()
         return false;
     }
     spdlog::trace("文字渲染引擎初始化成功。");
+    return true;
+}
+
+bool GameApp::initDispatcher()
+{
+    try {
+        m_dispatcher = std::make_unique<entt::dispatcher>();
+    } catch (const std::exception& e) {
+        spdlog::error("初始化事件分发器失败: {}", e.what());
+        return false;
+    }
+    spdlog::trace("事件分发器初始化成功。");
     return true;
 }
 
