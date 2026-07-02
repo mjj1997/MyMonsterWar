@@ -3,8 +3,10 @@
 #include "../utils/string_view_hash.h"
 
 #include <SDL3/SDL_render.h>
+#include <entt/signal/sigh.hpp>
 #include <glm/vec2.hpp>
 
+#include <array>
 #include <string>
 #include <unordered_map>
 #include <variant>
@@ -71,6 +73,13 @@ private:
 
     std::unordered_map<std::string, ActionState, engine::utils::StringViewHash, std::equal_to<>>
         m_actionStates; ///< @brief 存储每个动作的当前状态
+
+    /** @brief 核心数据结构: 存储动作名称函数列表的映射
+     * 
+     * @note 每个动作有3个状态: Pressed, Held, Released，每个状态对应一个回调函数
+     * @note 绑定动作时再插入元素（懒加载），初始化时为空
+     */
+    std::unordered_map<std::string, std::array<entt::sigh<void()>, 3>> m_actionToCallbacks;
 
     bool m_shouldQuit{ false };              ///< @brief 退出标志
     glm::vec2 m_mousePosition{ 0.0F, 0.0F }; ///< @brief 鼠标位置 (针对屏幕坐标)
