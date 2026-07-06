@@ -49,7 +49,7 @@ void TextRenderer::close()
 }
 
 void TextRenderer::drawUiText(std::string_view text,
-                              std::string_view fontId,
+                              entt::id_type fontId,
                               int fontSize,
                               const glm::vec2& screenPosition,
                               const engine::utils::FColor& color)
@@ -88,7 +88,7 @@ void TextRenderer::drawUiText(std::string_view text,
 
 void TextRenderer::drawText(const Camera& camera,
                             std::string_view text,
-                            std::string_view fontId,
+                            entt::id_type fontId,
                             int fontSize,
                             const glm::vec2& worldPosition,
                             const engine::utils::FColor& color)
@@ -100,12 +100,15 @@ void TextRenderer::drawText(const Camera& camera,
     drawUiText(text, fontId, fontSize, screenPos, color);
 }
 
-glm::vec2 TextRenderer::getTextSize(std::string_view text, std::string_view fontId, int fontSize)
+glm::vec2 TextRenderer::getTextSize(std::string_view text,
+                                    entt::id_type fontId,
+                                    int fontSize,
+                                    std::string_view fontPath)
 {
     /* 构造函数已经保证了必要指针不会为空，这里不需要再检查 */
 
     // 获取字体
-    TTF_Font* font{ m_resourceManager->getFont(fontId, fontSize) };
+    TTF_Font* font{ m_resourceManager->getFont(fontId, fontSize, fontPath) };
     if (font == nullptr) {
         spdlog::warn("getTextSize 获取字体失败: {} 大小 {}", fontId, fontSize);
         return glm::vec2(0.0F);
