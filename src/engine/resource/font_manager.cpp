@@ -1,5 +1,6 @@
 #include "font_manager.h"
 
+#include <entt/core/hashed_string.hpp>
 #include <spdlog/spdlog.h>
 
 #include <stdexcept>
@@ -57,6 +58,11 @@ TTF_Font* FontManager::loadFont(entt::id_type id, int pointSize, std::string_vie
     return font;
 }
 
+TTF_Font* FontManager::loadFont(entt::hashed_string hs, int pointSize)
+{
+    return loadFont(hs.value(), pointSize, hs.data());
+}
+
 TTF_Font* FontManager::getFont(entt::id_type id, int pointSize, std::string_view filePath)
 {
     // 查找现有字体
@@ -73,6 +79,11 @@ TTF_Font* FontManager::getFont(entt::id_type id, int pointSize, std::string_view
     }
     spdlog::info("字体 '{}' ({}pt) 不在缓存中，尝试加载。", filePath, pointSize);
     return loadFont(id, pointSize, filePath);
+}
+
+TTF_Font* FontManager::getFont(entt::hashed_string hs, int pointSize)
+{
+    return getFont(hs.value(), pointSize, hs.data());
 }
 
 void FontManager::unloadFont(entt::id_type id, int pointSize)

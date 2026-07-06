@@ -65,6 +65,16 @@ private: // 仅供 ResourceManager 访问的方法
     TTF_Font* loadFont(entt::id_type id, int pointSize, std::string_view filePath);
 
     /**
+     * @brief 从字符串哈希值加载指定点大小的字体
+     * @param hs entt::hashed_string 类型
+     * @param pointSize 字体的点大小
+     * @return 加载的字体的指针
+     * @note 如果字体已经加载，则返回已加载字体的指针
+     * @note 如果字体未加载，则从哈希字符串对应的文件路径加载字体，并返回加载的字体的指针
+     */
+    TTF_Font* loadFont(entt::hashed_string hs, int pointSize);
+
+    /**
      * @brief 从文件路径获取字体
      * @param id 字体的唯一标识符, 通过 entt::hashed_string 生成
      * @param pointSize 字体的点大小
@@ -75,6 +85,16 @@ private: // 仅供 ResourceManager 访问的方法
      * @note 如果字体未加载，且没有提供 filePath，则返回 nullptr
      */
     TTF_Font* getFont(entt::id_type id, int pointSize, std::string_view filePath = "");
+
+    /**
+     * @brief 从字符串哈希值获取字体
+     * @param hs entt::hashed_string 类型
+     * @param pointSize 字体的点大小
+     * @return 加载的字体的指针
+     * @note 如果字体已经加载，则返回已加载字体的指针
+     * @note 如果字体未加载，则从哈希字符串对应的文件路径加载字体，并返回加载的字体的指针
+     */
+    TTF_Font* getFont(entt::hashed_string hs, int pointSize);
 
     /**
      * @brief 卸载特定字体（通过路径哈希值和大小标识）
