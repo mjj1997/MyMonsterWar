@@ -1,7 +1,9 @@
 #include "texture_manager.h"
 
 #include <SDL3_image/SDL_image.h> // 用于 IMG_LoadTexture， IMG_Init, IMG_Quit
+#include <entt/core/hashed_string.hpp>
 #include <spdlog/spdlog.h>
+
 #include <stdexcept> // 用于 std::runtime_error
 
 namespace engine::resource {
@@ -44,6 +46,11 @@ SDL_Texture* TextureManager::loadTexture(entt::id_type id, std::string_view file
     return texture;
 }
 
+SDL_Texture* TextureManager::loadTexture(entt::hashed_string hs)
+{
+    return loadTexture(hs.value(), hs.data());
+}
+
 SDL_Texture* TextureManager::getTexture(entt::id_type id, std::string_view filePath)
 {
     // 查找现有纹理
@@ -62,6 +69,11 @@ SDL_Texture* TextureManager::getTexture(entt::id_type id, std::string_view fileP
     return loadTexture(id, filePath);
 }
 
+SDL_Texture* TextureManager::getTexture(entt::hashed_string hs)
+{
+    return getTexture(hs.value(), hs.data());
+}
+
 glm::vec2 TextureManager::getTextureSize(entt::id_type id, std::string_view filePath)
 {
     // 获取纹理
@@ -78,6 +90,11 @@ glm::vec2 TextureManager::getTextureSize(entt::id_type id, std::string_view file
         return glm::vec2(0.0F);
     }
     return size;
+}
+
+glm::vec2 TextureManager::getTextureSize(entt::hashed_string hs)
+{
+    return getTextureSize(hs.value(), hs.data());
 }
 
 void TextureManager::unloadTexture(entt::id_type id)

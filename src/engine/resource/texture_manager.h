@@ -46,6 +46,15 @@ private: // 仅供 ResourceManager 访问的方法
     SDL_Texture* loadTexture(entt::id_type id, std::string_view filePath);
 
     /**
+     * @brief 从字符串哈希值加载纹理
+     * @param hs entt::hashed_string 类型
+     * @return 加载的纹理的指针
+     * @note 如果纹理已经加载，则返回已加载的纹理的指针
+     * @note 如果纹理未加载，则从哈希字符串对应的文件路径加载纹理，并返回加载的纹理的指针
+     */
+    SDL_Texture* loadTexture(entt::hashed_string hs);
+
+    /**
      * @brief 获取纹理
      * @param id 纹理的唯一标识符, 通过 entt::hashed_string 生成
      * @param filePath 纹理文件的路径
@@ -57,6 +66,15 @@ private: // 仅供 ResourceManager 访问的方法
     SDL_Texture* getTexture(entt::id_type id, std::string_view filePath = "");
 
     /**
+     * @brief 从字符串哈希值获取纹理
+     * @param hs entt::hashed_string 类型
+     * @return 加载的纹理的指针
+     * @note 如果纹理已经加载，则返回已加载的纹理的指针
+     * @note 如果纹理未加载，则从哈希字符串对应的文件路径加载纹理，并返回加载的纹理的指针
+     */
+    SDL_Texture* getTexture(entt::hashed_string hs);
+
+    /**
      * @brief 获取纹理的尺寸
      * @param id 纹理的唯一标识符, 通过 entt::hashed_string 生成
      * @param filePath 纹理文件的路径
@@ -64,6 +82,14 @@ private: // 仅供 ResourceManager 访问的方法
      * @note 如果纹理未加载，且提供了 filePath，则尝试从文件路径加载纹理，并返回加载的纹理的尺寸
      */
     glm::vec2 getTextureSize(entt::id_type id, std::string_view filePath = "");
+
+    /**
+     * @brief 从字符串哈希值获取纹理的尺寸
+     * @param hs entt::hashed_string类型
+     * @return 纹理的尺寸
+     * @note 如果纹理未加载，则返回 glm::vec2(0.0f)
+     */
+    glm::vec2 getTextureSize(entt::hashed_string hs);
 
     /**
      * @brief 卸载纹理
