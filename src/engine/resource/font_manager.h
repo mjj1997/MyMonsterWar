@@ -1,26 +1,29 @@
 #pragma once
 
 #include <SDL3_ttf/SDL_ttf.h> // SDL_ttf 主头文件
+#include <entt/core/fwd.hpp>
 
 #include <functional> // 用于 std::hash
 #include <memory>     // 用于 std::unique_ptr
-#include <string>
+#include <string_view>
 #include <unordered_map>
 #include <utility> // 用于 std::pair
 
 namespace engine::resource {
 
 // 定义字体键类型（路径 + 大小）
-using FontKey = std::pair<std::string, int>;
+using FontKey = std::pair<entt::id_type, int>;
 
-// FontKey 的自定义哈希函数（std::pair<std::string, int>），用于 std::unordered_map
+// FontKey 的自定义哈希函数（std::pair<entt::id_type, int>），用于 std::unordered_map
 struct FontKeyHash
 {
-    std::size_t operator()(const FontKey& key) const
+    std::size_t operator()(const FontKey& key) const noexcept
     {
-        std::hash<std::string> stringHasher;
-        std::hash<int> intHasher;
-        return stringHasher(key.first) ^ intHasher(key.second);
+        // 采用C++20标准库的hash_combine实现思路
+        std::size_t h1{ std::hash<entt::id_type>{}(key.first) };
+        std::size_t h2{ std::hash<int>{}(key.second) };
+        // 推荐的哈希合并方式，参考boost::hash_combine
+        return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
     }
 };
 
@@ -32,6 +35,8 @@ struct FontKeyHash
  */
 class FontManager final
 {
+    friend class ResourceManager;
+
 public:
     /**
      * @brief 构造函数。初始化 SDL_ttf。
@@ -47,8 +52,7 @@ public:
     FontManager(FontManager&&) = delete;
     FontManager& operator=(FontManager&&) = delete;
 
-    // 仅由 ResourceManager（和内部）访问的方法
-private:
+private: // 仅供 ResourceManager 访问的方法
     ///< @brief 从文件路径加载指定点大小的字体
     TTF_Font* loadFont(std::string_view filePath, int pointSize);
     ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载
@@ -56,9 +60,6 @@ private:
     ///< @brief 卸载特定字体（通过路径和大小标识）
     void unloadFont(std::string_view filePath, int pointSize);
     void clearFonts(); ///< @brief 清空所有缓存的字体
-
-private:
-    friend class ResourceManager;
 
     // TTF_Font 的自定义删除器
     struct SDLFontDeletor
