@@ -1,11 +1,10 @@
 #pragma once
 
-#include "../utils/string_view_hash.h"
-
 #include <SDL3_mixer/SDL_mixer.h> // SDL_mixer 主头文件
+#include <entt/core/fwd.hpp>
 
 #include <memory> // 用于 std::unique_ptr
-#include <string>
+#include <string_view>
 #include <unordered_map>
 
 namespace engine::resource {
@@ -35,8 +34,7 @@ public:
     AudioManager(AudioManager&&) = delete;
     AudioManager& operator=(AudioManager&&) = delete;
 
-private:
-    // --- 仅供 ResourceManager 访问的方法 ---
+private: // 仅供 ResourceManager 访问的方法
     // --- 音效管理 ---
     MIX_Audio* loadSound(std::string_view filePath); ///< @brief 从文件路径加载音效（预解码）
     ///< @brief 尝试获取已加载音效的指针，如果未加载则尝试加载
@@ -68,17 +66,9 @@ private:
     };
 
     // 音效存储 (文件路径 -> MIX_Audio, 预解码)
-    std::unordered_map<std::string,
-                       std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>,
-                       engine::utils::StringViewHash,
-                       std::equal_to<>>
-        m_sounds;
+    std::unordered_map<entt::id_type, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>> m_sounds;
     // 音乐存储 (文件路径 -> MIX_Audio, 流式解码)
-    std::unordered_map<std::string,
-                       std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>,
-                       engine::utils::StringViewHash,
-                       std::equal_to<>>
-        m_musics;
+    std::unordered_map<entt::id_type, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>> m_musics;
 
     MIX_Mixer* m_mixer{ nullptr }; ///< @brief SDL_mixer 混音器实例
 };
