@@ -11,15 +11,16 @@ AudioManager::AudioManager()
     // 初始化SDL_mixer
     // SDL_mixer 3.2.0 不再需要传入格式标志
     if (!MIX_Init()) {
-        throw std::runtime_error("AudioManager 错误: MIX_Init 失败: " + std::string(SDL_GetError()));
+        throw std::runtime_error{ "AudioManager 错误: MIX_Init 失败: "
+                                  + std::string(SDL_GetError()) };
     }
 
     // 创建连接到默认音频输出设备的混音器
     m_mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
     if (m_mixer == nullptr) {
         MIX_Quit();
-        throw std::runtime_error("AudioManager 错误: MIX_CreateMixerDevice 失败: "
-                                 + std::string(SDL_GetError()));
+        throw std::runtime_error{ "AudioManager 错误: MIX_CreateMixerDevice 失败: "
+                                  + std::string(SDL_GetError()) };
     }
 
     spdlog::trace("AudioManager 构造成功。");
@@ -52,14 +53,14 @@ MIX_Audio* AudioManager::loadSound(entt::id_type id, std::string_view filePath)
 
     // 加载音效（predecode=true，预先解码为PCM，适合短音效）
     spdlog::debug("加载音效: {}", filePath);
-    MIX_Audio* sound = MIX_LoadAudio(m_mixer, filePath.data(), true);
+    MIX_Audio* sound{ MIX_LoadAudio(m_mixer, filePath.data(), true) };
     if (sound == nullptr) {
         spdlog::error("加载音效失败: '{}': {}", filePath, SDL_GetError());
         return nullptr;
     }
 
     // 使用unique_ptr存储在缓存中
-    m_sounds.emplace(id, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>(sound));
+    m_sounds.emplace(id, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>{ sound });
     spdlog::debug("成功加载并缓存音效: {}", filePath);
     return sound;
 }
@@ -112,14 +113,14 @@ MIX_Audio* AudioManager::loadMusic(entt::id_type id, std::string_view filePath)
 
     // 加载音乐（predecode=false，流式解码，适合长音乐）
     spdlog::debug("加载音乐: {}", filePath);
-    MIX_Audio* music = MIX_LoadAudio(m_mixer, filePath.data(), false);
+    MIX_Audio* music{ MIX_LoadAudio(m_mixer, filePath.data(), false) };
     if (music == nullptr) {
         spdlog::error("加载音乐失败: '{}': {}", filePath, SDL_GetError());
         return nullptr;
     }
 
     // 使用unique_ptr存储在缓存中
-    m_musics.emplace(filePath, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>(music));
+    m_musics.emplace(filePath, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>{ music });
     spdlog::debug("成功加载并缓存音乐: {}", filePath);
     return music;
 }
