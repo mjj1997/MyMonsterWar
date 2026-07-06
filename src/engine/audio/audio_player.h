@@ -1,5 +1,7 @@
 #pragma once
 
+#include <entt/entity/entity.hpp>
+
 #include <string>
 #include <string_view>
 
@@ -15,8 +17,8 @@ namespace engine::audio {
 /**
  * @brief 用于控制音频播放的类。
  *
- * 提供播放音效和音乐的方法，使用由 ResourceManager 管理的资源。
- * 必须使用有效的 ResourceManager 实例初始化。
+ * @note 提供播放音效和音乐的方法，使用由 ResourceManager 管理的资源。
+ * @note 必须使用有效的 ResourceManager 实例初始化。
  */
 class AudioPlayer final
 {
@@ -98,7 +100,8 @@ private:
     MIX_Mixer* m_mixer{ nullptr }; ///< @brief 指向 SDL_mixer 混音器的非拥有指针
 
     MIX_Track* m_musicTrack{ nullptr }; ///< @brief 背景音乐专用播放轨道指针（拥有）
-    std::string m_currentMusic; ///< @brief 当前正在播放的音乐路径，用于避免重复播放同一音乐。
+    ///< @brief 当前正在播放的音乐ID，用于避免重复播放同一音乐。
+    entt::id_type m_currentMusicId{ entt::null };
 };
 
 } // namespace engine::audio
