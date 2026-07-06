@@ -29,33 +29,33 @@ AudioPlayer::~AudioPlayer()
     }
 }
 
-int AudioPlayer::playSound(std::string_view soundPath)
+int AudioPlayer::playSound(entt::id_type soundId)
 {
-    MIX_Audio* sound{ m_resourceManager->getSound(soundPath) };
+    MIX_Audio* sound{ m_resourceManager->getSound(soundId) };
     if (sound == nullptr) {
-        spdlog::error("AudioPlayer: 无法获取音效 '{}' 播放。", soundPath);
+        spdlog::error("AudioPlayer: 无法获取音效 ID: {}。", soundId);
         return -1;
     }
 
     if (!MIX_PlayAudio(m_mixer, sound)) {
-        spdlog::error("AudioPlayer: 无法播放音效 '{}': {}", soundPath, SDL_GetError());
+        spdlog::error("AudioPlayer: 无法播放音效 ID: {}: {}。", soundId, SDL_GetError());
         return -1;
     }
 
-    spdlog::trace("AudioPlayer: 播放音效 '{}'。", soundPath);
+    spdlog::trace("AudioPlayer: 播放音效 ID: {}。", soundId);
     return 0;
 }
 
-bool AudioPlayer::playMusic(std::string_view musicPath, int loops, int fadeInTime)
+bool AudioPlayer::playMusic(entt::id_type musicId, int loops, int fadeInTime)
 {
-    if (musicPath == m_currentMusic) {
+    if (musicId == m_currentMusicId) {
         return true; // 如果当前音乐已经在播放，则不重复播放
     }
-    m_currentMusic = musicPath;
+    m_currentMusicId = musicId;
 
-    MIX_Audio* music{ m_resourceManager->getMusic(musicPath) }; // 通过 ResourceManager 获取资源
+    MIX_Audio* music{ m_resourceManager->getMusic(musicId) }; // 通过 ResourceManager 获取资源
     if (music == nullptr) {
-        spdlog::error("AudioPlayer: 无法获取音乐 '{}' 播放。", musicPath);
+        spdlog::error("AudioPlayer: 无法获取音乐 ID: {}。", musicId);
         return false;
     }
 
@@ -74,9 +74,9 @@ bool AudioPlayer::playMusic(std::string_view musicPath, int loops, int fadeInTim
     SDL_DestroyProperties(props);
 
     if (!result) {
-        spdlog::error("AudioPlayer: 无法播放音乐 '{}': {}", musicPath, SDL_GetError());
+        spdlog::error("AudioPlayer: 无法播放音乐 ID: {}: {}。", musicId, SDL_GetError());
     } else {
-        spdlog::trace("AudioPlayer: 播放音乐 '{}'。", musicPath);
+        spdlog::trace("AudioPlayer: 播放音乐 ID: {}。", musicId);
     }
 
     return result;
@@ -87,7 +87,7 @@ void AudioPlayer::stopMusic(int fadeOutTime)
     const Sint64 fadeFrames{ (fadeOutTime > 0) ? MIX_TrackMSToFrames(m_musicTrack, fadeOutTime)
                                                : 0 };
     MIX_StopTrack(m_musicTrack, fadeFrames);
-    m_currentMusic.clear();
+    m_currentMusicId = entt::null;
     spdlog::trace("AudioPlayer: 停止音乐。");
 }
 
