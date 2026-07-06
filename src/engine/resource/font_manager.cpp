@@ -9,7 +9,8 @@ namespace engine::resource {
 FontManager::FontManager()
 {
     if (TTF_WasInit() == 0 && !TTF_Init()) {
-        throw std::runtime_error("FontManager 错误：TTF_Init 失败：" + std::string(SDL_GetError()));
+        throw std::runtime_error{ "FontManager 错误：TTF_Init 失败："
+                                  + std::string(SDL_GetError()) };
     }
     spdlog::trace("FontManager 构造成功。");
 }
@@ -44,14 +45,14 @@ TTF_Font* FontManager::loadFont(entt::id_type id, int pointSize, std::string_vie
 
     // 缓存中不存在，则加载字体
     spdlog::debug("正在加载字体: {} ({}pt)", filePath, pointSize);
-    TTF_Font* font = TTF_OpenFont(filePath.data(), pointSize);
+    TTF_Font* font{ TTF_OpenFont(filePath.data(), pointSize) };
     if (font == nullptr) {
         spdlog::error("加载字体 '{}' ({}pt) 失败: {}", filePath, pointSize, SDL_GetError());
         return nullptr;
     }
 
     // 使用 unique_ptr 存储到缓存中
-    m_fonts.emplace(key, std::unique_ptr<TTF_Font, SDLFontDeletor>(font));
+    m_fonts.emplace(key, std::unique_ptr<TTF_Font, SDLFontDeletor>{ font });
     spdlog::debug("成功加载并缓存字体: {} ({}pt)", filePath, pointSize);
     return font;
 }
