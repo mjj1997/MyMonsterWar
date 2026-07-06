@@ -17,10 +17,10 @@ TextureManager::TextureManager(SDL_Renderer* sdlRenderer)
     spdlog::trace("TextureManager 构造成功。");
 }
 
-SDL_Texture* TextureManager::loadTexture(std::string_view filePath)
+SDL_Texture* TextureManager::loadTexture(entt::id_type id, std::string_view filePath)
 {
     // 检查是否已加载该纹理
-    auto iter = m_textures.find(filePath);
+    auto iter = m_textures.find(id);
     if (iter != m_textures.end()) {
         return iter->second.get();
     }
@@ -38,29 +38,34 @@ SDL_Texture* TextureManager::loadTexture(std::string_view filePath)
     }
 
     // 使用带有自定义删除器的 unique_ptr 存储加载的纹理
-    m_textures.emplace(filePath, std::unique_ptr<SDL_Texture, SDLTextureDeletor>(texture));
+    m_textures.emplace(id, std::unique_ptr<SDL_Texture, SDLTextureDeletor>(texture));
     spdlog::debug("成功加载并缓存纹理：{}", filePath);
 
     return texture;
 }
 
-SDL_Texture* TextureManager::getTexture(std::string_view filePath)
+SDL_Texture* TextureManager::getTexture(entt::id_type id, std::string_view filePath)
 {
     // 查找现有纹理
-    auto iter = m_textures.find(filePath);
+    auto iter = m_textures.find(id);
     if (iter != m_textures.end()) {
         return iter->second.get();
     }
 
     // 如果未找到纹理，尝试加载纹理
-    spdlog::warn("纹理 '{}' 未找到缓存，尝试加载。", filePath);
-    return loadTexture(filePath);
+    if (filePath.empty()) {
+        spdlog::error("纹理 '{}' 未找到缓存，且未提供文件路径，返回 nullptr。", id);
+        return nullptr;
+    }
+
+    spdlog::info("纹理 '{}' 未找到缓存，尝试加载。", filePath);
+    return loadTexture(id, filePath);
 }
 
-glm::vec2 TextureManager::getTextureSize(std::string_view filePath)
+glm::vec2 TextureManager::getTextureSize(entt::id_type id, std::string_view filePath)
 {
     // 获取纹理
-    SDL_Texture* texture{ getTexture(filePath) };
+    SDL_Texture* texture{ getTexture(id, filePath) };
     if (texture == nullptr) {
         spdlog::error("无法获取纹理：{}", filePath);
         return glm::vec2(0.0F);
@@ -75,14 +80,14 @@ glm::vec2 TextureManager::getTextureSize(std::string_view filePath)
     return size;
 }
 
-void TextureManager::unloadTexture(std::string_view filePath)
+void TextureManager::unloadTexture(entt::id_type id)
 {
-    auto iter = m_textures.find(filePath);
+    auto iter = m_textures.find(id);
     if (iter != m_textures.end()) {
         m_textures.erase(iter); // unique_ptr 通过自定义删除器自动释放纹理
-        spdlog::debug("成功卸载纹理：{}", filePath);
+        spdlog::debug("成功卸载纹理：id = {}", id);
     } else {
-        spdlog::warn("尝试卸载不存在的纹理：{}", filePath);
+        spdlog::warn("尝试卸载不存在的纹理：id = {}", id);
     }
 }
 

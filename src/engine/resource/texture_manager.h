@@ -35,12 +35,46 @@ public:
     TextureManager& operator=(TextureManager&&) = delete;
 
 private: // 仅供 ResourceManager 访问的方法
-    SDL_Texture* loadTexture(std::string_view filePath); ///< @brief 从文件路径加载纹理
-    ///< @brief 尝试获取已加载纹理的指针，如果未加载则尝试加载
-    SDL_Texture* getTexture(std::string_view filePath);
-    glm::vec2 getTextureSize(std::string_view filePath); ///< @brief 获取指定纹理的尺寸
-    void unloadTexture(std::string_view filePath);       ///< @brief 卸载指定的纹理资源
-    void clearTextures();                                ///< @brief 清空所有纹理资源
+    /**
+     * @brief 从文件路径加载纹理
+     * @param id 纹理的唯一标识符, 通过 entt::hashed_string 生成
+     * @param filePpath 纹理文件的路径
+     * @return 加载的纹理的指针
+     * @note 如果纹理已经加载，则返回已加载的纹理的指针
+     * @note 如果纹理未加载，则从文件路径加载纹理，并返回加载的纹理的指针
+     */
+    SDL_Texture* loadTexture(entt::id_type id, std::string_view filePath);
+
+    /**
+     * @brief 获取纹理
+     * @param id 纹理的唯一标识符, 通过 entt::hashed_string 生成
+     * @param filePath 纹理文件的路径
+     * @return 加载的纹理的指针
+     * @note 如果纹理已经加载，则返回已加载的纹理的指针
+     * @note 如果纹理未加载，且提供了 filePath，则尝试从文件路径加载纹理，并返回加载的纹理的指针
+     * @note 如果纹理未加载，且没有提供 filePath，则返回 nullptr
+     */
+    SDL_Texture* getTexture(entt::id_type id, std::string_view filePath = "");
+
+    /**
+     * @brief 获取纹理的尺寸
+     * @param id 纹理的唯一标识符, 通过 entt::hashed_string 生成
+     * @param filePath 纹理文件的路径
+     * @return 纹理的尺寸
+     * @note 如果纹理未加载，且提供了 filePath，则尝试从文件路径加载纹理，并返回加载的纹理的尺寸
+     */
+    glm::vec2 getTextureSize(entt::id_type id, std::string_view filePath = "");
+
+    /**
+     * @brief 卸载纹理
+     * @param id 纹理的唯一标识符, 通过 entt::hashed_string 生成
+     */
+    void unloadTexture(entt::id_type id);
+
+    /**
+     * @brief 清空所有纹理资源
+     */
+    void clearTextures();
 
     // SDL_Texture 的删除器函数对象，用于智能指针管理
     struct SDLTextureDeletor
