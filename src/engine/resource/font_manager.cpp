@@ -25,7 +25,7 @@ FontManager::~FontManager()
     spdlog::trace("FontManager 析构成功。");
 }
 
-TTF_Font* FontManager::loadFont(std::string_view filePath, int pointSize)
+TTF_Font* FontManager::loadFont(entt::id_type id, int pointSize, std::string_view filePath)
 {
     // 检查点大小是否有效
     if (pointSize <= 0) {
@@ -34,7 +34,7 @@ TTF_Font* FontManager::loadFont(std::string_view filePath, int pointSize)
     }
 
     // 创建映射表的键
-    FontKey key{ filePath, pointSize };
+    FontKey key{ id, pointSize };
 
     // 首先检查缓存
     auto iter = m_fonts.find(key);
@@ -56,27 +56,33 @@ TTF_Font* FontManager::loadFont(std::string_view filePath, int pointSize)
     return font;
 }
 
-TTF_Font* FontManager::getFont(std::string_view filePath, int pointSize)
+TTF_Font* FontManager::getFont(entt::id_type id, int pointSize, std::string_view filePath)
 {
-    const FontKey key{ filePath, pointSize };
+    // 查找现有字体
+    const FontKey key{ id, pointSize };
     auto iter = m_fonts.find(key);
     if (iter != m_fonts.end()) {
         return iter->second.get();
     }
 
-    spdlog::warn("字体 '{}' ({}pt) 不在缓存中，尝试加载。", filePath, pointSize);
-    return loadFont(filePath, pointSize);
+    // 如果未找到字体，尝试加载字体
+    if (filePath.empty()) {
+        spdlog::error("字体 '{}' 未找到缓存，且未提供文件路径，返回 nullptr。", id);
+        return nullptr;
+    }
+    spdlog::info("字体 '{}' ({}pt) 不在缓存中，尝试加载。", filePath, pointSize);
+    return loadFont(id, pointSize, filePath);
 }
 
-void FontManager::unloadFont(std::string_view filePath, int pointSize)
+void FontManager::unloadFont(entt::id_type id, int pointSize)
 {
-    const FontKey key{ filePath, pointSize };
+    const FontKey key{ id, pointSize };
     auto iter = m_fonts.find(key);
     if (iter != m_fonts.end()) {
-        spdlog::debug("成功卸载字体: {} ({}pt)", filePath, pointSize);
+        spdlog::debug("成功卸载字体: id = {} ({}pt)", id, pointSize);
         m_fonts.erase(iter); // unique_ptr 处理 TTF_CloseFont
     } else {
-        spdlog::warn("尝试卸载不存在的字体: {} ({}pt)", filePath, pointSize);
+        spdlog::warn("尝试卸载不存在的字体: id = {} ({}pt)", id, pointSize);
     }
 }
 

@@ -53,13 +53,40 @@ public:
     FontManager& operator=(FontManager&&) = delete;
 
 private: // 仅供 ResourceManager 访问的方法
-    ///< @brief 从文件路径加载指定点大小的字体
-    TTF_Font* loadFont(std::string_view filePath, int pointSize);
-    ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载
-    TTF_Font* getFont(std::string_view filePath, int pointSize);
-    ///< @brief 卸载特定字体（通过路径和大小标识）
-    void unloadFont(std::string_view filePath, int pointSize);
-    void clearFonts(); ///< @brief 清空所有缓存的字体
+    /**
+     * @brief 从文件路径加载指定点大小的字体
+     * @param id 字体的唯一标识符, 通过 entt::hashed_string 生成
+     * @param pointSize 字体的点大小
+     * @param filePath 字体文件的路径
+     * @return 加载的字体的指针
+     * @note 如果字体已经加载，则返回已加载字体的指针
+     * @note 如果字体未加载，则从文件路径加载字体，并返回加载的字体的指针
+     */
+    TTF_Font* loadFont(entt::id_type id, int pointSize, std::string_view filePath);
+
+    /**
+     * @brief 从文件路径获取字体
+     * @param id 字体的唯一标识符, 通过 entt::hashed_string 生成
+     * @param pointSize 字体的点大小
+     * @param filePath 字体文件的路径
+     * @return 加载的字体的指针
+     * @note 如果字体已经加载，则返回已加载字体的指针
+     * @note 如果字体未加载，且提供了 filePath ，则尝试从文件路径加载字体，并返回加载的字体的指针
+     * @note 如果字体未加载，且没有提供 filePath，则返回 nullptr
+     */
+    TTF_Font* getFont(entt::id_type id, int pointSize, std::string_view filePath = "");
+
+    /**
+     * @brief 卸载特定字体（通过路径哈希值和大小标识）
+     * @param id 字体的唯一标识符, 通过 entt::hashed_string 生成
+     * @param pointSize 字体的点大小
+     */
+    void unloadFont(entt::id_type id, int pointSize);
+
+    /**
+     * @brief 清空所有缓存的字体
+     */
+    void clearFonts();
 
     // TTF_Font 的自定义删除器
     struct SDLFontDeletor
