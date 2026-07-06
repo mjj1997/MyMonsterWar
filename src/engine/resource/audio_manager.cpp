@@ -1,5 +1,6 @@
 #include "audio_manager.h"
 
+#include <entt/core/hashed_string.hpp>
 #include <spdlog/spdlog.h>
 
 #include <stdexcept>
@@ -65,6 +66,11 @@ MIX_Audio* AudioManager::loadSound(entt::id_type id, std::string_view filePath)
     return sound;
 }
 
+MIX_Audio* AudioManager::loadSound(entt::hashed_string hs)
+{
+    return loadSound(hs.value(), hs.data());
+}
+
 MIX_Audio* AudioManager::getSound(entt::id_type id, std::string_view filePath)
 {
     // 查找现有音效
@@ -81,6 +87,11 @@ MIX_Audio* AudioManager::getSound(entt::id_type id, std::string_view filePath)
 
     spdlog::info("音效 '{}' 未找到缓存，尝试加载。", filePath);
     return loadSound(id, filePath);
+}
+
+MIX_Audio* AudioManager::getSound(entt::hashed_string hs)
+{
+    return getSound(hs.value(), hs.data());
 }
 
 void AudioManager::unloadSound(entt::id_type id)
@@ -125,6 +136,11 @@ MIX_Audio* AudioManager::loadMusic(entt::id_type id, std::string_view filePath)
     return music;
 }
 
+MIX_Audio* AudioManager::loadMusic(entt::hashed_string hs)
+{
+    return loadMusic(hs.value(), hs.data());
+}
+
 MIX_Audio* AudioManager::getMusic(entt::id_type id, std::string_view filePath)
 {
     // 查找现有音乐
@@ -141,6 +157,11 @@ MIX_Audio* AudioManager::getMusic(entt::id_type id, std::string_view filePath)
 
     spdlog::info("音乐 '{}' 未找到缓存，尝试加载。", filePath);
     return loadMusic(id, filePath);
+}
+
+MIX_Audio* AudioManager::getMusic(entt::hashed_string hs)
+{
+    return getMusic(hs.value(), hs.data());
 }
 
 void AudioManager::unloadMusic(entt::id_type id)

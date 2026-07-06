@@ -47,6 +47,15 @@ private: // 仅供 ResourceManager 访问的方法
     MIX_Audio* loadSound(entt::id_type id, std::string_view filePath);
 
     /**
+     * @brief 从字符串哈希值加载音效
+     * @param hs entt::hashed_string 类型
+     * @return 加载的音效的指针
+     * @note 如果音效已经加载，则返回已加载音效的指针
+     * @note 如果音效未加载，则从哈希字符串对应的文件路径加载音效，并返回加载的音效的指针
+     */
+    MIX_Audio* loadSound(entt::hashed_string hs);
+
+    /**
      * @brief 从文件路径获取音效
      * @param id 音效的唯一标识符, 通过 entt::hashed_string 生成
      * @return 加载的音效的指针
@@ -55,6 +64,15 @@ private: // 仅供 ResourceManager 访问的方法
      * @note 如果音效未加载，且没有提供 filePath，则返回 nullptr
      */
     MIX_Audio* getSound(entt::id_type id, std::string_view filePath = "");
+
+    /**
+     * @brief 从字符串哈希值获取音效
+     * @param hs entt::hashed_string 类型
+     * @return 加载的音效的指针
+     * @note 如果音效已经加载，则返回已加载音效的指针
+     * @note 如果音效未加载，则从哈希字符串对应的文件路径加载音效，并返回加载的音效的指针
+     */
+    MIX_Audio* getSound(entt::hashed_string hs);
 
     /**
      * @brief 卸载指定的音效资源
@@ -79,6 +97,15 @@ private: // 仅供 ResourceManager 访问的方法
     MIX_Audio* loadMusic(entt::id_type id, std::string_view filePath);
 
     /**
+     * @brief 从字符串哈希值加载音乐
+     * @param hs entt::hashed_string 类型
+     * @return 加载的音乐的指针
+     * @note 如果音乐已经加载，则返回已加载音乐的指针
+     * @note 如果音乐未加载，则从哈希字符串对应的文件路径加载音乐，并返回加载的音乐的指针
+     */
+    MIX_Audio* loadMusic(entt::hashed_string hs);
+
+    /**
      * @brief 从文件路径获取音乐
      * @param id 音乐的唯一标识符, 通过 entt::hashed_string 生成
      * @return 加载的音乐的指针
@@ -87,6 +114,15 @@ private: // 仅供 ResourceManager 访问的方法
      * @note 如果音乐未加载，且没有提供 filePath，则返回 nullptr
      */
     MIX_Audio* getMusic(entt::id_type id, std::string_view filePath = "");
+
+    /**
+     * @brief 从字符串哈希值获取音乐
+     * @param hs entt::hashed_string 类型
+     * @return 加载的音乐的指针
+     * @note 如果音乐已经加载，则返回已加载音乐的指针
+     * @note 如果音乐未加载，则从哈希字符串对应的文件路径加载音乐，并返回加载的音乐的指针
+     */
+    MIX_Audio* getMusic(entt::hashed_string hs);
 
     /**
      * @brief 卸载指定的音乐资源
