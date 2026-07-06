@@ -74,7 +74,7 @@ entt::sink<entt::sigh<bool()>> InputManager::actionSink(std::string_view actionN
 {
     auto [iter, isInserted] = m_actionToCallbacks.try_emplace(std::string(actionName),
                                                               std::array<entt::sigh<bool()>, 3>{});
-    return iter->second.at(static_cast<std::size_t>(actionState));
+    return entt::sink{ iter->second.at(static_cast<std::size_t>(actionState)) };
 }
 
 // --- 状态查询方法 ---
