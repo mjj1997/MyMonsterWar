@@ -28,34 +28,45 @@ public:
     Sprite() = default;
 
     /**
-     * @brief 构造一个精灵
+     * @brief 构造一个精灵（通过纹理ID构造）
      *
      * @param textureId 纹理资源的标识符。不应为空。
-     * @param sourceRect 可选的源矩形（SDL_FRect），定义要使用的纹理部分。如果为 std::nullopt，则使用整个纹理。
+     * @param sourceRect 可选的源矩形，定义要使用的纹理部分。如果为 std::nullopt，则使用整个纹理。
      * @param isFlipped 是否水平翻转
+     * @note 用此方法，需确保对应ID的纹理已经加载到 ResourceManager 中，因此不需要再提供纹理路径。
      */
-    explicit Sprite(std::string_view textureId,
-                    const std::optional<SDL_FRect>& sourceRect = std::nullopt,
+    explicit Sprite(entt::id_type textureId,
+                    std::optional<engine::utils::Rect> sourceRect = std::nullopt,
                     bool isFlipped = false)
-        : m_textureId(textureId)
-        , m_sourceRect(sourceRect)
-        , m_isFlipped(isFlipped)
+        : m_textureId{ textureId }
+        , m_sourceRect{ std::move(sourceRect) }
+        , m_isFlipped{ isFlipped }
     {}
 
     // --- getters and setters ---
-    std::string_view textureId() const { return m_textureId; } ///< @brief 获取纹理 ID
+    entt::id_type textureId() const { return m_textureId; }        ///< @brief 获取纹理 ID
     ///< @brief 获取源矩形 (如果使用整个纹理则为 std::nullopt)
-    const std::optional<SDL_FRect>& sourceRect() const { return m_sourceRect; }
+    const std::optional<engine::utils::Rect>& sourceRect() const { return m_sourceRect; }
     bool isFlipped() const { return m_isFlipped; } ///< @brief 获取是否水平翻转
 
-    ///< @brief 设置纹理 ID
-    void setTextureId(std::string_view textureId) { m_textureId = textureId; }
-    ///< @brief 设置源矩形 (如果使用整个纹理则为 std::nullopt)
-    void setSourceRect(std::optional<SDL_FRect> sourceRect)
+
+    ///< @brief 设置纹理ID (需确保已载入)
+    void setTextureId(entt::id_type textureId) { m_textureId = textureId; }
+
+    /**
+     * @brief 设置源矩形 (如果使用整个纹理则为 std::nullopt)
+     * @param sourceRect 源矩形。如果使用整个纹理则为 std::nullopt
+     */
+    void setSourceRect(std::optional<engine::utils::Rect> sourceRect)
     {
         m_sourceRect = std::move(sourceRect);
     }
-    void setFlipped(bool flipped) { m_isFlipped = flipped; } ///< @brief 设置是否水平翻转
+
+    /**
+     * @brief 设置是否水平翻转
+     * @param isFlipped 是否水平翻转
+     */
+    void setFlipped(bool isFlipped) { m_isFlipped = isFlipped; }
 
 private:
     ///< @brief 纹理资源的标识符 (entt::null是推荐的初始化方式，表示无效的ID)
