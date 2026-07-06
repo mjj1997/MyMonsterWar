@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 
 #include <memory> // 用于 std::unique_ptr
-#include <string>
 #include <string_view>
 
 // 前向声明 SDL 类型
@@ -49,20 +48,30 @@ public:
     // -- Texture --
     ///< @brief 载入纹理资源(通过id + 文件路径)
     SDL_Texture* loadTexture(entt::id_type id, std::string_view filePath);
+    ///< @brief 载入纹理资源(通过字符串哈希值)
+    SDL_Texture* loadTexture(entt::hashed_string hs);
     ///< @brief 尝试获取已加载纹理的指针，如果未加载则尝试加载(通过id + 文件路径)
     SDL_Texture* getTexture(entt::id_type id, std::string_view filePath = "");
+    ///< @brief 尝试获取已加载纹理的指针，如果未加载则尝试加载(通过字符串哈希值)
+    SDL_Texture* getTexture(entt::hashed_string hs);
     ///< @brief 卸载指定的纹理资源
     void unloadTexture(entt::id_type id);
     ///< @brief 获取指定纹理的尺寸(通过id + 文件路径)
     glm::vec2 getTextureSize(entt::id_type id, std::string_view filePath = "");
+    ///< @brief 获取指定纹理的尺寸(通过字符串哈希值)
+    glm::vec2 getTextureSize(entt::hashed_string hs);
     ///< @brief 清空所有纹理资源
     void clearTextures();
 
     // -- Sound Effects --
     ///< @brief 载入音效资源(通过id + 文件路径)
     MIX_Audio* loadSound(entt::id_type id, std::string_view filePath);
+    ///< @brief 载入音效资源(通过字符串哈希值)
+    MIX_Audio* loadSound(entt::hashed_string hs);
     ///< @brief 尝试获取已加载音效的指针，如果未加载则尝试加载(通过id + 文件路径)
     MIX_Audio* getSound(entt::id_type id, std::string_view filePath = "");
+    ///< @brief 尝试获取已加载音效的指针，如果未加载则尝试加载(通过字符串哈希值)
+    MIX_Audio* getSound(entt::hashed_string hs);
     ///< @brief 卸载指定的音效资源
     void unloadSound(entt::id_type id);
     ///< @brief 清空所有音效资源
@@ -71,8 +80,12 @@ public:
     // -- Music --
     ///< @brief 载入音乐资源(通过id + 文件路径)
     MIX_Audio* loadMusic(entt::id_type id, std::string_view filePath);
+    ///< @brief 载入音乐资源(通过字符串哈希值)
+    MIX_Audio* loadMusic(entt::hashed_string hs);
     ///< @brief 尝试获取已加载音乐的指针，如果未加载则尝试加载(通过id + 文件路径)
     MIX_Audio* getMusic(entt::id_type id, std::string_view filePath = "");
+    ///< @brief 尝试获取已加载音乐的指针，如果未加载则尝试加载(通过字符串哈希值)
+    MIX_Audio* getMusic(entt::hashed_string hs);
     ///< @brief 卸载指定的音乐资源
     void unloadMusic(entt::id_type id);
     ///< @brief 清空所有音乐资源
@@ -83,8 +96,12 @@ public:
     // -- Fonts --
     ///< @brief 载入字体资源(通过id + 文件路径)
     TTF_Font* loadFont(entt::id_type id, int pointSize, std::string_view filePath);
+    ///< @brief 载入字体资源(通过字符串哈希值)
+    TTF_Font* loadFont(entt::hashed_string hs, int pointSize);
     ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载(通过id + 文件路径)
     TTF_Font* getFont(entt::id_type id, int pointSize, std::string_view filePath = "");
+    ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载(通过字符串哈希值)
+    TTF_Font* getFont(entt::hashed_string hs, int pointSize);
     ///< @brief 卸载指定的字体资源
     void unloadFont(entt::id_type id, int pointSize);
     ///< @brief 清空所有字体资源

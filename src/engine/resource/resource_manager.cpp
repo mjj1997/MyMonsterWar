@@ -3,6 +3,7 @@
 #include "font_manager.h"
 #include "texture_manager.h"
 
+#include <entt/core/hashed_string.hpp>
 #include <spdlog/spdlog.h>
 
 namespace engine::resource {
@@ -32,9 +33,19 @@ SDL_Texture* ResourceManager::loadTexture(entt::id_type id, std::string_view fil
     return m_textureManager->loadTexture(id, filePath);
 }
 
+SDL_Texture* ResourceManager::loadTexture(entt::hashed_string hs)
+{
+    return m_textureManager->loadTexture(hs);
+}
+
 SDL_Texture* ResourceManager::getTexture(entt::id_type id, std::string_view filePath)
 {
     return m_textureManager->getTexture(id, filePath);
+}
+
+SDL_Texture* ResourceManager::getTexture(entt::hashed_string hs)
+{
+    return m_textureManager->getTexture(hs);
 }
 
 void ResourceManager::unloadTexture(entt::id_type id)
@@ -45,6 +56,11 @@ void ResourceManager::unloadTexture(entt::id_type id)
 glm::vec2 ResourceManager::getTextureSize(entt::id_type id, std::string_view filePath)
 {
     return m_textureManager->getTextureSize(id, filePath);
+}
+
+glm::vec2 ResourceManager::getTextureSize(entt::hashed_string hs)
+{
+    return m_textureManager->getTextureSize(hs);
 }
 
 void ResourceManager::clearTextures()
@@ -58,9 +74,19 @@ MIX_Audio* ResourceManager::loadSound(entt::id_type id, std::string_view filePat
     return m_audioManager->loadSound(id, filePath);
 }
 
+MIX_Audio* ResourceManager::loadSound(entt::hashed_string hs)
+{
+    return m_audioManager->loadSound(hs);
+}
+
 MIX_Audio* ResourceManager::getSound(entt::id_type id, std::string_view filePath)
 {
     return m_audioManager->getSound(id, filePath);
+}
+
+MIX_Audio* ResourceManager::getSound(entt::hashed_string hs)
+{
+    return m_audioManager->getSound(hs);
 }
 
 void ResourceManager::unloadSound(entt::id_type id)
@@ -78,9 +104,19 @@ MIX_Audio* ResourceManager::loadMusic(entt::id_type id, std::string_view filePat
     return m_audioManager->loadMusic(id, filePath);
 }
 
+MIX_Audio* ResourceManager::loadMusic(entt::hashed_string hs)
+{
+    return m_audioManager->loadMusic(hs);
+}
+
 MIX_Audio* ResourceManager::getMusic(entt::id_type id, std::string_view filePath)
 {
     return m_audioManager->getMusic(id, filePath);
+}
+
+MIX_Audio* ResourceManager::getMusic(entt::hashed_string hs)
+{
+    return m_audioManager->getMusic(hs);
 }
 
 void ResourceManager::unloadMusic(entt::id_type id)
@@ -104,9 +140,19 @@ TTF_Font* ResourceManager::loadFont(entt::id_type id, int pointSize, std::string
     return m_fontManager->loadFont(id, pointSize, filePath);
 }
 
+TTF_Font* ResourceManager::loadFont(entt::hashed_string hs, int pointSize)
+{
+    return m_fontManager->loadFont(hs, pointSize);
+}
+
 TTF_Font* ResourceManager::getFont(entt::id_type id, int pointSize, std::string_view filePath)
 {
     return m_fontManager->getFont(id, pointSize, filePath);
+}
+
+TTF_Font* ResourceManager::getFont(entt::hashed_string hs, int pointSize)
+{
+    return m_fontManager->getFont(hs, pointSize);
 }
 
 void ResourceManager::unloadFont(entt::id_type id, int pointSize)
