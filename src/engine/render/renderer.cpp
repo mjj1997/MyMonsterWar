@@ -11,12 +11,12 @@
 namespace engine::render {
 
 Renderer::Renderer(SDL_Renderer* sdlRenderer, engine::resource::ResourceManager* resourceManager)
-    : m_renderer(sdlRenderer)
-    , m_resourceManager(resourceManager)
+    : m_sdlRenderer{ sdlRenderer }
+    , m_resourceManager{ resourceManager }
 {
     spdlog::trace("构造 Renderer...");
 
-    if (m_renderer == nullptr) {
+    if (m_sdlRenderer == nullptr) {
         throw std::runtime_error("Renderer 构造失败: 提供的 SDL_Renderer 指针为空。");
     }
     if (m_resourceManager == nullptr) {
@@ -64,7 +64,7 @@ void Renderer::drawSprite(const Camera& camera,
     }
 
     // 执行绘制(默认旋转中心为精灵的中心点)
-    if (!SDL_RenderTextureRotated(m_renderer,
+    if (!SDL_RenderTextureRotated(m_sdlRenderer,
                                   texture,
                                   &srcRect.value(),
                                   &destRect,
@@ -126,7 +126,7 @@ void Renderer::drawParallax(const Camera& camera,
     for (float posY{ startPos.y }; posY < endPos.y; posY += scaledHeight) {
         for (float posX{ startPos.x }; posX < endPos.x; posX += scaledWidth) {
             const SDL_FRect destRect{ .x = posX, .y = posY, .w = scaledWidth, .h = scaledHeight };
-            if (!SDL_RenderTexture(m_renderer, texture, nullptr, &destRect)) {
+            if (!SDL_RenderTexture(m_sdlRenderer, texture, nullptr, &destRect)) {
                 spdlog::error("渲染视差纹理失败(ID: {}): {}", sprite.textureId(), SDL_GetError());
                 return;
             }
@@ -164,7 +164,7 @@ void Renderer::drawUiSprite(const Sprite& sprite,
     }
 
     // 执行绘制(未考虑UI旋转)
-    if (!SDL_RenderTextureRotated(m_renderer,
+    if (!SDL_RenderTextureRotated(m_sdlRenderer,
                                   texture,
                                   &srcRect.value(),
                                   &destRect,
@@ -182,7 +182,7 @@ void Renderer::drawUiFilledRect(const engine::utils::Rect& rect, const engine::u
     const SDL_FRect sdlRect{
         .x = rect.position.x, .y = rect.position.y, .w = rect.size.x, .h = rect.size.y
     };
-    if (!SDL_RenderFillRect(m_renderer, &sdlRect)) {
+    if (!SDL_RenderFillRect(m_sdlRenderer, &sdlRect)) {
         spdlog::error("绘制填充矩形失败：{}", SDL_GetError());
     }
 
@@ -191,26 +191,26 @@ void Renderer::drawUiFilledRect(const engine::utils::Rect& rect, const engine::u
 
 void Renderer::present()
 {
-    SDL_RenderPresent(m_renderer);
+    SDL_RenderPresent(m_sdlRenderer);
 }
 
 void Renderer::clearScreen()
 {
-    if (!SDL_RenderClear(m_renderer)) {
+    if (!SDL_RenderClear(m_sdlRenderer)) {
         spdlog::error("清除渲染器失败：{}", SDL_GetError());
     }
 }
 
 void Renderer::setDrawColor(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha)
 {
-    if (!SDL_SetRenderDrawColor(m_renderer, red, green, blue, alpha)) {
+    if (!SDL_SetRenderDrawColor(m_sdlRenderer, red, green, blue, alpha)) {
         spdlog::error("设置渲染绘制颜色失败：{}", SDL_GetError());
     }
 }
 
 void Renderer::setDrawColorFloat(float red, float green, float blue, float alpha)
 {
-    if (!SDL_SetRenderDrawColorFloat(m_renderer, red, green, blue, alpha)) {
+    if (!SDL_SetRenderDrawColorFloat(m_sdlRenderer, red, green, blue, alpha)) {
         spdlog::error("设置渲染绘制颜色失败：{}", SDL_GetError());
     }
 }

@@ -22,9 +22,9 @@ class Camera;
 /**
  * @brief 封装 SDL3 渲染操作
  *
- * 包装 SDL_Renderer 并提供清除屏幕、绘制精灵和呈现最终图像的方法。
- * 在构造时初始化。依赖于一个有效的 SDL_Renderer 和 ResourceManager。
- * 构造失败会抛出异常。
+ * @note 包装 SDL_Renderer 并提供清除屏幕、绘制精灵和呈现最终图像的方法。
+ * @note 在构造时初始化。依赖于一个有效的 SDL_Renderer 和 ResourceManager。
+ * @note 构造失败会抛出异常。
  */
 class Renderer final
 {
@@ -103,7 +103,7 @@ public:
 
     // --- getters and setters ---
     ///< @brief 获取底层的 SDL_Renderer 指针
-    SDL_Renderer* renderer() const { return m_renderer; }
+    SDL_Renderer* renderer() const { return m_sdlRenderer; }
 
 private:
     ///< @brief 获取精灵的源矩形，用于具体绘制。出现错误则返回std::nullopt并跳过绘制
@@ -113,7 +113,7 @@ private:
 
 private:
     ///< @brief 指向 SDL_Renderer 的非拥有指针
-    SDL_Renderer* m_renderer{ nullptr };
+    SDL_Renderer* m_sdlRenderer{ nullptr };
     ///< @brief 指向 ResourceManager 的非拥有指针
     engine::resource::ResourceManager* m_resourceManager{ nullptr };
 };
