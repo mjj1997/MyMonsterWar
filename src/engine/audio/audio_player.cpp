@@ -11,14 +11,14 @@ AudioPlayer::AudioPlayer(engine::resource::ResourceManager* resourceManager)
     : m_resourceManager{ resourceManager }
 {
     if (m_resourceManager == nullptr) {
-        throw std::runtime_error("AudioPlayer 构造失败: 提供的 ResourceManager 指针为空。");
+        throw std::runtime_error{ "AudioPlayer 构造失败: 提供的 ResourceManager 指针为空。" };
     }
 
     m_mixer = m_resourceManager->mixer();
     m_musicTrack = MIX_CreateTrack(m_mixer);
     if (m_musicTrack == nullptr) {
-        throw std::runtime_error("AudioPlayer 构造失败: 无法创建音乐轨道："
-                                 + std::string(SDL_GetError()));
+        throw std::runtime_error{ "AudioPlayer 构造失败: 无法创建音乐轨道："
+                                  + std::string(SDL_GetError()) };
     }
 }
 
