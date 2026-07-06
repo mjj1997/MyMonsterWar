@@ -2,6 +2,7 @@
 #include "../resource/resource_manager.h"
 
 #include <SDL3_mixer/SDL_mixer.h>
+#include <entt/core/hashed_string.hpp>
 #include <spdlog/spdlog.h>
 
 namespace engine::audio {
@@ -46,6 +47,28 @@ int AudioPlayer::playSound(entt::id_type soundId)
     return 0;
 }
 
+int AudioPlayer::playSound(entt::hashed_string hashedPath)
+{
+    MIX_Audio* sound{ m_resourceManager->getSound(hashedPath) };
+    if (sound == nullptr) {
+        spdlog::error("AudioPlayer: 无法获取音效 ID: {}, path: {}。",
+                      hashedPath.value(),
+                      hashedPath.data());
+        return -1;
+    }
+
+    if (!MIX_PlayAudio(m_mixer, sound)) {
+        spdlog::error("AudioPlayer: 无法播放音效 ID: {}, path: {}: {}。",
+                      hashedPath.value(),
+                      hashedPath.data(),
+                      SDL_GetError());
+        return -1;
+    }
+
+    spdlog::trace("AudioPlayer: 播放音效 ID: {}, path: {}。", hashedPath.value(), hashedPath.data());
+    return 0;
+}
+
 bool AudioPlayer::playMusic(entt::id_type musicId, int loops, int fadeInTime)
 {
     if (musicId == m_currentMusicId) {
@@ -77,6 +100,49 @@ bool AudioPlayer::playMusic(entt::id_type musicId, int loops, int fadeInTime)
         spdlog::error("AudioPlayer: 无法播放音乐 ID: {}: {}。", musicId, SDL_GetError());
     } else {
         spdlog::trace("AudioPlayer: 播放音乐 ID: {}。", musicId);
+    }
+
+    return result;
+}
+
+bool AudioPlayer::playMusic(entt::hashed_string hashedPath, int loops, int fadeInTime)
+{
+    if (hashedPath.value() == m_currentMusicId) {
+        return true; // 如果当前音乐已经在播放，则不重复播放
+    }
+    m_currentMusicId = hashedPath.value();
+
+    MIX_Audio* music{ m_resourceManager->getMusic(hashedPath) }; // 通过 ResourceManager 获取资源
+    if (music == nullptr) {
+        spdlog::error("AudioPlayer: 无法获取音乐 ID: {}, path: {}。",
+                      hashedPath.value(),
+                      hashedPath.data());
+        return false;
+    }
+
+    MIX_StopTrack(m_musicTrack, 0);         // 立即停止之前的音乐
+    MIX_SetTrackAudio(m_musicTrack, music); // 设置音乐轨道的音频源
+
+    // 配置播放参数（循环次数、淡入时长）
+    auto props = SDL_CreateProperties();
+    SDL_SetNumberProperty(props, MIX_PROP_PLAY_LOOPS_NUMBER, loops);
+    if (fadeInTime > 0) {
+        SDL_SetNumberProperty(props, MIX_PROP_PLAY_FADE_IN_MILLISECONDS_NUMBER, fadeInTime);
+    }
+
+    // 播放音乐
+    const bool result{ MIX_PlayTrack(m_musicTrack, props) };
+    SDL_DestroyProperties(props);
+
+    if (!result) {
+        spdlog::error("AudioPlayer: 无法播放音乐 ID: {}, path:{}: {}。",
+                      hashedPath.value(),
+                      hashedPath.data(),
+                      SDL_GetError());
+    } else {
+        spdlog::trace("AudioPlayer: 播放音乐 ID: {}, path:{}。",
+                      hashedPath.value(),
+                      hashedPath.data());
     }
 
     return result;

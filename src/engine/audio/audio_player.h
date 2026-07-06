@@ -45,6 +45,14 @@ public:
     int playSound(entt::id_type soundId);
 
     /**
+     * @brief 播放音效。
+     * @note 如果尚未缓存，则通过 ResourceManager 加载音效。
+     * @param hashedPath 音效文件的路径。
+     * @return 成功时返回 0，出错时返回 -1。
+     */
+    int playSound(entt::hashed_string hashedPath);
+
+    /**
      * @brief 播放背景音乐。如果正在播放，则淡出之前的音乐。
      * @note 必须确保 ResourceManager 加载了音乐。
      * @param musicId 音乐ID。
@@ -53,6 +61,16 @@ public:
      * @return 成功返回 true，出错返回 false。
      */
     bool playMusic(entt::id_type musicId, int loops = -1, int fadeInTime = 0);
+
+    /**
+     * @brief 播放背景音乐。如果正在播放，则淡出之前的音乐。
+     * @note 如果尚未缓存，则通过 ResourceManager 加载音乐。
+     * @param hashedPath 音乐文件的路径。
+     * @param loops 循环次数（-1 无限循环，0 播放一次，1 播放两次，以此类推）。默认为 -1。
+     * @param fadeInTime 音乐淡入的时间（毫秒）（0 表示不淡入）。默认为 0。
+     * @return 成功返回 true，出错返回 false。
+     */
+    bool playMusic(entt::hashed_string hashedPath, int loops = -1, int fadeInTime = 0);
 
     /**
      * @brief 停止当前正在播放的背景音乐。
