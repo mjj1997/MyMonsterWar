@@ -6,10 +6,10 @@
 
 namespace engine::resource {
 
-TextureManager::TextureManager(SDL_Renderer* renderer)
-    : m_renderer{ renderer }
+TextureManager::TextureManager(SDL_Renderer* sdlRenderer)
+    : m_sdlRenderer{ sdlRenderer }
 {
-    if (renderer == nullptr) {
+    if (sdlRenderer == nullptr) {
         // 关键错误，无法继续，抛出异常 （它将由catch语句捕获（位于GameApp），并进行处理）
         throw std::runtime_error("TextureManager 构造失败：渲染器指针为空。");
     }
@@ -26,7 +26,7 @@ SDL_Texture* TextureManager::loadTexture(std::string_view filePath)
     }
 
     // 如果未加载，则尝试加载纹理
-    SDL_Texture* texture = IMG_LoadTexture(m_renderer, filePath.data());
+    SDL_Texture* texture = IMG_LoadTexture(m_sdlRenderer, filePath.data());
     if (texture == nullptr) {
         spdlog::error("加载纹理失败：'{}': {}", filePath, SDL_GetError());
         return nullptr;

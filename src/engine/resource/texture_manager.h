@@ -20,13 +20,15 @@ namespace engine::resource {
  */
 class TextureManager final
 {
+    friend class ResourceManager;
+
 public:
     /**
      * @brief 构造函数，执行初始化。
-     * @param renderer 指向有效的 SDL_Renderer 上下文的指针。不能为空。
-     * @throws std::runtime_error 如果 renderer 为 nullptr 或初始化失败。
+     * @param sdlRenderer 指向有效的 SDL_Renderer 上下文的指针。不能为空。
+     * @throws std::runtime_error 如果 sdlRenderer 为 nullptr 或初始化失败。
      */
-    explicit TextureManager(SDL_Renderer* renderer);
+    explicit TextureManager(SDL_Renderer* sdlRenderer);
 
     // 当前设计中，我们只需要一个TextureManager，所有权不变，所以不需要拷贝、移动相关构造及赋值运算符
     TextureManager(const TextureManager&) = delete;
@@ -34,17 +36,13 @@ public:
     TextureManager(TextureManager&&) = delete;
     TextureManager& operator=(TextureManager&&) = delete;
 
-    // 仅供 ResourceManager 访问的方法
-private:
+private: // 仅供 ResourceManager 访问的方法
     SDL_Texture* loadTexture(std::string_view filePath); ///< @brief 从文件路径加载纹理
     ///< @brief 尝试获取已加载纹理的指针，如果未加载则尝试加载
     SDL_Texture* getTexture(std::string_view filePath);
     glm::vec2 getTextureSize(std::string_view filePath); ///< @brief 获取指定纹理的尺寸
     void unloadTexture(std::string_view filePath);       ///< @brief 卸载指定的纹理资源
     void clearTextures();                                ///< @brief 清空所有纹理资源
-
-private:
-    friend class ResourceManager;
 
     // SDL_Texture 的删除器函数对象，用于智能指针管理
     struct SDLTextureDeletor
@@ -64,7 +62,7 @@ private:
                        std::equal_to<>>
         m_textures;
 
-    SDL_Renderer* m_renderer{ nullptr }; // 指向主渲染器的非拥有指针
+    SDL_Renderer* m_sdlRenderer{ nullptr }; // 指向主渲染器的非拥有指针
 };
 
 } // namespace engine::resource
