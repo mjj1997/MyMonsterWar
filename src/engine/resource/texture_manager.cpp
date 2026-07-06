@@ -11,7 +11,7 @@ TextureManager::TextureManager(SDL_Renderer* sdlRenderer)
 {
     if (sdlRenderer == nullptr) {
         // 关键错误，无法继续，抛出异常 （它将由catch语句捕获（位于GameApp），并进行处理）
-        throw std::runtime_error("TextureManager 构造失败：渲染器指针为空。");
+        throw std::runtime_error{ "TextureManager 构造失败：渲染器指针为空。" };
     }
     // SDL3中不再需要手动调用IMG_Init/IMG_Quit
     spdlog::trace("TextureManager 构造成功。");
@@ -38,7 +38,7 @@ SDL_Texture* TextureManager::loadTexture(entt::id_type id, std::string_view file
     }
 
     // 使用带有自定义删除器的 unique_ptr 存储加载的纹理
-    m_textures.emplace(id, std::unique_ptr<SDL_Texture, SDLTextureDeletor>(texture));
+    m_textures.emplace(id, std::unique_ptr<SDL_Texture, SDLTextureDeletor>{ texture });
     spdlog::debug("成功加载并缓存纹理：{}", filePath);
 
     return texture;
