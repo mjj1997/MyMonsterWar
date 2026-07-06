@@ -4,6 +4,7 @@
 #include "../utils/math.h"
 
 #include <SDL3/SDL_rect.h> // 用于 SDL_FRect
+#include <entt/core/hashed_string.hpp>
 #include <entt/entity/entity.hpp>
 
 #include <optional> // 用于 std::optional 表示可选的源矩形
@@ -44,11 +45,21 @@ public:
     {}
 
     // --- getters and setters ---
+    std::string_view texturePath() const { return m_texturePath; } ///< @brief 获取纹理路径
     entt::id_type textureId() const { return m_textureId; }        ///< @brief 获取纹理 ID
     ///< @brief 获取源矩形 (如果使用整个纹理则为 std::nullopt)
     const std::optional<engine::utils::Rect>& sourceRect() const { return m_sourceRect; }
     bool isFlipped() const { return m_isFlipped; } ///< @brief 获取是否水平翻转
 
+    /**
+     * @brief 设置纹理路径同时更新纹理ID
+     * @param texturePath 纹理资源的文件路径。不应为空。
+     */
+    void setTexture(std::string_view texturePath)
+    {
+        m_texturePath = texturePath.data();
+        m_textureId = entt::hashed_string(texturePath.data()).value();
+    }
 
     ///< @brief 设置纹理ID (需确保已载入)
     void setTextureId(entt::id_type textureId) { m_textureId = textureId; }
@@ -69,6 +80,8 @@ public:
     void setFlipped(bool isFlipped) { m_isFlipped = isFlipped; }
 
 private:
+    ///< @brief 纹理资源的文件路径
+    std::string m_texturePath;
     ///< @brief 纹理资源的标识符 (entt::null是推荐的初始化方式，表示无效的ID)
     entt::id_type m_textureId{ entt::null };
     ///< @brief 可选：要绘制的纹理部分
