@@ -36,20 +36,73 @@ public:
 
 private: // 仅供 ResourceManager 访问的方法
     // --- 音效管理 ---
-    MIX_Audio* loadSound(std::string_view filePath); ///< @brief 从文件路径加载音效（预解码）
-    ///< @brief 尝试获取已加载音效的指针，如果未加载则尝试加载
-    MIX_Audio* getSound(std::string_view filePath);
-    void unloadSound(std::string_view filePath); ///< @brief 卸载指定的音效资源
-    void clearSounds();                          ///< @brief 清空所有音效资源
+    /**
+     * @brief 从文件路径加载音效（预解码）
+     * @param id 音效的唯一标识符, 通过 entt::hashed_string 生成
+     * @param filePath 音效文件的路径
+     * @return 加载的音效的指针
+     * @note 如果音效已经加载，则返回已加载音效的指针
+     * @note 如果音效未加载，则从文件路径加载音效，并返回加载的音效的指针
+     */
+    MIX_Audio* loadSound(entt::id_type id, std::string_view filePath);
+
+    /**
+     * @brief 从文件路径获取音效
+     * @param id 音效的唯一标识符, 通过 entt::hashed_string 生成
+     * @return 加载的音效的指针
+     * @note 如果音效已经加载，则返回已加载音效的指针
+     * @note 如果音效未加载，且提供了 filePath，则尝试从文件路径加载音效，并返回加载的音效的指针
+     * @note 如果音效未加载，且没有提供 filePath，则返回 nullptr
+     */
+    MIX_Audio* getSound(entt::id_type id, std::string_view filePath = "");
+
+    /**
+     * @brief 卸载指定的音效资源
+     * @param id 音效的唯一标识符, 通过 entt::hashed_string 生成
+     */
+    void unloadSound(entt::id_type id);
+
+    /**
+     * @brief 清空所有音效资源
+     */
+    void clearSounds();
 
     // --- 音乐管理 ---
-    MIX_Audio* loadMusic(std::string_view filePath); ///< @brief 从文件路径加载音乐（流式解码）
-    ///< @brief 尝试获取已加载音乐的指针，如果未加载则尝试加载
-    MIX_Audio* getMusic(std::string_view filePath);
-    void unloadMusic(std::string_view filePath); ///< @brief 卸载指定的音乐资源
-    void clearMusics();                          ///< @brief 清空所有音乐资源
+    /**
+     * @brief 从文件路径加载音乐（流式解码）
+     * @param id 音乐的唯一标识符, 通过 entt::hashed_string 生成
+     * @param filePath 音乐文件的路径
+     * @return 加载的音乐的指针
+     * @note 如果音乐已经加载，则返回已加载音乐的指针
+     * @note 如果音乐未加载，则从文件路径加载音乐，并返回加载的音乐的指针
+     */
+    MIX_Audio* loadMusic(entt::id_type id, std::string_view filePath);
 
-    void clearAudio(); ///< @brief 清空所有音频资源
+    /**
+     * @brief 从文件路径获取音乐
+     * @param id 音乐的唯一标识符, 通过 entt::hashed_string 生成
+     * @return 加载的音乐的指针
+     * @note 如果音乐已经加载，则返回已加载音乐的指针
+     * @note 如果音乐未加载，且提供了 filePath，则尝试从文件路径加载音乐，并返回加载的音乐的指针
+     * @note 如果音乐未加载，且没有提供 filePath，则返回 nullptr
+     */
+    MIX_Audio* getMusic(entt::id_type id, std::string_view filePath = "");
+
+    /**
+     * @brief 卸载指定的音乐资源
+     * @param id 音乐的唯一标识符, 通过 entt::hashed_string 生成
+     */
+    void unloadMusic(entt::id_type id);
+
+    /**
+     * @brief 清空所有音乐资源
+     */
+    void clearMusics();
+
+    /**
+     * @brief 清空所有音频资源
+     */
+    void clearAudio();
 
     // --- getter ---
     MIX_Mixer* mixer() const { return m_mixer; }; ///< @brief 获取 SDL_mixer 混音器指针

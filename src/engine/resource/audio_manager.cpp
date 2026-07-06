@@ -42,10 +42,10 @@ AudioManager::~AudioManager()
 }
 
 // --- 音效管理 ---
-MIX_Audio* AudioManager::loadSound(std::string_view filePath)
+MIX_Audio* AudioManager::loadSound(entt::id_type id, std::string_view filePath)
 {
     // 首先检查缓存
-    auto iter = m_sounds.find(filePath);
+    auto iter = m_sounds.find(id);
     if (iter != m_sounds.end()) {
         return iter->second.get();
     }
@@ -59,30 +59,37 @@ MIX_Audio* AudioManager::loadSound(std::string_view filePath)
     }
 
     // 使用unique_ptr存储在缓存中
-    m_sounds.emplace(filePath, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>(sound));
+    m_sounds.emplace(id, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>(sound));
     spdlog::debug("成功加载并缓存音效: {}", filePath);
     return sound;
 }
 
-MIX_Audio* AudioManager::getSound(std::string_view filePath)
+MIX_Audio* AudioManager::getSound(entt::id_type id, std::string_view filePath)
 {
-    auto iter = m_sounds.find(filePath);
+    // 查找现有音效
+    auto iter = m_sounds.find(id);
     if (iter != m_sounds.end()) {
         return iter->second.get();
     }
 
-    spdlog::warn("音效 '{}' 未找到缓存，尝试加载。", filePath);
-    return loadSound(filePath);
+    // 如果未找到音效，尝试加载音效
+    if (filePath.empty()) {
+        spdlog::error("音效 '{}' 未找到缓存，且未提供文件路径，返回 nullptr。", id);
+        return nullptr;
+    }
+
+    spdlog::info("音效 '{}' 未找到缓存，尝试加载。", filePath);
+    return loadSound(id, filePath);
 }
 
-void AudioManager::unloadSound(std::string_view filePath)
+void AudioManager::unloadSound(entt::id_type id)
 {
-    auto iter = m_sounds.find(filePath);
+    auto iter = m_sounds.find(id);
     if (iter != m_sounds.end()) {
-        spdlog::debug("成功卸载音效: {}", filePath);
+        spdlog::debug("成功卸载音效: id = {}", id);
         m_sounds.erase(iter); // unique_ptr 处理 MIX_DestroyAudio
     } else {
-        spdlog::warn("尝试卸载不存在的音效: {}", filePath);
+        spdlog::warn("尝试卸载不存在的音效: id = {}", id);
     }
 }
 
@@ -95,10 +102,10 @@ void AudioManager::clearSounds()
 }
 
 // --- 音乐管理 ---
-MIX_Audio* AudioManager::loadMusic(std::string_view filePath)
+MIX_Audio* AudioManager::loadMusic(entt::id_type id, std::string_view filePath)
 {
     // 首先检查缓存
-    auto iter = m_musics.find(filePath);
+    auto iter = m_musics.find(id);
     if (iter != m_musics.end()) {
         return iter->second.get();
     }
@@ -117,25 +124,32 @@ MIX_Audio* AudioManager::loadMusic(std::string_view filePath)
     return music;
 }
 
-MIX_Audio* AudioManager::getMusic(std::string_view filePath)
+MIX_Audio* AudioManager::getMusic(entt::id_type id, std::string_view filePath)
 {
-    auto iter = m_musics.find(filePath);
+    // 查找现有音乐
+    auto iter = m_musics.find(id);
     if (iter != m_musics.end()) {
         return iter->second.get();
     }
 
-    spdlog::warn("音乐 '{}' 未找到缓存，尝试加载。", filePath);
-    return loadMusic(filePath);
+    // 如果未找到音乐，尝试加载音乐
+    if (filePath.empty()) {
+        spdlog::error("音乐 '{}' 未找到缓存，且未提供文件路径，返回 nullptr。", id);
+        return nullptr;
+    }
+
+    spdlog::info("音乐 '{}' 未找到缓存，尝试加载。", filePath);
+    return loadMusic(id, filePath);
 }
 
-void AudioManager::unloadMusic(std::string_view filePath)
+void AudioManager::unloadMusic(entt::id_type id)
 {
-    auto iter = m_musics.find(filePath);
+    auto iter = m_musics.find(id);
     if (iter != m_musics.end()) {
-        spdlog::debug("卸载音乐: {}", filePath);
+        spdlog::debug("卸载音乐: id = {}", id);
         m_musics.erase(iter); // unique_ptr 处理 MIX_DestroyAudio
     } else {
-        spdlog::warn("尝试卸载不存在的音乐: {}", filePath);
+        spdlog::warn("尝试卸载不存在的音乐: id = {}", id);
     }
 }
 
