@@ -29,6 +29,22 @@ public:
     Sprite() = default;
 
     /**
+     * @brief 构造一个精灵（通过纹理路径构造）
+     *
+     * @param texturePath 纹理资源的文件路径。不应为空。
+     * @param sourceRect 可选的源矩形，定义要使用的纹理部分。如果为 std::nullopt，则使用整个纹理。
+     * @param isFlipped 是否水平翻转
+     */
+    explicit Sprite(std::string_view texturePath,
+                    std::optional<engine::utils::Rect> sourceRect = std::nullopt,
+                    bool isFlipped = false)
+        : m_texturePath{ texturePath.data() }
+        , m_textureId{ entt::hashed_string(texturePath.data()).value() }
+        , m_sourceRect{ std::move(sourceRect) }
+        , m_isFlipped{ isFlipped }
+    {}
+
+    /**
      * @brief 构造一个精灵（通过纹理ID构造）
      *
      * @param textureId 纹理资源的标识符。不应为空。
