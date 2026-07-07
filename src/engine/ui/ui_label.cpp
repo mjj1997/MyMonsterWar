@@ -20,7 +20,8 @@ UiLabel::UiLabel(engine::render::TextRenderer& textRenderer,
     , m_fontSize{ fontSize }
     , m_textColor{ textColor }
 {
-    m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize);
+    // 获取文本渲染尺寸 (函数内部会确保字体资源被加载)
+    m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize, m_fontPath);
     spdlog::trace("UiLabel 构造完成");
 }
 
@@ -47,13 +48,13 @@ void UiLabel::setFontPath(std::string_view fontPath)
 {
     m_fontPath = fontPath;
     m_fontId = entt::hashed_string(fontPath.data());
-    m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize);
+    m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize, m_fontPath);
 }
 
 void UiLabel::setFontSize(int fontSize)
 {
     m_fontSize = fontSize;
-    m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize);
+    m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize, m_fontPath);
 }
 
 void UiLabel::setTextColor(engine::utils::FColor textColor)
