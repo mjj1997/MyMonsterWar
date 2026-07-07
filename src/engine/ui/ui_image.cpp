@@ -6,15 +6,15 @@
 
 namespace engine::ui {
 
-UiImage::UiImage(std::string_view textureId,
+UiImage::UiImage(std::string_view texturePath,
                  glm::vec2 localPosition,
                  glm::vec2 size,
-                 std::optional<SDL_FRect> sourceRect,
+                 std::optional<engine::utils::Rect> sourceRect,
                  bool isFlipped)
     : UiElementBase{ localPosition, size }
-    , m_sprite{ textureId, sourceRect, isFlipped }
+    , m_sprite{ texturePath, sourceRect, isFlipped }
 {
-    if (textureId.empty()) {
+    if (m_sprite.textureId() == entt::null) {
         spdlog::warn("创建了一个空纹理 ID 的 UiImage 元素。");
     }
 
@@ -23,7 +23,7 @@ UiImage::UiImage(std::string_view textureId,
 
 void UiImage::render(engine::core::Context& context)
 {
-    if (!m_isVisible || m_sprite.textureId().empty()) {
+    if (!m_isVisible || m_sprite.textureId() == entt::null) {
         return; // 如果不可见或纹理 ID 为空，不绘制
     }
 
