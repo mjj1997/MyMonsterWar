@@ -2,6 +2,8 @@
 
 #include "ui_element_base.h"
 
+#include <entt/core/fwd.hpp>
+
 #include <string>
 #include <string_view>
 
@@ -43,7 +45,7 @@ public:
 
     // --- Setters & Getters ---
     std::string_view text() const { return m_text; }
-    std::string_view fontId() const { return m_fontId; }
+    entt::id_type fontId() const { return m_fontId; }
     int fontSize() const { return m_fontSize; }
     const engine::utils::FColor& textColor() const { return m_textColor; }
 
@@ -58,6 +60,7 @@ private:
 
     std::string m_text;     ///< @brief 文本内容
     std::string m_fontPath; ///< @brief 字体路径
+    entt::id_type m_fontId; ///< @brief 字体 ID
     int m_fontSize;         ///< @brief 字体大小
     engine::utils::FColor m_textColor{ 1.0F, 1.0F, 1.0F, 1.0F };
 

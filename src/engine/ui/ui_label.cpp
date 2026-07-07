@@ -1,6 +1,7 @@
 #include "ui_label.h"
 #include "../render/text_renderer.h"
 
+#include <entt/core/hashed_string.hpp>
 #include <spdlog/spdlog.h>
 
 namespace engine::ui {
@@ -15,6 +16,7 @@ UiLabel::UiLabel(engine::render::TextRenderer& textRenderer,
     , m_textRenderer{ textRenderer }
     , m_text{ text }
     , m_fontPath{ fontPath }
+    , m_fontId{ entt::hashed_string(fontPath.data()) }
     , m_fontSize{ fontSize }
     , m_textColor{ textColor }
 {
@@ -44,6 +46,7 @@ void UiLabel::setText(std::string_view text)
 void UiLabel::setFontPath(std::string_view fontPath)
 {
     m_fontPath = fontPath;
+    m_fontId = entt::hashed_string(fontPath.data());
     m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize);
 }
 
