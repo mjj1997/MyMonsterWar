@@ -47,6 +47,17 @@ public:
                      std::optional<engine::utils::Rect> sourceRect = std::nullopt,
                      bool isFlipped = false);
 
+    /**
+     * @brief 构造一个 UiImage 对象。（通过 Sprite 对象构造）
+     *
+     * @param sprite 要显示的 Sprite 对象。
+     * @param localPosition UiImage 的局部位置。
+     * @param size UiImage 的大小。（如果为 {0.0F, 0.0F}，则使用纹理的原始尺寸）
+     */
+    explicit UiImage(const engine::render::Sprite& sprite,
+                     glm::vec2 localPosition = { 0.0F, 0.0F },
+                     glm::vec2 size = { 0.0F, 0.0F });
+
     void render(engine::core::Context& context) override;
 
     // --- Setters & Getters ---

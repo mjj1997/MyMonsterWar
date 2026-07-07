@@ -36,6 +36,17 @@ UiImage::UiImage(entt::id_type textureId,
     spdlog::trace("UiImage 构造成功。");
 }
 
+UiImage::UiImage(const engine::render::Sprite& sprite, glm::vec2 localPosition, glm::vec2 size)
+    : UiElementBase{ localPosition, size }
+    , m_sprite{ sprite }
+{
+    if (m_sprite.textureId() == entt::null) {
+        spdlog::warn("创建了一个空纹理 ID 的 UiImage 元素。");
+    }
+
+    spdlog::trace("UiImage 构造成功。");
+}
+
 void UiImage::render(engine::core::Context& context)
 {
     if (!m_isVisible || m_sprite.textureId() == entt::null) {
