@@ -21,6 +21,21 @@ UiImage::UiImage(std::string_view texturePath,
     spdlog::trace("UiImage 构造成功。");
 }
 
+UiImage::UiImage(entt::id_type textureId,
+                 glm::vec2 localPosition,
+                 glm::vec2 size,
+                 std::optional<engine::utils::Rect> sourceRect,
+                 bool isFlipped)
+    : UiElementBase{ localPosition, size }
+    , m_sprite{ textureId, sourceRect, isFlipped }
+{
+    if (m_sprite.textureId() == entt::null) {
+        spdlog::warn("创建了一个空纹理 ID 的 UiImage 元素。");
+    }
+
+    spdlog::trace("UiImage 构造成功。");
+}
+
 void UiImage::render(engine::core::Context& context)
 {
     if (!m_isVisible || m_sprite.textureId() == entt::null) {
