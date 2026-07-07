@@ -7,14 +7,14 @@ namespace engine::ui {
 
 UiLabel::UiLabel(engine::render::TextRenderer& textRenderer,
                  std::string_view text,
-                 std::string_view fontId,
+                 std::string_view fontPath,
                  int fontSize,
                  engine::utils::FColor textColor,
                  glm::vec2 localPosition)
     : UiElementBase{ localPosition }
     , m_textRenderer{ textRenderer }
     , m_text{ text }
-    , m_fontId{ fontId }
+    , m_fontPath{ fontPath }
     , m_fontSize{ fontSize }
     , m_textColor{ textColor }
 {
@@ -41,9 +41,9 @@ void UiLabel::setText(std::string_view text)
     m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize);
 }
 
-void UiLabel::setFontId(std::string_view fontId)
+void UiLabel::setFontPath(std::string_view fontPath)
 {
-    m_fontId = fontId;
+    m_fontPath = fontPath;
     m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize);
 }
 
