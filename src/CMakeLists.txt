@@ -29,7 +29,10 @@ target_sources(
           engine/ui/state/ui_pressed_state.cpp
           engine/ui/ui_button.cpp
           engine/core/game_state.cpp
-          game/scene/game_scene.cpp)
+          game/scene/game_scene.cpp
+          engine/system/movement_system.cpp
+          engine/system/render_system.cpp
+          engine/system/animation_system.cpp)
 
 target_link_libraries(
   MonsterWar
