@@ -119,13 +119,13 @@ void InputManager::initInputMappings(const engine::core::Configurator* config)
     // 获取配置中的输入映射（动作 -> 按键名称）
     auto actionToKeyNames = config->m_inputMappings;
     // 如果配置中没有定义鼠标按钮动作(通常不需要配置),则添加默认映射, 用于 UI
-    if (!actionToKeyNames.contains("mouseLeftClick")) {
-        spdlog::debug("配置中没有定义 'mouseLeftClick' 动作,添加默认映射到 'MouseLeft'.");
-        actionToKeyNames["mouseLeftClick"] = { "MouseLeft" }; // 如果缺失则添加默认映射
+    if (!actionToKeyNames.contains("mouse_left")) {
+        spdlog::debug("配置中没有定义 'mouse_left' 动作,添加默认映射到 'MouseLeft'.");
+        actionToKeyNames["mouse_left"] = { "MouseLeft" }; // 如果缺失则添加默认映射
     }
-    if (!actionToKeyNames.contains("mouseRightClick")) {
-        spdlog::debug("配置中没有定义 'mouseRightClick' 动作,添加默认映射到 'MouseRight'.");
-        actionToKeyNames["mouseRightClick"] = { "MouseRight" }; // 如果缺失则添加默认映射
+    if (!actionToKeyNames.contains("mouse_right")) {
+        spdlog::debug("配置中没有定义 'mouse_right' 动作,添加默认映射到 'MouseRight'.");
+        actionToKeyNames["mouse_right"] = { "MouseRight" }; // 如果缺失则添加默认映射
     }
 
     // 遍历 动作 -> 按键名称 的映射
