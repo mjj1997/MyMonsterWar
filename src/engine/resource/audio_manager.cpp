@@ -131,7 +131,7 @@ MIX_Audio* AudioManager::loadMusic(entt::id_type id, std::string_view filePath)
     }
 
     // 使用unique_ptr存储在缓存中
-    m_musics.emplace(filePath, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>{ music });
+    m_musics.emplace(id, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>{ music });
     spdlog::debug("成功加载并缓存音乐: {}", filePath);
     return music;
 }
