@@ -4,12 +4,16 @@
 #include "../ui_interactive_element_base.h"
 #include "ui_hover_state.h"
 
+#include <entt/core/hashed_string.hpp>
+
+using namespace entt::literals;
+
 namespace engine::ui::state {
 
 void UiNormalState::enter()
 {
     // 设置 UI 为正常状态的精灵
-    m_owner->setCurrentSprite("normal");
+    m_owner->setSprite("normal"_hs);
 }
 
 std::unique_ptr<UiStateBase> UiNormalState::handleInput(engine::core::Context& context)
@@ -18,7 +22,7 @@ std::unique_ptr<UiStateBase> UiNormalState::handleInput(engine::core::Context& c
     const auto& mousePos = inputManager.logicalMousePosition();
     if (m_owner->isPointInside(mousePos)) { // 如果鼠标在 UI 元素内，切换到悬停状态
         // 播放悬停时的音效
-        m_owner->playSound("hover");
+        m_owner->playSound("hover"_hs);
         return std::make_unique<UiHoverState>(m_owner);
     }
 
