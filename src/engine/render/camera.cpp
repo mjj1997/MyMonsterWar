@@ -1,5 +1,6 @@
 #include "camera.h"
 
+#include <glm/common.hpp>
 #include <spdlog/spdlog.h>
 
 namespace engine::render {
