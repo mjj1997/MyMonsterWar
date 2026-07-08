@@ -34,11 +34,6 @@ void SceneBase::update(float deltaTime)
         return;
     }
 
-    if (m_context.gameState().isPlaying()) {
-        // 更新相机
-        m_context.camera().update(deltaTime);
-    }
-
     // 更新 UI 管理器
     m_uiManager->update(deltaTime, m_context);
 }
