@@ -1,7 +1,4 @@
 #pragma once
-
-#include "../utils/string_view_hash.h"
-
 #include <SDL3/SDL_render.h>
 #include <entt/signal/sigh.hpp>
 #include <glm/vec2.hpp>
@@ -85,8 +82,7 @@ private:
     ///< @brief 从键盘（Scancode）或鼠标按钮 (Uint32) 到关联的动作名称列表
     std::unordered_map<InputKey, std::vector<std::string>> m_inputKeyToActions;
 
-    std::unordered_map<std::string, ActionState, engine::utils::StringViewHash, std::equal_to<>>
-        m_actionStates; ///< @brief 存储每个动作的当前状态
+    std::unordered_map<std::string, ActionState> m_actionStates; ///< @brief 存储每个动作的当前状态
 
     /** @brief 核心数据结构: 存储动作名称函数列表的映射
      * 

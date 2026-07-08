@@ -16,7 +16,6 @@ target_sources(
           engine/core/context.cpp
           engine/scene/scene_base.cpp
           engine/scene/scene_manager.cpp
-          engine/render/animation.cpp
           engine/audio/audio_player.cpp
           engine/render/text_renderer.cpp
           engine/ui/ui_element_base.cpp
