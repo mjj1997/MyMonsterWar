@@ -5,12 +5,16 @@
 #include "ui_normal_state.h"
 #include "ui_pressed_state.h"
 
+#include <entt/core/hashed_string.hpp>
+
+using namespace entt::literals;
+
 namespace engine::ui::state {
 
 void UiHoverState::enter()
 {
     // 设置 UI 为悬停状态的精灵
-    m_owner->setCurrentSprite("hover");
+    m_owner->setSprite("hover"_hs);
 }
 
 std::unique_ptr<UiStateBase> UiHoverState::handleInput(engine::core::Context& context)

@@ -88,7 +88,6 @@ protected:
     ///< @brief 发送退出游戏的信号。
     void emitQuitSignal();
 
-private:
     void processPendingAdditions(); ///< @brief 处理待添加的游戏对象。（每轮更新的最后调用）
 
     std::string m_sceneName;                            ///< @brief 场景名称（构造时传入）

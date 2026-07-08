@@ -5,14 +5,18 @@
 #include "ui_hover_state.h"
 #include "ui_normal_state.h"
 
+#include <entt/core/hashed_string.hpp>
+
+using namespace entt::literals;
+
 namespace engine::ui::state {
 
 void UiPressedState::enter()
 {
     // 设置 UI 为按下状态的精灵
-    m_owner->setCurrentSprite("pressed");
+    m_owner->setSprite("pressed"_hs);
     // 播放按下时的音效
-    m_owner->playSound("pressed");
+    m_owner->playSound("pressed"_hs);
 }
 
 std::unique_ptr<UiStateBase> UiPressedState::handleInput(engine::core::Context& context)

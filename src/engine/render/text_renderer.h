@@ -3,6 +3,7 @@
 #include "../utils/math.h"
 
 #include <SDL3/SDL_render.h>
+#include <entt/core/fwd.hpp>
 #include <glm/vec2.hpp>
 
 #include <string_view>
@@ -19,8 +20,8 @@ class Camera;
 /**
  * @brief 使用 SDL_ttf 和 TTF_Text 对象处理文本渲染。
  *
- * 封装 TTF_TextEngine 并提供创建和绘制 TTF_Text 对象的方法，
- * 管理字体加载和颜色设置。
+ * @note 封装 TTF_TextEngine 并提供创建和绘制 TTF_Text 对象的方法，
+ * @note 管理字体加载和颜色设置。
  */
 class TextRenderer final
 {
@@ -56,7 +57,7 @@ public:
      * @param color 文本颜色。(默认为白色)
      */
     void drawUiText(std::string_view text,
-                    std::string_view fontId,
+                    entt::id_type fontId,
                     int fontSize,
                     const glm::vec2& screenPosition,
                     const engine::utils::FColor& color = { 1.0F, 1.0F, 1.0F, 1.0F });
@@ -73,7 +74,7 @@ public:
      */
     void drawText(const Camera& camera,
                   std::string_view text,
-                  std::string_view fontId,
+                  entt::id_type fontId,
                   int fontSize,
                   const glm::vec2& worldPosition,
                   const engine::utils::FColor& color = { 1.0F, 1.0F, 1.0F, 1.0F });
@@ -84,9 +85,13 @@ public:
      * @param text 要测量的文本。
      * @param fontId 字体 ID。
      * @param fontSize 字体大小。
+     * @param fontPath 字体路径。
      * @return 文本的尺寸。
      */
-    glm::vec2 getTextSize(std::string_view text, std::string_view fontId, int fontSize);
+    glm::vec2 getTextSize(std::string_view text,
+                          entt::id_type fontId,
+                          int fontSize,
+                          std::string_view fontPath = "");
 
 private:
     ///< @brief 持有渲染器的非拥有指针

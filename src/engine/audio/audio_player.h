@@ -1,5 +1,7 @@
 #pragma once
 
+#include <entt/entity/entity.hpp>
+
 #include <string>
 #include <string_view>
 
@@ -15,8 +17,8 @@ namespace engine::audio {
 /**
  * @brief 用于控制音频播放的类。
  *
- * 提供播放音效和音乐的方法，使用由 ResourceManager 管理的资源。
- * 必须使用有效的 ResourceManager 实例初始化。
+ * @note 提供播放音效和音乐的方法，使用由 ResourceManager 管理的资源。
+ * @note 必须使用有效的 ResourceManager 实例初始化。
  */
 class AudioPlayer final
 {
@@ -36,21 +38,39 @@ public:
     // --- 播放控制方法 ---
     /**
      * @brief 播放音效。
-     * 如果尚未缓存，则通过 ResourceManager 加载音效。
-     * @param soundPath 音效文件的路径。
+     * @note 必须确保 ResourceManager 加载了音效。
+     * @param soundId 音效ID。
      * @return 成功时返回 0，出错时返回 -1。
      */
-    int playSound(std::string_view soundPath);
+    int playSound(entt::id_type soundId);
+
+    /**
+     * @brief 播放音效。
+     * @note 如果尚未缓存，则通过 ResourceManager 加载音效。
+     * @param hashedPath 音效文件的路径。
+     * @return 成功时返回 0，出错时返回 -1。
+     */
+    int playSound(entt::hashed_string hashedPath);
 
     /**
      * @brief 播放背景音乐。如果正在播放，则淡出之前的音乐。
-     * 如果尚未缓存，则通过 ResourceManager 加载音乐。
-     * @param musicPath 音乐文件的路径。
+     * @note 必须确保 ResourceManager 加载了音乐。
+     * @param musicId 音乐ID。
      * @param loops 循环次数（-1 无限循环，0 播放一次，1 播放两次，以此类推）。默认为 -1。
      * @param fadeInTime 音乐淡入的时间（毫秒）（0 表示不淡入）。默认为 0。
      * @return 成功返回 true，出错返回 false。
      */
-    bool playMusic(std::string_view musicPath, int loops = -1, int fadeInTime = 0);
+    bool playMusic(entt::id_type musicId, int loops = -1, int fadeInTime = 0);
+
+    /**
+     * @brief 播放背景音乐。如果正在播放，则淡出之前的音乐。
+     * @note 如果尚未缓存，则通过 ResourceManager 加载音乐。
+     * @param hashedPath 音乐文件的路径。
+     * @param loops 循环次数（-1 无限循环，0 播放一次，1 播放两次，以此类推）。默认为 -1。
+     * @param fadeInTime 音乐淡入的时间（毫秒）（0 表示不淡入）。默认为 0。
+     * @return 成功返回 true，出错返回 false。
+     */
+    bool playMusic(entt::hashed_string hashedPath, int loops = -1, int fadeInTime = 0);
 
     /**
      * @brief 停止当前正在播放的背景音乐。
@@ -98,7 +118,8 @@ private:
     MIX_Mixer* m_mixer{ nullptr }; ///< @brief 指向 SDL_mixer 混音器的非拥有指针
 
     MIX_Track* m_musicTrack{ nullptr }; ///< @brief 背景音乐专用播放轨道指针（拥有）
-    std::string m_currentMusic; ///< @brief 当前正在播放的音乐路径，用于避免重复播放同一音乐。
+    ///< @brief 当前正在播放的音乐ID，用于避免重复播放同一音乐。
+    entt::id_type m_currentMusicId{ entt::null };
 };
 
 } // namespace engine::audio

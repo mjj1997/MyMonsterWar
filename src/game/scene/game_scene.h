@@ -14,11 +14,8 @@ public:
     void clean() override;
 
 private:
-    // --- 测试输入回调事件 (场景切换测试) ---
-    bool pushScene();
-    bool popScene();
-    bool replaceScene();
-    bool quit();
+    // --- 测试资源管理器 ---
+    void testResourceManager();
 
     int m_sceneNum{ 0 };
 };

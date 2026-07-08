@@ -70,12 +70,12 @@ void Configurator::fromJson(const nlohmann::json& json)
 
     if (json.contains("graphics")) {
         const auto& graphicsConfig = json.at("graphics");
-        m_isVSyncEnabled = graphicsConfig.value("VSync", m_isVSyncEnabled);
+        m_isVSyncEnabled = graphicsConfig.value("vsync", m_isVSyncEnabled);
     }
 
     if (json.contains("performance")) {
         const auto& performanceConfig = json.at("performance");
-        m_targetFps = performanceConfig.value("targetFps", m_targetFps);
+        m_targetFps = performanceConfig.value("target_fps", m_targetFps);
         if (m_targetFps < 0) {
             spdlog::warn("目标 FPS 不能为负数。设置为 0（无限制）。");
             m_targetFps = 0;
@@ -84,12 +84,12 @@ void Configurator::fromJson(const nlohmann::json& json)
 
     if (json.contains("audio")) {
         const auto& audioConfig = json.at("audio");
-        m_musicVolume = audioConfig.value("musicVolume", m_musicVolume);
-        m_soundVolume = audioConfig.value("soundVolume", m_soundVolume);
+        m_musicVolume = audioConfig.value("music_volume", m_musicVolume);
+        m_soundVolume = audioConfig.value("sound_volume", m_soundVolume);
     }
 
-    if (json.contains("inputMappings") && json.at("inputMappings").is_object()) {
-        const auto& inputMappingsConfig = json.at("inputMappings");
+    if (json.contains("input_mappings") && json.at("input_mappings").is_object()) {
+        const auto& inputMappingsConfig = json.at("input_mappings");
         try {
             // 直接尝试从 JSON 对象转换为 unordered_map<string, vector<string>>
             auto inputMappings
@@ -118,8 +118,8 @@ nlohmann::ordered_json Configurator::toJson() const
             { "resizable", m_windowResizable } } },
         { "graphics", { { "VSync", m_isVSyncEnabled } } },
         { "performance", { { "targetFps", m_targetFps } } },
-        { "audio", { { "musicVolume", m_musicVolume }, { "soundVolume", m_soundVolume } } },
-        { "inputMappings", m_inputMappings }
+        { "audio", { { "music_volume", m_musicVolume }, { "sound_volume", m_soundVolume } } },
+        { "input_mappings", m_inputMappings }
     };
 }
 

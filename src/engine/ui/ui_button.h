@@ -19,17 +19,17 @@ public:
     /**
      * @brief 构造函数
      * @param context 引擎上下文
-     * @param normalSpriteId 正常状态的精灵ID
-     * @param hoverSpriteId 悬停状态的精灵ID
-     * @param pressedSpriteId 按下状态的精灵ID
+     * @param normalSpritePath 正常状态的精灵路径
+     * @param hoverSpritePath 悬停状态的精灵路径
+     * @param pressedSpritePath 按下状态的精灵路径
      * @param localPosition 局部位置
      * @param size 大小
      * @param callback 回调函数
      */
     UiButton(engine::core::Context& context,
-             std::string_view normalSpriteId,
-             std::string_view hoverSpriteId,
-             std::string_view pressedSpriteId,
+             std::string_view normalSpritePath,
+             std::string_view hoverSpritePath,
+             std::string_view pressedSpritePath,
              glm::vec2 localPosition = { 0.0F, 0.0F },
              glm::vec2 size = { 0.0F, 0.0F },
              std::function<void()> callback = nullptr);

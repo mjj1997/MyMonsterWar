@@ -33,7 +33,7 @@ public:
 public:
     // --- 默认配置值 --- (为了方便拓展，全部设置为公有)
     // 窗口设置
-    std::string m_windowTitle{ "SunnyLand" };
+    std::string m_windowTitle{ "MonsterWar" };
     int m_windowWidth{ 1280 };
     int m_windowHeight{ 720 };
     bool m_windowResizable{ true };
@@ -51,9 +51,9 @@ public:
     // 存储动作名称到 SDL Scancode 名称列表的映射
     std::unordered_map<std::string, std::vector<std::string>> m_inputMappings{
         // 提供一些合理的默认值，以防配置文件加载失败或缺少此部分
-        { "moveLeft", { "A", "Left" } }, { "moveRight", { "D", "Right" } },
-        { "moveUp", { "W", "Up" } },     { "moveDown", { "S", "Down" } },
-        { "jump", { "J", "Space" } },    { "attack", { "K", "MouseLeft" } },
+        { "move_left", { "A", "Left" } }, { "move_right", { "D", "Right" } },
+        { "move_up", { "W", "Up" } },     { "move_down", { "S", "Down" } },
+        { "jump", { "J", "Space" } },     { "attack", { "K", "MouseLeft" } },
         { "pause", { "P", "Escape" } },
         // 可以继续添加更多默认动作
     };

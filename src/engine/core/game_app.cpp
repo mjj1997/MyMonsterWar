@@ -231,6 +231,8 @@ bool GameApp::initResourceManager()
 {
     try {
         m_resourceManager = std::make_unique<engine::resource::ResourceManager>(m_sdlRenderer);
+        // 载入默认资源映射文件
+        m_resourceManager->loadResources("assets/data/resource_mapping.json");
     } catch (const std::exception& e) {
         spdlog::error("初始化资源管理器失败: {}", e.what());
         return false;
