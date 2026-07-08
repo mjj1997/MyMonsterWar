@@ -44,18 +44,20 @@ public:
     bool handleInput(engine::core::Context& context) override;
     void render(engine::core::Context& context) override;
 
-    void addSprite(std::string_view name,
-                   std::unique_ptr<engine::render::Sprite> sprite); ///< @brief 添加状态名称-精灵对
-    void addSound(std::string_view name, std::string_view path);    ///< @brief 添加状态名称-音效对
-    void playSound(std::string_view name);                          ///< @brief 播放音效
+    ///< @brief 添加状态名称-精灵对
+    void addSprite(entt::id_type nameId, engine::render::Sprite sprite);
+    ///< @brief 通过状态名称 ID，设置当前显示的精灵
+    void setSprite(entt::id_type nameId);
+    ///< @brief 添加状态名称-音效对
+    void addSound(entt::id_type nameId, entt::hashed_string hashedPath);
+    ///< @brief 通过状态名称 ID，播放音效
+    void playSound(entt::id_type nameId);
 
     // --- Getters and Setters ---
     ///< @brief 设置当前状态
     void setCurrentState(std::unique_ptr<engine::ui::state::UiStateBase> state);
     ///< @brief 获取当前状态
     engine::ui::state::UiStateBase* currentState() const { return m_currentState.get(); }
-
-    void setCurrentSprite(std::string_view name); ///< @brief 通过状态名称，设置当前显示的精灵
 
     ///< @brief 设置是否可交互
     void setInteractive(bool interactive) { m_isInteractive = interactive; }
@@ -70,7 +72,7 @@ protected:
     std::unordered_map<entt::id_type, entt::id_type> m_sounds;
 
     std::unique_ptr<engine::ui::state::UiStateBase> m_currentState; ///< @brief 当前状态
-    engine::render::Sprite* m_currentSprite{ nullptr };             ///< @brief 当前显示的精灵
+    entt::id_type m_currentSpriteId{ entt::null };                  ///< @brief 当前显示的精灵 ID
     bool m_isInteractive{ true };                                   ///< @brief 是否可交互
 };
 

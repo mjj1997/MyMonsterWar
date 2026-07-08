@@ -41,36 +41,46 @@ void UiInteractiveElementBase::render(engine::core::Context& context)
         return;
     }
 
-    // 先渲染自身
-    m_context.renderer().drawUiSprite(*m_currentSprite, screenPosition(), m_size);
+    // 先渲染当前状态对应的精灵
+    if (m_currentSpriteId != entt::null) {
+        m_context.renderer().drawUiSprite(m_sprites[m_currentSpriteId], screenPosition(), m_size);
+    }
 
     // 再渲染子 UI 元素（调用基类的 render 方法）
     UiElementBase::render(context);
 }
 
-void UiInteractiveElementBase::addSprite(std::string_view name,
-                                         std::unique_ptr<engine::render::Sprite> sprite)
+void UiInteractiveElementBase::addSprite(entt::id_type nameId, engine::render::Sprite sprite)
 {
     // 可交互 UI 元素必须有一个 size 用于交互检测，因此如果参数列表中没有指定，则用图片大小作为 size
     if (m_size.x == 0.0F && m_size.y == 0.0F) {
-        m_size = m_context.resourceManager().getTextureSize(sprite->textureId());
+        m_size = m_context.resourceManager().getTextureSize(sprite.textureId());
     }
 
     // 添加精灵
-    m_sprites.emplace(name, std::move(sprite));
+    m_sprites.emplace(nameId, std::move(sprite));
 }
 
-void UiInteractiveElementBase::addSound(std::string_view name, std::string_view path)
+void UiInteractiveElementBase::setSprite(entt::id_type nameId)
 {
-    m_sounds.emplace(name, path);
+    if (auto iter = m_sprites.find(nameId); iter != m_sprites.end()) {
+        m_currentSpriteId = nameId;
+    } else {
+        spdlog::warn("Sprite '{}' 未找到。", nameId);
+    }
 }
 
-void UiInteractiveElementBase::playSound(std::string_view name)
+void UiInteractiveElementBase::addSound(entt::id_type nameId, entt::hashed_string hashedPath)
 {
-    if (auto iter = m_sounds.find(name); iter != m_sounds.end()) {
+    m_sounds.emplace(nameId, hashedPath.value());
+}
+
+void UiInteractiveElementBase::playSound(entt::id_type nameId)
+{
+    if (auto iter = m_sounds.find(nameId); iter != m_sounds.end()) {
         m_context.audioPlayer().playSound(iter->second);
     } else {
-        spdlog::warn("Sound '{}' 未找到。", name);
+        spdlog::warn("Sound '{}' 未找到。", nameId);
     }
 }
 
@@ -83,15 +93,6 @@ void UiInteractiveElementBase::setCurrentState(std::unique_ptr<engine::ui::state
 
     m_currentState = std::move(state);
     m_currentState->enter();
-}
-
-void UiInteractiveElementBase::setCurrentSprite(std::string_view name)
-{
-    if (auto iter = m_sprites.find(name); iter != m_sprites.end()) {
-        m_currentSprite = iter->second.get();
-    } else {
-        spdlog::warn("Sprite '{}' 未找到。", name);
-    }
 }
 
 } // namespace engine::ui
