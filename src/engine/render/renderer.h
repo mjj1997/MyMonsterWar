@@ -1,6 +1,8 @@
 #pragma once
 
+#include "../component/sprite_component.h"
 #include "../utils/math.h"
+#include "image.h"
 
 #include <SDL3/SDL_stdinc.h>
 #include <glm/glm.hpp>
@@ -47,16 +49,17 @@ public:
     /**
      * @brief 绘制一个精灵
      * 
+     * @param camera 相机对象，用于将世界坐标转换为屏幕坐标。
      * @param sprite 包含纹理ID、源矩形和翻转状态的 Sprite 对象。
      * @param position 世界坐标中的左上角位置。
-     * @param scale 缩放因子。
-     * @param angle 旋转角度（度）。
+     * @param size 精灵的尺寸。
+     * @param rotation 旋转角度（度）。
      */
-    // void drawSprite(const Camera& camera,
-    //                 const Image& sprite,
-    //                 const glm::vec2& position,
-    //                 const glm::vec2& scale = { 1.0F, 1.0F },
-    //                 double angle = 0.0);
+    void drawSprite(const Camera& camera,
+                    const component::Sprite& sprite,
+                    glm::vec2 position,
+                    glm::vec2 size,
+                    const float rotation = 0.0F);
 
     /**
      * @brief 在屏幕坐标中直接渲染一个用于 UI 的 Image 对象。
