@@ -37,7 +37,7 @@ void GameScene::testResourceManager()
     // 载入资源
     m_context.resourceManager().loadTexture("assets/textures/Buildings/Castle.png"_hs);
     // 播放音乐
-    m_context.audioPlayer().playMusic("assets/audio/4 Battle Track INTRO TomMusic.ogg"_hs);
+    m_context.audioPlayer().playMusic("battle_bgm"_hs);
 
     // 测试UI元素（使用载入的资源）
     m_uiManager->addElement(
