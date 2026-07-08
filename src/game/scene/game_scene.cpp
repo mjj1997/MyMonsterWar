@@ -38,8 +38,25 @@ void GameScene::init()
 {
     // 测试资源管理器
     testResourceManager();
+    // 测试ECS
+    testECS();
 
     SceneBase::init();
+}
+
+void GameScene::update(float deltaTime)
+{
+    m_movementSystem->update(m_registry, deltaTime);
+    m_animationSystem->update(m_registry, deltaTime);
+
+    SceneBase::update(deltaTime);
+}
+
+void GameScene::render()
+{
+    m_renderSystem->update(m_registry, m_context.renderer(), m_context.camera());
+
+    SceneBase::render();
 }
 
 void GameScene::clean()
