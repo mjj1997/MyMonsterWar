@@ -1,4 +1,3 @@
-// sprite.h
 #pragma once
 
 #include "../utils/math.h"

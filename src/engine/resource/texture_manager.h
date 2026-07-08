@@ -38,7 +38,7 @@ private: // 仅供 ResourceManager 访问的方法
     /**
      * @brief 从文件路径加载纹理
      * @param id 纹理的唯一标识符, 通过 entt::hashed_string 生成
-     * @param filePpath 纹理文件的路径
+     * @param filePath 纹理文件的路径
      * @return 加载的纹理的指针
      * @note 如果纹理已经加载，则返回已加载的纹理的指针
      * @note 如果纹理未加载，则从文件路径加载纹理，并返回加载的纹理的指针
