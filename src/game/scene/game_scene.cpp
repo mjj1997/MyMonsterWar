@@ -1,6 +1,10 @@
 #include "game_scene.h"
 
 #include "../../engine/audio/audio_player.h"
+#include "../../engine/component/animation_component.h"
+#include "../../engine/component/sprite_component.h"
+#include "../../engine/component/transform_component.h"
+#include "../../engine/component/velocity_component.h"
 #include "../../engine/core/context.h"
 #include "../../engine/resource/resource_manager.h"
 #include "../../engine/system/animation_system.h"
@@ -57,6 +61,40 @@ void GameScene::testResourceManager()
         std::make_unique<engine::ui::UiLabel>(m_context.textRenderer(),
                                               "Hello, World!",
                                               "assets/fonts/VonwaonBitmap-16px.ttf"));
+}
+
+void GameScene::testECS()
+{
+    auto entity = m_registry.create();
+    // 变换、速度、精灵组件
+    m_registry.emplace<engine::component::TransformComponent>(entity, glm::vec2(100.0F));
+    m_registry.emplace<engine::component::VelocityComponent>(entity, glm::vec2(10.0F));
+    m_registry.emplace<engine::component::SpriteComponent>(
+        entity,
+        engine::component::Sprite("assets/textures/Units/Archer.png",
+                                  engine::utils::Rect{ 0.0F, 0.0F, 192.0F, 192.0F }));
+
+    // 动画组件 (单一动画 -> 动画map -> AnimationComponent)
+    auto animation = engine::component::Animation{
+        { engine::component::AnimationFrame{ engine::utils::Rect{ 0.0F, 0.0F, 192.0F, 192.0F },
+                                             100 },
+          engine::component::AnimationFrame{ engine::utils::Rect{ 192.0F, 0.0F, 192.0F, 192.0F },
+                                             100 },
+          engine::component::AnimationFrame{ engine::utils::Rect{ 384.0F, 0.0F, 192.0F, 192.0F },
+                                             100 },
+          engine::component::AnimationFrame{ engine::utils::Rect{ 576.0F, 0.0F, 192.0F, 192.0F },
+                                             100 },
+          engine::component::AnimationFrame{ engine::utils::Rect{ 768.0F, 0.0F, 192.0F, 192.0F },
+                                             100 },
+          engine::component::AnimationFrame{ engine::utils::Rect{ 960.0F, 0.0F, 192.0F, 192.0F },
+                                             100 } }
+    };
+    auto animationMap = std::unordered_map<entt::id_type, engine::component::Animation>{
+        { "idle"_hs, std::move(animation) }
+    };
+    m_registry.emplace<engine::component::AnimationComponent>(entity,
+                                                              std::move(animationMap),
+                                                              "idle"_hs);
 }
 
 } // namespace game::scene
