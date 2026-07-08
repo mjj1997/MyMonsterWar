@@ -44,6 +44,9 @@ public:
     ResourceManager(ResourceManager&&) = delete;
     ResourceManager& operator=(ResourceManager&&) = delete;
 
+    // 加载资源
+    void loadResources(std::string_view filePath);
+
     // --- 统一资源访问接口 ---
     // -- Texture --
     ///< @brief 载入纹理资源(通过id + 文件路径)

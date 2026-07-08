@@ -4,7 +4,10 @@
 #include "texture_manager.h"
 
 #include <entt/core/hashed_string.hpp>
+#include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
+
+#include <fstream>
 
 namespace engine::resource {
 
@@ -25,6 +28,45 @@ void ResourceManager::clear()
     m_audioManager->clearAudio();
     m_fontManager->clearFonts();
     spdlog::trace("ResourceManager 中的资源通过 clear() 清空。");
+}
+
+void ResourceManager::loadResources(std::string_view filePath)
+{
+    std::filesystem::path path{ filePath };
+    if (!std::filesystem::exists(path)) {
+        spdlog::warn("资源映射文件不存在: {}", filePath);
+        return;
+    }
+
+    std::ifstream file{ path };
+    nlohmann::json json;
+    file >> json;
+    try {
+        if (json.contains("texture")) {
+            for (const auto& [key, value] : json.at("texture").items()) {
+                loadTexture(entt::hashed_string(key.c_str()), value.get<std::string>());
+            }
+        }
+        if (json.contains("sound")) {
+            for (const auto& [key, value] : json.at("sound").items()) {
+                loadSound(entt::hashed_string(key.c_str()), value.get<std::string>());
+            }
+        }
+        if (json.contains("music")) {
+            for (const auto& [key, value] : json.at("music").items()) {
+                loadMusic(entt::hashed_string(key.c_str()), value.get<std::string>());
+            }
+        }
+        if (json.contains("font")) {
+            for (const auto& [key, value] : json.at("font").items()) {
+                loadFont(entt::hashed_string(key.c_str()),
+                         value.get<int>(),
+                         value.get<std::string>());
+            }
+        }
+    } catch (const nlohmann::json::exception& e) {
+        spdlog::error("加载资源文件失败: {}", e.what());
+    }
 }
 
 // --- 纹理接口实现 ---
