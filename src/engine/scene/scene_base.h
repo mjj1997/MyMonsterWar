@@ -1,5 +1,7 @@
 #pragma once
 
+#include <entt/entity/registry.hpp>
+
 #include <memory>
 #include <string>
 #include <string_view>
@@ -57,6 +59,7 @@ public:
     bool isInitialized() const { return m_isInitialized; } ///< @brief 获取场景是否已初始化
 
     engine::core::Context& context() const { return m_context; } ///< @brief 获取上下文引用
+    entt::registry& registry() { return m_registry; }            ///< @brief 获取注册表引用
 
 protected:
     ///< @brief 发送压入一个新场景的信号。
@@ -71,6 +74,8 @@ protected:
     std::string m_sceneName;                            ///< @brief 场景名称（构造时传入）
     engine::core::Context& m_context;                   ///< @brief 上下文引用（构造时传入）
     std::unique_ptr<engine::ui::UiManager> m_uiManager; ///< @brief UI 管理器（构造时自动创建）
+    ///< @brief ECS 注册表
+    entt::registry m_registry;
 
     ///< @brief 场景是否已初始化(非当前场景很可能未被删除，因此需要初始化标志避免重复初始化)
     bool m_isInitialized{ false };
