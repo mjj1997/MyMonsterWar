@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../render/sprite.h"
+#include "../render/image.h"
 #include "ui_element_base.h"
 
 #include <optional>
@@ -23,7 +23,7 @@ public:
      * @param localPosition UiImage 的局部位置  
      * @param size UiImage 的大小（如果为 {0.0F, 0.0F}，则使用纹理的原始尺寸）
      * @param sourceRect 可选：要绘制的纹理区域（如果未指定，则绘制整个纹理）
-     * @param isFlipped 可选：精灵是否应该水平翻转。
+     * @param isFlipped 可选：图片是否应该水平翻转。
      */
     explicit UiImage(std::string_view texturePath,
                      glm::vec2 localPosition = { 0.0F, 0.0F },
@@ -38,7 +38,7 @@ public:
      * @param localPosition UiImage 的局部位置
      * @param size UiImage 的大小（如果为 {0.0F, 0.0F}，则使用纹理的原始尺寸）
      * @param sourceRect 可选：要绘制的纹理区域（如果未指定，则绘制整个纹理）
-     * @param isFlipped 可选：精灵是否应该水平翻转。
+     * @param isFlipped 可选：图片是否应该水平翻转。
      * @note 用此方法，需确保对应 ID 的纹理已经加载到 ResourceManager 中，因此不需要再提供纹理路径。
      */
     explicit UiImage(entt::id_type textureId,
@@ -48,36 +48,36 @@ public:
                      bool isFlipped = false);
 
     /**
-     * @brief 构造一个 UiImage 对象。（通过 Sprite 对象构造）
+     * @brief 构造一个 UiImage 对象。（通过 Image 对象构造）
      *
-     * @param sprite 要显示的 Sprite 对象。
+     * @param image 要显示的 Image 对象。
      * @param localPosition UiImage 的局部位置。
      * @param size UiImage 的大小。（如果为 {0.0F, 0.0F}，则使用纹理的原始尺寸）
      */
-    explicit UiImage(const engine::render::Sprite& sprite,
+    explicit UiImage(const engine::render::Image& image,
                      glm::vec2 localPosition = { 0.0F, 0.0F },
                      glm::vec2 size = { 0.0F, 0.0F });
 
     void render(engine::core::Context& context) override;
 
     // --- Setters & Getters ---
-    const engine::render::Sprite& sprite() const { return m_sprite; }
-    void setSprite(engine::render::Sprite sprite) { m_sprite = std::move(sprite); }
+    const engine::render::Image& image() const { return m_image; }
+    void setImage(engine::render::Image image) { m_image = std::move(image); }
 
-    entt::id_type textureId() const { return m_sprite.textureId(); }
-    void setTexture(std::string_view texturePath) { m_sprite.setTexture(texturePath); }
+    entt::id_type textureId() const { return m_image.textureId(); }
+    void setTexture(std::string_view texturePath) { m_image.setTexture(texturePath); }
 
-    const std::optional<engine::utils::Rect>& sourceRect() const { return m_sprite.sourceRect(); }
+    const std::optional<engine::utils::Rect>& sourceRect() const { return m_image.sourceRect(); }
     void setSourceRect(std::optional<engine::utils::Rect> sourceRect)
     {
-        m_sprite.setSourceRect(std::move(sourceRect));
+        m_image.setSourceRect(std::move(sourceRect));
     }
 
-    bool isFlipped() const { return m_sprite.isFlipped(); }
-    void setFlipped(bool flipped) { m_sprite.setFlipped(flipped); }
+    bool isFlipped() const { return m_image.isFlipped(); }
+    void setFlipped(bool flipped) { m_image.setFlipped(flipped); }
 
 private:
-    engine::render::Sprite m_sprite;
+    engine::render::Image m_image;
 };
 
 } // namespace engine::ui

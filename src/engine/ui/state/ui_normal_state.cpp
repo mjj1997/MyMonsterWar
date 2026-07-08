@@ -12,8 +12,8 @@ namespace engine::ui::state {
 
 void UiNormalState::enter()
 {
-    // 设置 UI 为正常状态的精灵
-    m_owner->setSprite("normal"_hs);
+    // 设置 UI 为正常状态的图片
+    m_owner->setImage("normal"_hs);
 }
 
 std::unique_ptr<UiStateBase> UiNormalState::handleInput(engine::core::Context& context)

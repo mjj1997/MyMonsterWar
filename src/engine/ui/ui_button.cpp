@@ -9,19 +9,19 @@ using namespace entt::literals;
 namespace engine::ui {
 
 UiButton::UiButton(engine::core::Context& context,
-                   std::string_view normalSpritePath,
-                   std::string_view hoverSpritePath,
-                   std::string_view pressedSpritePath,
+                   std::string_view normalImagePath,
+                   std::string_view hoverImagePath,
+                   std::string_view pressedImagePath,
                    glm::vec2 localPosition,
                    glm::vec2 size,
                    std::function<void()> callback)
     : UiInteractiveElementBase{ context, localPosition, size }
     , m_callback{ std::move(callback) }
 {
-    // 添加各状态对应的精灵
-    addSprite("normal"_hs, engine::render::Sprite{ normalSpritePath });
-    addSprite("hover"_hs, engine::render::Sprite{ hoverSpritePath });
-    addSprite("pressed"_hs, engine::render::Sprite{ pressedSpritePath });
+    // 添加各状态对应的图片
+    addImage("normal"_hs, engine::render::Image{ normalImagePath });
+    addImage("hover"_hs, engine::render::Image{ hoverImagePath });
+    addImage("pressed"_hs, engine::render::Image{ pressedImagePath });
 
     // 设置默认状态为"normal"
     setCurrentState(std::make_unique<engine::ui::state::UiNormalState>(this));

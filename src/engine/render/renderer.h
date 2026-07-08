@@ -16,7 +16,7 @@ class ResourceManager;
 
 namespace engine::render {
 
-class Sprite;
+class Image;
 class Camera;
 
 /**
@@ -52,37 +52,22 @@ public:
      * @param scale 缩放因子。
      * @param angle 旋转角度（度）。
      */
-    void drawSprite(const Camera& camera,
-                    const Sprite& sprite,
-                    const glm::vec2& position,
-                    const glm::vec2& scale = { 1.0F, 1.0F },
-                    double angle = 0.0);
+    // void drawSprite(const Camera& camera,
+    //                 const Image& sprite,
+    //                 const glm::vec2& position,
+    //                 const glm::vec2& scale = { 1.0F, 1.0F },
+    //                 double angle = 0.0);
 
     /**
-     * @brief 绘制视差滚动背景
-     * 
-     * @param sprite 包含纹理ID、源矩形和翻转状态的 Sprite 对象。
-     * @param position 世界坐标中的左上角位置。
-     * @param scrollFactor 滚动因子。
-     * @param scale 缩放因子。
-     */
-    void drawParallax(const Camera& camera,
-                      const Sprite& sprite,
-                      const glm::vec2& position,
-                      const glm::vec2& scrollFactor,
-                      const glm::bvec2& repeat = { true, true },
-                      const glm::vec2& scale = { 1.0F, 1.0F });
-
-    /**
-     * @brief 在屏幕坐标中直接渲染一个用于UI的Sprite对象。
+     * @brief 在屏幕坐标中直接渲染一个用于 UI 的 Image 对象。
      *
-     * @param sprite 包含纹理ID、源矩形和翻转状态的Sprite对象。
+     * @param image 包含纹理ID、源矩形和翻转状态的 Image 对象。
      * @param position 屏幕坐标中的左上角位置。
-     * @param size 可选：目标矩形的大小。如果为 std::nullopt，则使用Sprite的原始大小。
+     * @param size 可选：目标矩形的大小。如果为 std::nullopt，则使用 Image 对象的原始大小。
      */
-    void drawUiSprite(const Sprite& sprite,
-                      const glm::vec2& position,
-                      const std::optional<glm::vec2>& size = std::nullopt);
+    void drawUiImage(const Image& image,
+                     const glm::vec2& position,
+                     const std::optional<glm::vec2>& size = std::nullopt);
 
     /**
      * @brief 绘制填充矩形
@@ -106,8 +91,8 @@ public:
     SDL_Renderer* renderer() const { return m_sdlRenderer; }
 
 private:
-    ///< @brief 获取精灵的源矩形，用于具体绘制。出现错误则返回std::nullopt并跳过绘制
-    std::optional<SDL_FRect> getSpriteSrcRect(const Sprite& sprite);
+    ///< @brief 获取 Image 对象的源矩形，用于具体绘制。出现错误则返回std::nullopt并跳过绘制
+    std::optional<SDL_FRect> getImageSrcRect(const Image& image);
     ///< @brief 判断矩形是否在视口中，用于视口裁剪
     static bool isRectInViewport(const Camera& camera, const SDL_FRect& rect);
 

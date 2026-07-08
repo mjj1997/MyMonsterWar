@@ -13,8 +13,8 @@ namespace engine::ui::state {
 
 void UiPressedState::enter()
 {
-    // 设置 UI 为按下状态的精灵
-    m_owner->setSprite("pressed"_hs);
+    // 设置 UI 为按下状态的图片
+    m_owner->setImage("pressed"_hs);
     // 播放按下时的音效
     m_owner->playSound("pressed"_hs);
 }
