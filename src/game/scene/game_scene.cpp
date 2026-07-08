@@ -3,11 +3,15 @@
 #include "../../engine/audio/audio_player.h"
 #include "../../engine/core/context.h"
 #include "../../engine/resource/resource_manager.h"
+#include "../../engine/system/animation_system.h"
+#include "../../engine/system/movement_system.h"
+#include "../../engine/system/render_system.h"
 #include "../../engine/ui/ui_image.h"
 #include "../../engine/ui/ui_label.h"
 #include "../../engine/ui/ui_manager.h"
 
 #include <entt/core/hashed_string.hpp>
+#include <spdlog/spdlog.h>
 
 using namespace entt::literals;
 
@@ -15,7 +19,14 @@ namespace game::scene {
 
 GameScene::GameScene(engine::core::Context& context)
     : SceneBase{ "GameScene", context }
-{}
+{
+    // 初始化系统
+    m_movementSystem = std::make_unique<engine::system::MovementSystem>();
+    m_renderSystem = std::make_unique<engine::system::RenderSystem>();
+    m_animationSystem = std::make_unique<engine::system::AnimationSystem>();
+
+    spdlog::info("GameScene 构造完成");
+}
 
 GameScene::~GameScene() = default;
 
