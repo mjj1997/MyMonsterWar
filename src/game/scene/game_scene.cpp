@@ -1,12 +1,15 @@
 #include "game_scene.h"
 
+#include "../../engine/audio/audio_player.h"
 #include "../../engine/core/context.h"
-#include "../../engine/input/input_manager.h"
-#include "../../engine/utils/events.h"
+#include "../../engine/resource/resource_manager.h"
+#include "../../engine/ui/ui_image.h"
+#include "../../engine/ui/ui_label.h"
+#include "../../engine/ui/ui_manager.h"
 
-#include <entt/signal/dispatcher.hpp>
-#include <entt/signal/sigh.hpp>
-#include <spdlog/spdlog.h>
+#include <entt/core/hashed_string.hpp>
+
+using namespace entt::literals;
 
 namespace game::scene {
 
@@ -18,63 +21,31 @@ GameScene::~GameScene() = default;
 
 void GameScene::init()
 {
-    static int count{ 0 };
-    ++count;
-    m_sceneNum = count;
-    spdlog::info("场景编号：{}", m_sceneNum);
-
-    // 注册输入事件处理回调函数
-    auto& inputManager = context().inputManager();
-    inputManager.actionSink("mouseLeftClick").connect<&GameScene::pushScene>(this); // 鼠标左键点击
-    inputManager.actionSink("mouseRightClick").connect<&GameScene::popScene>(this); // 鼠标右键点击
-    inputManager.actionSink("jump").connect<&GameScene::replaceScene>(this);        // J 键
-    inputManager.actionSink("pause").connect<&GameScene::quit>(this);               // P 键
+    // 测试资源管理器
+    testResourceManager();
 
     SceneBase::init();
 }
 
 void GameScene::clean()
 {
-    // 反注册输入事件处理回调函数 (谁连接，谁负责断开)
-    auto& inputManager = context().inputManager();
-    inputManager.actionSink("mouseLeftClick").disconnect<&GameScene::pushScene>(this);
-    inputManager.actionSink("mouseRightClick").disconnect<&GameScene::popScene>(this);
-    inputManager.actionSink("jump").disconnect<&GameScene::replaceScene>(this);
-    inputManager.actionSink("pause").disconnect<&GameScene::quit>(this);
-
     SceneBase::clean();
 }
 
-bool GameScene::pushScene()
+void GameScene::testResourceManager()
 {
-    spdlog::info("发出 pushScene signal, 压入场景");
-    emitPushSceneSignal(std::make_unique<GameScene>(context()));
+    // 载入资源
+    m_context.resourceManager().loadTexture("assets/textures/Buildings/Castle.png"_hs);
+    // 播放音乐
+    m_context.audioPlayer().playMusic("assets/audio/4 Battle Track INTRO TomMusic.ogg"_hs);
 
-    return true;
-}
-
-bool GameScene::popScene()
-{
-    spdlog::info("发出 popScene signal, 弹出场景");
-    emitPopSceneSignal();
-
-    return true;
-}
-
-bool GameScene::replaceScene()
-{
-    spdlog::info("发出 replaceScene signal, 替换场景");
-    emitReplaceSceneSignal(std::make_unique<GameScene>(context()));
-
-    return true;
-}
-
-bool GameScene::quit()
-{
-    spdlog::info("发出 quit signal, 退出游戏");
-    emitQuitSignal();
-
-    return true;
+    // 测试UI元素（使用载入的资源）
+    m_uiManager->addElement(
+        std::make_unique<engine::ui::UiImage>("assets/textures/Buildings/Castle.png"_hs));
+    m_uiManager->addElement(
+        std::make_unique<engine::ui::UiLabel>(m_context.textRenderer(),
+                                              "Hello, World!",
+                                              "assets/fonts/VonwaonBitmap-16px.ttf"));
 }
 
 } // namespace game::scene
