@@ -1,7 +1,7 @@
 #include "renderer.h"
 #include "../resource/resource_manager.h"
 #include "camera.h"
-#include "sprite.h"
+#include "image.h"
 
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
@@ -30,20 +30,14 @@ Renderer::Renderer(SDL_Renderer* sdlRenderer, engine::resource::ResourceManager*
 }
 
 void Renderer::drawSprite(const Camera& camera,
-                          const Sprite& sprite,
-                          const glm::vec2& position,
-                          const glm::vec2& scale,
-                          double angle)
+                          const component::Sprite& sprite,
+                          glm::vec2 position,
+                          glm::vec2 size,
+                          float rotation)
 {
-    SDL_Texture* texture{ m_resourceManager->getTexture(sprite.textureId()) };
+    SDL_Texture* texture{ m_resourceManager->getTexture(sprite.m_textureId, sprite.m_texturePath) };
     if (texture == nullptr) {
-        spdlog::error("无法为 ID {} 获取纹理。", sprite.textureId());
-        return;
-    }
-
-    auto srcRect = getSpriteSrcRect(sprite);
-    if (!srcRect.has_value()) {
-        spdlog::error("无法获取精灵的源矩形, ID: {}", sprite.textureId());
+        spdlog::error("无法为 ID {} 获取纹理。", sprite.m_textureId);
         return;
     }
 
@@ -51,10 +45,8 @@ void Renderer::drawSprite(const Camera& camera,
     const glm::vec2 positionScreen{ camera.worldToScreen(position) };
 
     // 计算目标矩形，注意 position 是精灵的左上角坐标
-    const float scaledWidth{ srcRect.value().w * scale.x };
-    const float scaledHeight{ srcRect.value().h * scale.y };
     const SDL_FRect destRect{
-        .x = positionScreen.x, .y = positionScreen.y, .w = scaledWidth, .h = scaledHeight
+        .x = positionScreen.x, .y = positionScreen.y, .w = size.x, .h = size.y
     };
 
     // 视口裁剪：如果精灵超出视口，则不绘制
@@ -63,90 +55,36 @@ void Renderer::drawSprite(const Camera& camera,
         return;
     }
 
+    const SDL_FRect srcRect{ .x = sprite.m_sourceRect.position.x,
+                             .y = sprite.m_sourceRect.position.y,
+                             .w = sprite.m_sourceRect.size.x,
+                             .h = sprite.m_sourceRect.size.y };
+
     // 执行绘制(默认旋转中心为精灵的中心点)
     if (!SDL_RenderTextureRotated(m_sdlRenderer,
                                   texture,
-                                  &srcRect.value(),
+                                  &srcRect,
                                   &destRect,
-                                  angle,
+                                  rotation,
                                   nullptr,
-                                  sprite.isFlipped() ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE)) {
-        spdlog::error("渲染旋转纹理失败(ID: {}): {}", sprite.textureId(), SDL_GetError());
+                                  sprite.m_isFlipped ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE)) {
+        spdlog::error("渲染旋转纹理失败(ID: {}): {}", sprite.m_textureId, SDL_GetError());
     }
 }
 
-void Renderer::drawParallax(const Camera& camera,
-                            const Sprite& sprite,
-                            const glm::vec2& position,
-                            const glm::vec2& scrollFactor,
-                            const glm::bvec2& repeat,
-                            const glm::vec2& scale)
+void Renderer::drawUiImage(const Image& image,
+                           const glm::vec2& position,
+                           const std::optional<glm::vec2>& size)
 {
-    SDL_Texture* texture{ m_resourceManager->getTexture(sprite.textureId()) };
+    SDL_Texture* texture{ m_resourceManager->getTexture(image.textureId()) };
     if (texture == nullptr) {
-        spdlog::error("无法为 ID {} 获取纹理。", sprite.textureId());
+        spdlog::error("无法为 ID {} 获取纹理。", image.textureId());
         return;
     }
 
-    auto srcRect = getSpriteSrcRect(sprite);
+    auto srcRect = getImageSrcRect(image);
     if (!srcRect.has_value()) {
-        spdlog::error("无法获取精灵的源矩形, ID: {}", sprite.textureId());
-        return;
-    }
-
-    // 应用相机变换
-    const glm::vec2 positionScreen{ camera.worldToScreenWithParallax(position, scrollFactor) };
-
-    // 计算缩放后的纹理尺寸
-    const float scaledWidth{ srcRect.value().w * scale.x };
-    const float scaledHeight{ srcRect.value().h * scale.y };
-
-    glm::vec2 startPos;
-    glm::vec2 endPos;
-    const glm::vec2 viewportSize{ camera.viewportSize() };
-    if (repeat.x) {
-        // 重复背景纹理的 x 坐标范围，从 -scaledWidth 到 0
-        startPos.x = glm::mod(positionScreen.x, scaledWidth) - scaledWidth;
-        endPos.x = viewportSize.x;
-    } else {
-        startPos.x = positionScreen.x;
-        // 结束点是一个纹理宽度之后，但不超过视口宽度
-        endPos.x = glm::min(positionScreen.x + scaledWidth, viewportSize.x);
-    }
-    if (repeat.y) {
-        // 重复背景纹理的 y 坐标范围，从 -scaledHeight 到 0
-        startPos.y = glm::mod(positionScreen.y, scaledHeight) - scaledHeight;
-        endPos.y = viewportSize.y;
-    } else {
-        startPos.y = positionScreen.y;
-        // 结束点是一个纹理高度之后，但不超过视口高度
-        endPos.y = glm::min(positionScreen.y + scaledHeight, viewportSize.y);
-    }
-
-    for (float posY{ startPos.y }; posY < endPos.y; posY += scaledHeight) {
-        for (float posX{ startPos.x }; posX < endPos.x; posX += scaledWidth) {
-            const SDL_FRect destRect{ .x = posX, .y = posY, .w = scaledWidth, .h = scaledHeight };
-            if (!SDL_RenderTexture(m_sdlRenderer, texture, nullptr, &destRect)) {
-                spdlog::error("渲染视差纹理失败(ID: {}): {}", sprite.textureId(), SDL_GetError());
-                return;
-            }
-        }
-    }
-}
-
-void Renderer::drawUiSprite(const Sprite& sprite,
-                            const glm::vec2& position,
-                            const std::optional<glm::vec2>& size)
-{
-    SDL_Texture* texture{ m_resourceManager->getTexture(sprite.textureId()) };
-    if (texture == nullptr) {
-        spdlog::error("无法为 ID {} 获取纹理。", sprite.textureId());
-        return;
-    }
-
-    auto srcRect = getSpriteSrcRect(sprite);
-    if (!srcRect.has_value()) {
-        spdlog::error("无法获取精灵的源矩形, ID: {}", sprite.textureId());
+        spdlog::error("无法获取 Image 对象的源矩形, ID: {}", image.textureId());
         return;
     }
 
@@ -170,8 +108,8 @@ void Renderer::drawUiSprite(const Sprite& sprite,
                                   &destRect,
                                   0.0,
                                   nullptr,
-                                  sprite.isFlipped() ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE)) {
-        spdlog::error("渲染 UI Sprite 失败 (ID: {}): {}", sprite.textureId(), SDL_GetError());
+                                  image.isFlipped() ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE)) {
+        spdlog::error("渲染 UI Image 失败 (ID: {}): {}", image.textureId(), SDL_GetError());
     }
 }
 
@@ -215,20 +153,20 @@ void Renderer::setDrawColorFloat(float red, float green, float blue, float alpha
     }
 }
 
-std::optional<SDL_FRect> Renderer::getSpriteSrcRect(const Sprite& sprite)
+std::optional<SDL_FRect> Renderer::getImageSrcRect(const Image& image)
 {
-    SDL_Texture* texture{ m_resourceManager->getTexture(sprite.textureId()) };
+    SDL_Texture* texture{ m_resourceManager->getTexture(image.textureId()) };
     if (texture == nullptr) {
-        spdlog::error("无法为 ID {} 获取纹理。", sprite.textureId());
+        spdlog::error("无法为 ID {} 获取纹理。", image.textureId());
         return std::nullopt;
     }
 
-    auto srcRect = sprite.sourceRect();
+    auto srcRect = image.sourceRect();
     if (srcRect.has_value()) {
         if (srcRect.value().size.x <= 0 || srcRect.value().size.y <= 0) {
             spdlog::error("源矩形尺寸无效, ID: {}, path: {}",
-                          sprite.textureId(),
-                          sprite.texturePath());
+                          image.textureId(),
+                          image.texturePath());
             return std::nullopt;
         }
         return SDL_FRect{ .x = srcRect.value().position.x,
@@ -239,8 +177,8 @@ std::optional<SDL_FRect> Renderer::getSpriteSrcRect(const Sprite& sprite)
         SDL_FRect defaultRect{ .x = 0.0F, .y = 0.0F, .w = 0.0F, .h = 0.0F };
         if (!SDL_GetTextureSize(texture, &defaultRect.w, &defaultRect.h)) {
             spdlog::error("无法获取纹理尺寸, ID: {}, path: {}",
-                          sprite.textureId(),
-                          sprite.texturePath());
+                          image.textureId(),
+                          image.texturePath());
             return std::nullopt;
         }
         return defaultRect;

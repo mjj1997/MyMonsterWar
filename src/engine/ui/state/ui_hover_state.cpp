@@ -13,8 +13,8 @@ namespace engine::ui::state {
 
 void UiHoverState::enter()
 {
-    // 设置 UI 为悬停状态的精灵
-    m_owner->setSprite("hover"_hs);
+    // 设置 UI 为悬停状态的图片
+    m_owner->setImage("hover"_hs);
 }
 
 std::unique_ptr<UiStateBase> UiHoverState::handleInput(engine::core::Context& context)

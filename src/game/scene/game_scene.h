@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../engine/scene/scene_base.h"
+#include "../../engine/system/fwd.h"
 
 namespace game::scene {
 
@@ -11,13 +12,20 @@ public:
     ~GameScene() override;
 
     void init() override;
+    void update(float deltaTime) override;
+    void render() override;
     void clean() override;
 
 private:
     // --- 测试资源管理器 ---
     void testResourceManager();
 
-    int m_sceneNum{ 0 };
+    // --- 测试 ECS 系统 ---
+    void testECS();
+
+    std::unique_ptr<engine::system::MovementSystem> m_movementSystem;
+    std::unique_ptr<engine::system::RenderSystem> m_renderSystem;
+    std::unique_ptr<engine::system::AnimationSystem> m_animationSystem;
 };
 
 } // namespace game::scene

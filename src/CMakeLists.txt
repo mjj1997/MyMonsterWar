@@ -13,20 +13,10 @@ target_sources(
           engine/render/renderer.cpp
           engine/core/configurator.cpp
           engine/input/input_manager.cpp
-          engine/object/game_object.cpp
           engine/core/context.cpp
-          # engine/component/transform_component.cpp
-          # engine/component/sprite_component.cpp
           engine/scene/scene_base.cpp
           engine/scene/scene_manager.cpp
-          # engine/component/parallax_component.cpp
-          # engine/scene/level_loader.cpp
-          # engine/component/tilelayer_component.cpp
-          engine/render/animation.cpp
-          # engine/component/animation_component.cpp
-          # engine/component/health_component.cpp
           engine/audio/audio_player.cpp
-          # engine/component/audio_component.cpp
           engine/render/text_renderer.cpp
           engine/ui/ui_element_base.cpp
           engine/ui/ui_panel.cpp
@@ -39,7 +29,10 @@ target_sources(
           engine/ui/state/ui_pressed_state.cpp
           engine/ui/ui_button.cpp
           engine/core/game_state.cpp
-          game/scene/game_scene.cpp)
+          game/scene/game_scene.cpp
+          engine/system/movement_system.cpp
+          engine/system/render_system.cpp
+          engine/system/animation_system.cpp)
 
 target_link_libraries(
   MonsterWar

@@ -41,32 +41,32 @@ void UiInteractiveElementBase::render(engine::core::Context& context)
         return;
     }
 
-    // 先渲染当前状态对应的精灵
-    if (m_currentSpriteId != entt::null) {
-        m_context.renderer().drawUiSprite(m_sprites[m_currentSpriteId], screenPosition(), m_size);
+    // 先渲染当前状态对应的图片
+    if (m_currentImageId != entt::null) {
+        m_context.renderer().drawUiImage(m_images[m_currentImageId], screenPosition(), m_size);
     }
 
     // 再渲染子 UI 元素（调用基类的 render 方法）
     UiElementBase::render(context);
 }
 
-void UiInteractiveElementBase::addSprite(entt::id_type nameId, engine::render::Sprite sprite)
+void UiInteractiveElementBase::addImage(entt::id_type nameId, engine::render::Image image)
 {
     // 可交互 UI 元素必须有一个 size 用于交互检测，因此如果参数列表中没有指定，则用图片大小作为 size
     if (m_size.x == 0.0F && m_size.y == 0.0F) {
-        m_size = m_context.resourceManager().getTextureSize(sprite.textureId());
+        m_size = m_context.resourceManager().getTextureSize(image.textureId());
     }
 
-    // 添加精灵
-    m_sprites.emplace(nameId, std::move(sprite));
+    // 添加图片
+    m_images.emplace(nameId, std::move(image));
 }
 
-void UiInteractiveElementBase::setSprite(entt::id_type nameId)
+void UiInteractiveElementBase::setImage(entt::id_type nameId)
 {
-    if (auto iter = m_sprites.find(nameId); iter != m_sprites.end()) {
-        m_currentSpriteId = nameId;
+    if (auto iter = m_images.find(nameId); iter != m_images.end()) {
+        m_currentImageId = nameId;
     } else {
-        spdlog::warn("Sprite '{}' 未找到。", nameId);
+        spdlog::warn("Image '{}' 未找到。", nameId);
     }
 }
 

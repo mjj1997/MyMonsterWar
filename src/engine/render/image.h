@@ -13,30 +13,30 @@
 namespace engine::render {
 
 /**
- * @brief 表示要绘制的视觉精灵的数据。
+ * @brief 表示要绘制的 UI 图片的数据。（只针对 UI，与游戏中 Sprite 隔离）
  *
  * @note 包含纹理标识符、要绘制的纹理部分（源矩形）以及翻转状态。
- * @note 位置、缩放和旋转由外部（例如 SpriteComponent）标识。
- * @note 渲染工作由 Renderer 类完成。（传入Sprite作为参数）
+ * @note 位置、缩放和旋转由外部（例如 UiImage）标识。
+ * @note 渲染工作由 Renderer 类完成。（传入 Image 作为参数）
  */
-class Sprite final
+class Image final
 {
 public:
     /**
-     * @brief 默认构造函数(创建一个空的精灵，不包含任何纹理或源矩形)
+     * @brief 默认构造函数(创建一个空的图片，不包含任何纹理或源矩形)
      */
-    Sprite() = default;
+    Image() = default;
 
     /**
-     * @brief 构造一个精灵（通过纹理路径构造）
+     * @brief 构造一个图片（通过纹理路径构造）
      *
      * @param texturePath 纹理资源的文件路径。不应为空。
      * @param sourceRect 可选的源矩形，定义要使用的纹理部分。如果为 std::nullopt，则使用整个纹理。
      * @param isFlipped 是否水平翻转
      */
-    explicit Sprite(std::string_view texturePath,
-                    std::optional<engine::utils::Rect> sourceRect = std::nullopt,
-                    bool isFlipped = false)
+    explicit Image(std::string_view texturePath,
+                   std::optional<engine::utils::Rect> sourceRect = std::nullopt,
+                   bool isFlipped = false)
         : m_texturePath{ texturePath.data() }
         , m_textureId{ entt::hashed_string(texturePath.data()).value() }
         , m_sourceRect{ std::move(sourceRect) }
@@ -44,16 +44,16 @@ public:
     {}
 
     /**
-     * @brief 构造一个精灵（通过纹理ID构造）
+     * @brief 构造一个图片（通过纹理ID构造）
      *
      * @param textureId 纹理资源的标识符。不应为空。
      * @param sourceRect 可选的源矩形，定义要使用的纹理部分。如果为 std::nullopt，则使用整个纹理。
      * @param isFlipped 是否水平翻转
      * @note 用此方法，需确保对应ID的纹理已经加载到 ResourceManager 中，因此不需要再提供纹理路径。
      */
-    explicit Sprite(entt::id_type textureId,
-                    std::optional<engine::utils::Rect> sourceRect = std::nullopt,
-                    bool isFlipped = false)
+    explicit Image(entt::id_type textureId,
+                   std::optional<engine::utils::Rect> sourceRect = std::nullopt,
+                   bool isFlipped = false)
         : m_textureId{ textureId }
         , m_sourceRect{ std::move(sourceRect) }
         , m_isFlipped{ isFlipped }

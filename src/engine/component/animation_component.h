@@ -1,75 +1,91 @@
 #pragma once
 
-#include "../utils/string_view_hash.h"
-#include "component_base.h"
+#include "../utils/math.h"
 
-#include <memory>
-#include <string>
-#include <string_view>
+#include <entt/entity/entity.hpp>
+
 #include <unordered_map>
-
-namespace engine::render {
-class Animation;
-}
-
-namespace engine::component {
-class SpriteComponent;
-}
+#include <vector>
 
 namespace engine::component {
 
 /**
- * @brief GameObject的动画组件。
+ * @brief 动画帧数据结构，代表动画中的单个帧。
  *
- * 持有一组 Animation 对象并控制其播放，
- * 根据当前帧更新关联的 SpriteComponent。
+ * 包含该帧在纹理图集上的源矩形，和帧持续时间（毫秒）。
  */
-class AnimationComponent final : public ComponentBase
+struct AnimationFrame
 {
-    friend class engine::object::GameObject;
+    AnimationFrame(engine::utils::Rect sourceRect, float duration = 100.0F)
+        : m_sourceRect{ sourceRect }
+        , m_duration{ duration }
+    {}
 
+    engine::utils::Rect m_sourceRect; ///< @brief 该帧在纹理图集上的源矩形
+    float m_duration;                 ///< @brief 帧持续时间（毫秒）
+};
+
+/**
+ * @brief 动画数据结构，代表整个动画。
+ * 
+ * 包含帧列表、总时长和是否循环等属性。
+ */
+struct Animation
+{
 public:
-    AnimationComponent() = default;
-    ~AnimationComponent() override = default;
+    /**
+     * @brief 构造函数
+     * @param frames 动画帧列表。
+     * @param isLoop 动画是否应该循环播放。
+     */
+    explicit Animation(std::vector<AnimationFrame> frames, bool isLoop = true)
+        : m_frames{ std::move(frames) }
+        , m_isLoop{ isLoop }
+    {
+        // 计算总时长
+        for (const auto& frame : m_frames) {
+            m_totalDuration += frame.m_duration;
+        }
+    }
 
-    // 禁止拷贝和移动
-    AnimationComponent(const AnimationComponent&) = delete;
-    AnimationComponent& operator=(const AnimationComponent&) = delete;
-    AnimationComponent(AnimationComponent&&) = delete;
-    AnimationComponent& operator=(AnimationComponent&&) = delete;
+    std::vector<AnimationFrame> m_frames; ///< @brief 动画帧列表
+    float m_totalDuration{ 0.0F };        ///< @brief 动画的总持续时间（毫秒）
+    bool m_isLoop{ true };                ///< @brief 动画是否循环播放，默认值为 true
+};
 
-    ///< @brief 向 m_animations map容器中添加一个动画。
-    void addAnimation(std::unique_ptr<engine::render::Animation> animation);
-    void playAnimation(std::string_view name);     ///< @brief 播放指定名称的动画。
-    void stopAnimation() { m_isPlaying = false; }  ///< @brief 停止当前动画播放。
-    void resumeAnimation() { m_isPlaying = true; } ///< @brief 重新播放当前动画。
+/**
+ * @brief 动画组件。
+ *
+ * 包含动画集合、当前播放的动画、当前播放的帧索引、当前播放时间（毫秒）和播放速度。
+ */
+struct AnimationComponent
+{
+    /**
+     * @brief 构造函数
+     * @param animations 动画集合
+     * @param currentAnimationId 当前播放的动画名称 id
+     * @param currentFrameIndex 当前播放的帧索引
+     * @param currentTime 当前播放时间（毫秒）
+     * @param speed 播放速度
+     */
+    AnimationComponent(std::unordered_map<entt::id_type, Animation> animations,
+                       entt::id_type currentAnimationId,
+                       size_t currentFrameIndex = 0,
+                       float currentTime = 0.0F,
+                       float speed = 1.0F)
+        : m_animations{ std::move(animations) }
+        , m_currentAnimationId{ currentAnimationId }
+        , m_currentFrameIndex{ currentFrameIndex }
+        , m_currentTime{ currentTime }
+        , m_speed{ speed }
+    {}
 
-    // --- Getters and Setters ---
-    std::string_view currentAnimationName() const;
-    bool isPlaying() const { return m_isPlaying; }
-    bool isAnimationFinished() const;
-    bool isOneShotRemoval() const { return m_isOneShotRemoval; }
-    void setOneShotRemoval(bool isOneShotRemoval) { m_isOneShotRemoval = isOneShotRemoval; }
-
-protected:
-    // 核心循环方法
-    void init() override;
-    void update(float deltaTime, engine::core::Context& context) override;
-
-private:
-    /// @brief 动画名称到 Animation 对象的映射。
-    std::unordered_map<std::string,
-                       std::unique_ptr<engine::render::Animation>,
-                       engine::utils::StringViewHash,
-                       std::equal_to<>>
-        m_animations;
-    SpriteComponent* m_spriteComponent{ nullptr }; ///< @brief 指向必需的 SpriteComponent 的指针
-
-    engine::render::Animation* m_currentAnimation{ nullptr }; ///< @brief 指向当前播放动画的原始指针
-    float m_animationTimer{ 0.0F };                           ///< @brief 动画播放中的计时器
-
-    bool m_isPlaying{ false };        ///< @brief 当前是否有动画正在播放
-    bool m_isOneShotRemoval{ false }; ///< @brief 是否在动画结束后删除整个GameObject
+    /// @brief 动画集合，键为动画名称 id，值为动画数据
+    std::unordered_map<entt::id_type, Animation> m_animations;
+    entt::id_type m_currentAnimationId{ entt::null }; ///< @brief 当前播放的动画名称 id
+    size_t m_currentFrameIndex{ 0 };                  ///< @brief 当前播放的帧索引
+    float m_currentTime{ 0.0F };                      ///< @brief 当前播放时间（毫秒）
+    float m_speed{ 1.0F };                            ///< @brief 播放速度
 };
 
 } // namespace engine::component

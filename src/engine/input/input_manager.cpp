@@ -81,7 +81,7 @@ entt::sink<entt::sigh<bool()>> InputManager::actionSink(std::string_view actionN
 
 bool InputManager::isActionDown(std::string_view action) const
 {
-    if (auto iter = m_actionStates.find(action); iter != m_actionStates.end()) {
+    if (auto iter = m_actionStates.find(std::string(action)); iter != m_actionStates.end()) {
         return iter->second == ActionState::Pressed || iter->second == ActionState::Held;
     }
     return false;
@@ -89,7 +89,7 @@ bool InputManager::isActionDown(std::string_view action) const
 
 bool InputManager::isActionPressed(std::string_view action) const
 {
-    if (auto iter = m_actionStates.find(action); iter != m_actionStates.end()) {
+    if (auto iter = m_actionStates.find(std::string(action)); iter != m_actionStates.end()) {
         return iter->second == ActionState::Pressed;
     }
     return false;
@@ -97,7 +97,7 @@ bool InputManager::isActionPressed(std::string_view action) const
 
 bool InputManager::isActionReleased(std::string_view action) const
 {
-    if (auto iter = m_actionStates.find(action); iter != m_actionStates.end()) {
+    if (auto iter = m_actionStates.find(std::string(action)); iter != m_actionStates.end()) {
         return iter->second == ActionState::Released;
     }
     return false;
@@ -257,7 +257,7 @@ Uint32 InputManager::mouseButtonUint32FromString(std::string_view buttonName)
 
 void InputManager::updateActionState(std::string_view action, bool isInputActive, bool isRepeatEvent)
 {
-    auto iter = m_actionStates.find(action);
+    auto iter = m_actionStates.find(std::string(action));
     if (iter == m_actionStates.end()) {
         spdlog::warn("尝试更新未注册动作的状态: {}", action);
         return;

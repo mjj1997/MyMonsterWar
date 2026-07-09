@@ -4,10 +4,6 @@
 
 #include <optional>
 
-namespace engine::component {
-class TransformComponent;
-}
-
 namespace engine::render {
 
 /**
@@ -33,7 +29,6 @@ public:
     Camera(Camera&&) = delete;
     Camera& operator=(Camera&&) = delete;
 
-    void update(float deltaTime);       ///< @brief 更新相机位置
     void move(const glm::vec2& offset); ///< @brief 移动相机
 
     glm::vec2 worldToScreen(const glm::vec2& worldPos) const; ///< @brief 世界坐标转屏幕坐标
@@ -46,14 +41,10 @@ public:
     const glm::vec2& viewportSize() const;                         ///< @brief 获取视口大小
     const glm::vec2& position() const;                             ///< @brief 获取相机位置
     const std::optional<engine::utils::Rect>& limitBounds() const; ///< @brief 获取限制相机的移动范围
-    ///< @brief 获取相机跟随目标的变换组件
-    const engine::component::TransformComponent* target() const;
 
     void setPosition(glm::vec2 position); ///< @brief 设置相机位置
     ///< @brief 设置限制相机的移动范围
     void setLimitBounds(std::optional<engine::utils::Rect> limitBounds);
-    ///< @brief 设置相机跟随目标的变换组件
-    void setTarget(engine::component::TransformComponent* target);
 
 private:
     void clampPosition(); ///< @brief 限制相机位置在边界内
@@ -63,8 +54,6 @@ private:
     ///< @brief 限制相机的移动范围，空值表示不限制
     std::optional<engine::utils::Rect> m_limitBounds{ std::nullopt };
     float m_smoothSpeed{ 5.0F }; ///< @brief 相机移动的平滑速度
-    ///< @brief 相机跟随目标的变换组件，空值表示不跟随
-    engine::component::TransformComponent* m_target{ nullptr };
 };
 
 } // namespace engine::render
