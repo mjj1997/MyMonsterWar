@@ -81,6 +81,9 @@ bool GameApp::init()
     if (!initRenderer()) {
         return false;
     }
+    if (!initGameState()) {
+        return false;
+    }
     if (!initCamera()) {
         return false;
     }
@@ -91,9 +94,6 @@ bool GameApp::init()
         return false;
     }
     if (!initAudioPlayer()) {
-        return false;
-    }
-    if (!initGameState()) {
         return false;
     }
     if (!initDispatcher()) {
@@ -261,8 +261,7 @@ bool GameApp::initRenderer()
 bool GameApp::initCamera()
 {
     try {
-        m_camera = std::make_unique<engine::render::Camera>(
-            glm::vec2{ m_configurator->m_windowWidth / 2, m_configurator->m_windowHeight / 2 });
+        m_camera = std::make_unique<engine::render::Camera>(m_gameState->logicalSize());
     } catch (const std::exception& e) {
         spdlog::error("初始化相机失败: {}", e.what());
         return false;
