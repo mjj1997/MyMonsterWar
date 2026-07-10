@@ -32,7 +32,9 @@ target_sources(
           game/scene/game_scene.cpp
           engine/system/movement_system.cpp
           engine/system/render_system.cpp
-          engine/system/animation_system.cpp)
+          engine/system/animation_system.cpp
+          engine/loader/level_loader.cpp
+          engine/loader/basic_entity_builder.cpp)
 
 target_link_libraries(
   MonsterWar
