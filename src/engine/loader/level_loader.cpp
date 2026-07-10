@@ -317,6 +317,19 @@ std::optional<engine::component::TileInfo> LevelLoader::getTileInfoByGid(int gid
         return std::nullopt;
     }
 
+    // 判断并存储是否水平翻转（最高的第 32 位为 1）
+    bool isFlippedHorizontally = gid & 0x80000000;
+    /** 未来可添加其它翻转支持，目前精灵组件仅支持水平翻转
+     * // 判断并存储是否垂直翻转（最高的第 31 位为 1）
+     * bool isFlippedVertically = gid & 0x40000000;
+     * 
+     * // 判断并存储是否对角线翻转（最高的第 30 位为 1）
+     * bool isFlippedDiagonally = gid & 0x20000000;
+     */
+
+    // 还原 gid 的实际值（最高的三个标志位为 0，其余位均为 1。这个掩码的十六进制表示为 0x1FFFFFFF）
+    gid = gid & 0x1FFFFFFF;
+
     // upper_bound：查找 tilesets 中键大于 gid 的第一个元素，返回迭代器
     auto iter = m_tilesets.upper_bound(gid);
     if (iter == m_tilesets.begin()) {
