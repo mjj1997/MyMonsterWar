@@ -13,8 +13,6 @@
 namespace engine::component {
 struct TileInfo;
 enum class TileType;
-class AnimationComponent;
-class AudioComponent;
 } // namespace engine::component
 
 namespace engine::scene {
@@ -44,23 +42,6 @@ private:
     ///< @brief 加载对象图层
     void loadObjectLayer(const nlohmann::json& layerJson, SceneBase& scene);
 
-    /**
-     * @brief 添加动画到指定的 AnimationComponent。
-     * @param animationJson 动画 JSON 数据（自定义）
-     * @param animationComponent 动画组件指针（动画添加到此组件）
-     * @param spriteSize 每一帧动画的尺寸
-     */
-    static void addAnimation(const nlohmann::json& animationJson,
-                             engine::component::AnimationComponent* animationComponent,
-                             const glm::vec2& spriteSize);
-
-    /**
-     * @brief 添加音效到指定的 AudioComponent。
-     * @param soundJson 音效 JSON 数据（自定义）
-     * @param audioComponent 音效组件指针（音效添加到此组件）
-     */
-    static void addSound(const nlohmann::json& soundJson,
-                         engine::component::AudioComponent* audioComponent);
 
     /**
      * @brief 获取瓦片属性
@@ -109,13 +90,6 @@ private:
      * @return engine::component::TileInfo 瓦片信息。
      */
     engine::component::TileInfo getTileInfoByGid(int gid);
-
-    /**
-     * @brief 根据全局 ID 获取瓦片json对象 (用于对象层获取瓦片信息)
-     * @param gid 全局 ID
-     * @return 瓦片json对象
-     */
-    std::optional<nlohmann::json> getTileJsonByGid(int gid) const;
 
     /**
      * @brief 加载 Tiled tileset 文件 (.tsj)，数据保存到 m_tilesets 中。

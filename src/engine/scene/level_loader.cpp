@@ -305,81 +305,6 @@ void LevelLoader::loadObjectLayer(const nlohmann::json& layerJson, SceneBase& sc
     }
 }
 
-void LevelLoader::addAnimation(const nlohmann::json& animationJson,
-                               engine::component::AnimationComponent* animationComponent,
-                               const glm::vec2& spriteSize)
-{
-    // 检查 animationJson 必须是一个对象，并且 animationComponent 不能为 nullptr
-    if (!animationJson.is_object() || animationComponent == nullptr) {
-        spdlog::error("无效的动画 JSON 或 AnimationComponent 指针。");
-        return;
-    }
-
-    // 遍历动画 JSON 对象中的每个键值对（动画名称 : 动画信息）
-    for (const auto& anime : animationJson.items()) {
-        std::string_view animeName{ anime.key() };
-        const auto& animeInfo{ anime.value() };
-        if (!animeInfo.is_object()) {
-            spdlog::warn("动画 '{}' 的信息无效或为空。", animeName);
-            continue;
-        }
-
-        // 1. 获取可能存在的动画帧信息
-        auto duration_ms = animeInfo.value("duration", 100);       // 默认持续时间为100毫秒
-        auto duration = static_cast<float>(duration_ms) / 1000.0F; // 转换为秒
-        auto row = animeInfo.value("row", 0);                      // 默认行数为0
-        // 2. 帧信息（数组）是必须存在的
-        if (!animeInfo.contains("frames") || !animeInfo.at("frames").is_array()) {
-            spdlog::warn("动画 '{}' 缺少 'frames' 数组。", animeName);
-            continue;
-        }
-
-        // 3. 创建一个Animation对象 (默认为循环播放)
-        auto animation = std::make_unique<engine::render::Animation>(animeName);
-
-        // 4. 遍历数组并进行添加帧信息到animation对象
-        for (const auto& frame : animeInfo.at("frames")) {
-            if (!frame.is_number_integer()) {
-                spdlog::warn("动画 {} 中 frames 数组格式错误！", animeName);
-                continue;
-            }
-
-            auto column = frame.get<int>();
-            // 计算源矩形
-            const SDL_FRect srcRect{ .x = column * spriteSize.x,
-                                     .y = row * spriteSize.y,
-                                     .w = spriteSize.x,
-                                     .h = spriteSize.y };
-            // 添加动画帧到 Animation
-            animation->addFrame(srcRect, duration);
-        }
-
-        // 5. 将 Animation 对象添加到 AnimationComponent 中
-        animationComponent->addAnimation(std::move(animation));
-    }
-}
-
-void LevelLoader::addSound(const nlohmann::json& soundJson,
-                           engine::component::AudioComponent* audioComponent)
-{
-    // 检查 soundJson 必须是一个对象，并且 audioComponent 不能为 nullptr
-    if (!soundJson.is_object() || audioComponent == nullptr) {
-        spdlog::error("无效的音效 JSON 或 AudioComponent 指针。");
-        return;
-    }
-
-    // 遍历音效 JSON 对象中的每个键值对（音效 ID : 音效路径）
-    for (const auto& sound : soundJson.items()) {
-        std::string_view soundId{ sound.key() };
-        const std::string soundPath{ sound.value().get<std::string>() };
-        if (soundId.empty() || soundPath.empty()) {
-            spdlog::warn("音效 '{}' 缺少必要信息。", soundId);
-            continue;
-        }
-        // 添加音效到 AudioComponent
-        audioComponent->addSound(soundId, soundPath);
-    }
-}
 
 engine::component::TileType LevelLoader::getTileType(const nlohmann::json& tileJson)
 {
@@ -531,37 +456,6 @@ engine::component::TileInfo LevelLoader::getTileInfoByGid(int gid)
     // 如果能走到这里，说明查找失败，返回空的瓦片信息
     spdlog::error("Tileset 文件 '{}' 中未找到gid为 {} 的瓦片。", tilesetFirstGid, gid);
     return engine::component::TileInfo{};
-}
-
-std::optional<nlohmann::json> LevelLoader::getTileJsonByGid(int gid) const
-{
-    // 1. 查找 tilesets 中键大于 gid 的第一个元素，返回迭代器
-    auto iter = m_tilesets.upper_bound(gid);
-    if (iter == m_tilesets.begin()) {
-        spdlog::error("gid为 {} 的瓦片未找到图块集。", gid);
-        return std::nullopt;
-    }
-    --iter; // 前移一个位置，这样就得到不大于gid的最近一个元素（我们需要的）
-
-    // 2. 获取 tileset JSON 对象
-    const auto& tilesetJson = iter->second;
-    const auto& tilesetFirstGid = iter->first;
-    // 没有 tiles 字段的话不符合数据格式要求，直接返回空
-    if (!tilesetJson.contains("tiles")) {
-        spdlog::error("Tileset 文件 '{}' 缺少 'tiles' 属性。", tilesetFirstGid);
-        return std::nullopt;
-    }
-
-    // 3. 遍历 tileset JSON 中的 tiles 数组，根据局部 ID 查找对应的瓦片, 并返回瓦片 JSON 对象
-    auto localId = gid - tilesetFirstGid; // 计算瓦片在图块集中的局部ID
-    for (const auto& tile : tilesetJson.at("tiles")) {
-        auto tileId = tile.value("id", 0);
-        if (tileId == localId) {
-            return std::make_optional(tile);
-        }
-    }
-
-    return std::nullopt;
 }
 
 void LevelLoader::loadTileset(std::string_view tilesetPath, int firstGid)
