@@ -34,8 +34,10 @@ public:
     // --- 默认配置值 --- (为了方便拓展，全部设置为公有)
     // 窗口设置
     std::string m_windowTitle{ "MonsterWar" };
-    int m_windowWidth{ 1280 };
-    int m_windowHeight{ 720 };
+    int m_windowWidth{ 1600 };
+    int m_windowHeight{ 1216 };
+    float m_windowScale{ 0.75F };
+    float m_logicalScale{ 1.0F };
     bool m_windowResizable{ true };
 
     // 图形设置
