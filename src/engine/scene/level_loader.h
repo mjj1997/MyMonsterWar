@@ -40,6 +40,9 @@ public:
     [[nodiscard]] bool loadLevel(std::string_view mapPath, engine::scene::SceneBase* scene);
 
     // --- getters & setters ---
+    const glm::ivec2& mapSize() const { return m_mapSize; }
+    const glm::ivec2& tileSize() const { return m_tileSize; }
+
     ///< @brief 设置实体生成器（如果不设置，则使用默认的 BasicEntityBuilder）
     void setEntityBuilder(std::unique_ptr<BasicEntityBuilder> builder);
 
@@ -76,6 +79,13 @@ private:
 
         return std::nullopt;
     }
+
+    /**
+     * @brief 获取瓦片碰撞器矩形 （当前项目未使用）
+     * @param tileJson 瓦片 JSON 数据
+     * @return 碰撞器矩形，如果碰撞器不存在则返回 std::nullopt
+     */
+    static std::optional<engine::utils::Rect> getColliderRect(const nlohmann::json& tileJson);
 
     /**
      * @brief 获取瓦片纹理矩形（只针对单一图片图块集）

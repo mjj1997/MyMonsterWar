@@ -239,6 +239,32 @@ void LevelLoader::loadObjectLayer(const nlohmann::json& layerJson)
     }
 }
 
+std::optional<engine::utils::Rect> LevelLoader::getColliderRect(const nlohmann::json& tileJson)
+{
+    if (!tileJson.contains("objectgroup")) {
+        return std::nullopt;
+    }
+
+    auto& objectgroup = tileJson.at("objectgroup");
+    if (!objectgroup.contains("objects")) {
+        return std::nullopt;
+    }
+
+    auto& objects = objectgroup.at("objects");
+    for (const auto& object : objects) {
+        // 一个图片只支持一个碰撞器。如果有多个，则返回第一个不为空的
+        auto rect = engine::utils::Rect(glm::vec2{ object.value("x", 0.0f),
+                                                   object.value("y", 0.0f) },
+                                        glm::vec2{ object.value("width", 0.0f),
+                                                   object.value("height", 0.0f) });
+        if (rect.size.x > 0 && rect.size.y > 0) {
+            return rect;
+        }
+    }
+
+    return std::nullopt; // 如果没找到碰撞器，则返回空
+}
+
 engine::utils::Rect LevelLoader::getTextureRect(const nlohmann::json& tilesetJson, int localId)
 {
     auto columns = tilesetJson.value("columns", 1);
