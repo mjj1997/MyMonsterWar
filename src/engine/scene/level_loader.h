@@ -37,7 +37,7 @@ public:
      * @param scene 要加载数据的目标 Scene 对象。
      * @return bool 是否加载成功。
      */
-    [[nodiscard]] bool loadLevel(std::string_view mapPath, SceneBase& scene);
+    [[nodiscard]] bool loadLevel(std::string_view mapPath, engine::scene::SceneBase* scene);
 
     // --- getters & setters ---
     ///< @brief 设置实体生成器（如果不设置，则使用默认的 BasicEntityBuilder）
@@ -45,12 +45,11 @@ public:
 
 private:
     ///< @brief 加载图片图层
-    void loadImageLayer(const nlohmann::json& layerJson, SceneBase& scene);
+    void loadImageLayer(const nlohmann::json& layerJson);
     ///< @brief 加载瓦片图层
-    void loadTileLayer(const nlohmann::json& layerJson, SceneBase& scene);
+    void loadTileLayer(const nlohmann::json& layerJson);
     ///< @brief 加载对象图层
-    void loadObjectLayer(const nlohmann::json& layerJson, SceneBase& scene);
-
+    void loadObjectLayer(const nlohmann::json& layerJson);
 
     /**
      * @brief 获取瓦片属性
@@ -117,6 +116,8 @@ private:
      * @return std::string 解析后的完整路径。
      */
     static std::string resolvePath(std::string_view relativePath, std::string_view filePath);
+
+    engine::scene::SceneBase* m_scene; ///< @brief 场景指针（非拥有）
 
     std::string m_mapPath; ///< @brief 地图路径（拼接路径时需要）
     glm::ivec2 m_mapSize;  ///< @brief 地图尺寸（瓦片数量）

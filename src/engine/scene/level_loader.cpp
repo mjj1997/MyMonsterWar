@@ -23,7 +23,7 @@ void LevelLoader::setEntityBuilder(std::unique_ptr<BasicEntityBuilder> builder)
     m_entityBuilder = std::move(builder);
 }
 
-bool LevelLoader::loadLevel(std::string_view mapPath, SceneBase& scene)
+bool LevelLoader::loadLevel(std::string_view mapPath, engine::scene::SceneBase* scene)
 {
     // 1. 加载关卡地图 JSON 文件
     auto path = std::filesystem::path{ mapPath };
@@ -74,11 +74,11 @@ bool LevelLoader::loadLevel(std::string_view mapPath, SceneBase& scene)
 
         // 根据图层类型决定加载方法
         if (type == "imagelayer") {
-            loadImageLayer(layer, scene);
+            loadImageLayer(layer);
         } else if (type == "tilelayer") {
-            loadTileLayer(layer, scene);
+            loadTileLayer(layer);
         } else if (type == "objectgroup") {
-            loadObjectLayer(layer, scene);
+            loadObjectLayer(layer);
         } else {
             spdlog::warn("不支持的图层类型: {}", type);
         }
@@ -88,7 +88,7 @@ bool LevelLoader::loadLevel(std::string_view mapPath, SceneBase& scene)
     return true;
 }
 
-void LevelLoader::loadImageLayer(const nlohmann::json& layerJson, SceneBase& scene)
+void LevelLoader::loadImageLayer(const nlohmann::json& layerJson)
 {
     // 获取纹理相对路径 （会自动处理'\/'符号）
     const std::string imagePath{ layerJson.value("image", "") };
@@ -116,7 +116,7 @@ void LevelLoader::loadImageLayer(const nlohmann::json& layerJson, SceneBase& sce
     spdlog::info("加载图层: '{}' 完成", layerName);
 }
 
-void LevelLoader::loadTileLayer(const nlohmann::json& layerJson, SceneBase& scene)
+void LevelLoader::loadTileLayer(const nlohmann::json& layerJson)
 {
     if (!layerJson.contains("data") || !layerJson.at("data").is_array()) {
         spdlog::error("图层 '{}' 缺少 'data' 属性。", layerJson.value("name", "Unnamed"));
@@ -138,7 +138,7 @@ void LevelLoader::loadTileLayer(const nlohmann::json& layerJson, SceneBase& scen
     spdlog::info("加载图层: '{}' 完成", layerName);
 }
 
-void LevelLoader::loadObjectLayer(const nlohmann::json& layerJson, SceneBase& scene)
+void LevelLoader::loadObjectLayer(const nlohmann::json& layerJson)
 {
     if (!layerJson.contains("objects") || !layerJson.at("objects").is_array()) {
         spdlog::error("对象图层 '{}' 缺少 'objects' 属性。", layerJson.value("name", "Unnamed"));
