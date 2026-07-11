@@ -1,11 +1,15 @@
 #include "level_loader.h"
+#include "../component/name_component.h"
 #include "../component/parallax_component.h"
 #include "../component/sprite_component.h"
 #include "../component/tilelayer_component.h"
 #include "../component/transform_component.h"
 #include "../core/context.h"
+#include "../resource/resource_manager.h"
 #include "../scene/scene_base.h"
 
+#include <entt/core/hashed_string.hpp>
+#include <entt/entity/registry.hpp>
 #include <glm/vec2.hpp>
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
@@ -116,7 +120,14 @@ void LevelLoader::loadImageLayer(const nlohmann::json& layerJson)
         return;
     }
 
+    // 创建精灵（在获取纹理大小时会确保纹理加载）
     auto texturePath = LevelLoader::resolvePath(imagePath, m_mapPath);
+    auto& resourceManager = m_scene->context().resourceManager();
+    auto textureSize = resourceManager.getTextureSize(entt::hashed_string(texturePath.c_str()),
+                                                      texturePath);
+    auto sprite = engine::component::Sprite{ texturePath,
+                                             engine::utils::Rect{ glm::vec2(0.0F), textureSize } };
+
     // 获取图层偏移量（json中没有则代表未设置，给默认值即可）
     const glm::vec2 offset{ glm::vec2{ layerJson.value("offsetx", 0.0F),
                                        layerJson.value("offsety", 0.0F) } };
@@ -129,8 +140,21 @@ void LevelLoader::loadImageLayer(const nlohmann::json& layerJson)
 
     // 获取图层名称
     std::string layerName{ layerJson.value("name", "Unnamed") };
+    entt::id_type layerNameId{ entt::hashed_string(layerName.c_str()) };
 
     /*  可用类似方法获取其它各种属性，这里我们暂时用不上 */
+
+    // 创建图层实体
+    auto& registry = m_scene->registry();
+    auto layerEntity = registry.create();
+
+    // 添加组件
+    registry.emplace<engine::component::NameComponent>(layerEntity, layerNameId, layerName);
+    registry.emplace<engine::component::TransformComponent>(layerEntity, offset);
+    registry.emplace<engine::component::ParallaxComponent>(layerEntity, scrollFactor, repeat);
+    registry.emplace<engine::component::SpriteComponent>(layerEntity, sprite);
+
+    /* 实体与组件创建完毕后，由 registry 自动管理，不需要“添加到场景”的步骤 */
 
     spdlog::info("加载图层: '{}' 完成", layerName);
 }
