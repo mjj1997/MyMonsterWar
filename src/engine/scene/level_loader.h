@@ -78,6 +78,14 @@ private:
     }
 
     /**
+     * @brief 获取瓦片纹理矩形（只针对单一图片图块集）
+     * @param tilesetJson 图块集 JSON 数据
+     * @param localId 图块集中的 ID
+     * @return 纹理矩形
+     */
+    static engine::utils::Rect getTextureRect(const nlohmann::json& tilesetJson, int localId);
+
+    /**
      * @brief 根据瓦片 JSON 数据对象获取瓦片类型（当前项目中，TileType 无任何作用）
      * @param tileJson 瓦片 JSON 数据
      * @return 瓦片类型
@@ -98,7 +106,7 @@ private:
      * @param gid 全局 ID。
      * @return engine::component::TileInfo 瓦片信息。
      */
-    engine::component::TileInfo getTileInfoByGid(int gid);
+    std::optional<engine::component::TileInfo> getTileInfoByGid(int gid);
 
     /**
      * @brief 加载 Tiled tileset 文件 (.tsj)，数据保存到 m_tilesets 中。

@@ -197,6 +197,16 @@ void LevelLoader::loadObjectLayer(const nlohmann::json& layerJson)
     }
 }
 
+engine::utils::Rect LevelLoader::getTextureRect(const nlohmann::json& tilesetJson, int localId)
+{
+    auto columns = tilesetJson.value("columns", 1);
+    auto tileWidth = tilesetJson.value("tilewidth", 0);
+    auto tileHeight = tilesetJson.value("tileheight", 0);
+    auto tileX = localId % columns;
+    auto tileY = localId / columns;
+    return engine::utils::Rect{ glm::vec2{ tileX * tileWidth, tileY * tileHeight },
+                                glm::vec2{ tileWidth, tileHeight } };
+}
 
 engine::component::TileType LevelLoader::getTileType(const nlohmann::json& tileJson)
 {
@@ -233,17 +243,17 @@ engine::component::TileType LevelLoader::getTileTypeById(const nlohmann::json& t
     return engine::component::TileType::Normal;
 }
 
-engine::component::TileInfo LevelLoader::getTileInfoByGid(int gid)
+std::optional<engine::component::TileInfo> LevelLoader::getTileInfoByGid(int gid)
 {
     if (gid == 0) {
-        return engine::component::TileInfo{};
+        return std::nullopt;
     }
 
     // upper_bound：查找 tilesets 中键大于 gid 的第一个元素，返回迭代器
     auto iter = m_tilesets.upper_bound(gid);
     if (iter == m_tilesets.begin()) {
         spdlog::error("gid为 {} 的瓦片未找到图块集。", gid);
-        return engine::component::TileInfo{};
+        return std::nullopt;
     }
     --iter; // 前移一个位置，这样就得到不大于gid的最近一个元素（我们需要的）
 
@@ -253,47 +263,49 @@ engine::component::TileInfo LevelLoader::getTileInfoByGid(int gid)
     const std::string filePath{ tilesetJson.value("filepath", "") }; // 获取图块集文件路径
     if (filePath.empty()) {
         spdlog::error("Tileset 文件 '{}' 缺少 'filepath' 属性。", tilesetFirstGid);
-        return engine::component::TileInfo{};
+        return std::nullopt;
     }
 
     auto localId = gid - tilesetFirstGid; // 计算瓦片在图块集中的局部 ID
 
-    // 图块集分为两种情况，需要分别考虑
-    if (tilesetJson.contains("image")) { // 这是单一图片的情况
+    engine::component::TileInfo tileInfo; // 初始化瓦片信息
+    // 图块集分为两种情况，使用一个标志进行记录区分
+    bool isSingleImage{ false };
+    // --- 单一图片的情况 ---
+    if (tilesetJson.contains("image")) {
         // 获取图片路径
         auto texturePath = LevelLoader::resolvePath(tilesetJson.at("image").get<std::string>(),
                                                     filePath);
-        // 计算在图片网格中的瓦片坐标
-        auto coordinateX = localId % tilesetJson.at("columns").get<int>();
-        auto coordinateY = localId / tilesetJson.at("columns").get<int>();
-        // 根据瓦片坐标确定源矩形
-        SDL_FRect srcRect{ .x = static_cast<float>(coordinateX * m_tileSize.x),
-                           .y = static_cast<float>(coordinateY * m_tileSize.y),
-                           .w = static_cast<float>(m_tileSize.x),
-                           .h = static_cast<float>(m_tileSize.y) };
-        // 创建瓦片精灵
-        const engine::render::Sprite sprite{ textureId, srcRect };
-        // 获取瓦片类型
-        auto tileType = LevelLoader::getTileTypeById(tilesetJson, localId);
-        // 返回瓦片信息
-        return engine::component::TileInfo{ sprite, tileType };
-    } else { // 这是多图片的情况
-        // 没有 tiles 字段的话不符合数据格式要求，直接返回空的瓦片信息
-        if (!tilesetJson.contains("tiles")) {
-            spdlog::error("Tileset 文件 '{}' 缺少 'tiles' 属性。", tilesetFirstGid);
-            return engine::component::TileInfo{};
-        }
+        // 获取纹理源矩形
+        auto textureRect = LevelLoader::getTextureRect(tilesetJson, localId);
+        // 填充瓦片信息中的精灵和类型
+        tileInfo.m_sprite = engine::component::Sprite{ texturePath, textureRect };
+        tileInfo.m_type = LevelLoader::getTileTypeById(tilesetJson,
+                                                       localId); // 只有瓦片 id，还没有瓦片 json 数据
+        // 标记为单一图片
+        isSingleImage = true;
+    }
 
-        // 遍历 tileset JSON 中的 tiles 数组，根据局部 ID 查找对应的瓦片
-        for (const auto& tile : tilesetJson.at("tiles")) {
-            auto tileId = tile.value("id", 0);
-            if (tileId == localId) { // 找到对应的瓦片，进行后续操作
+    // --- 多图片的情况 ---
+    if (!isSingleImage && !tilesetJson.contains("tiles")) {
+        // 没有 tiles 字段的话不符合数据格式要求，直接返回空的瓦片信息
+        spdlog::error("Tileset 文件 '{}' 缺少 'tiles' 属性。", tilesetFirstGid);
+        return std::nullopt;
+    }
+
+    // 遍历 tileset JSON 中的 tiles 数组，根据局部 ID 查找对应的瓦片
+    for (const auto& tile : tilesetJson.at("tiles")) {
+        auto tileId = tile.value("id", 0);
+        // 找到对应的瓦片，进行后续操作
+        if (tileId == localId) {
+            // 如果是多图片，需要先补充精灵和类型信息
+            if (!isSingleImage) {
                 // 没有 image 字段的话不符合数据格式要求，直接返回空的瓦片信息
                 if (!tile.contains("image")) {
                     spdlog::error("Tileset 文件 '{}' 中瓦片 {} 缺少 'image' 属性。",
                                   tilesetFirstGid,
                                   tileId);
-                    return engine::component::TileInfo{};
+                    return std::nullopt;
                 }
 
                 // --- 接下来根据必要信息创建并返回 TileInfo ---
@@ -307,23 +319,18 @@ engine::component::TileInfo LevelLoader::getTileInfoByGid(int gid)
                  * Tiled 中源矩形信息只有设置了才会有值，没有就是默认值
                  * 如果未设置，则使用图片尺寸
                  */
-                SDL_FRect srcRect{ .x = static_cast<float>(tile.value("x", 0)),
-                                   .y = static_cast<float>(tile.value("y", 0)),
-                                   .w = static_cast<float>(tile.value("width", imageWidth)),
-                                   .h = static_cast<float>(tile.value("height", imageHeight)) };
-                // 创建瓦片精灵
-                const engine::render::Sprite sprite{ textureId, srcRect };
-                // 获取瓦片类型
-                auto tileType = LevelLoader::getTileType(tile);
-                // 返回瓦片信息
-                return engine::component::TileInfo{ sprite, tileType };
+                engine::utils::Rect srcRect{ static_cast<float>(tile.value("x", 0)),
+                                             static_cast<float>(tile.value("y", 0)),
+                                             static_cast<float>(tile.value("width", imageWidth)),
+                                             static_cast<float>(tile.value("height", imageHeight)) };
+                // 填充瓦片信息中的精灵和类型
+                tileInfo.m_sprite = engine::component::Sprite{ texturePath, srcRect };
+                tileInfo.m_type = LevelLoader::getTileType(tile); // 已经有具体的瓦片 JSON 数据
             }
         }
     }
 
-    // 如果能走到这里，说明查找失败，返回空的瓦片信息
-    spdlog::error("Tileset 文件 '{}' 中未找到gid为 {} 的瓦片。", tilesetFirstGid, gid);
-    return engine::component::TileInfo{};
+    return tileInfo;
 }
 
 void LevelLoader::loadTileset(std::string_view tilesetPath, int firstGid)
