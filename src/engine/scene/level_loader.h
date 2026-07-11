@@ -29,6 +29,7 @@ class LevelLoader final
 
 public:
     LevelLoader() = default;
+    ~LevelLoader();
 
     /**
      * @brief 加载关卡数据到指定的 Scene 对象中，并根据关卡数据生成游戏实体。

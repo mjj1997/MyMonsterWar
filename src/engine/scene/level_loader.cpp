@@ -16,6 +16,8 @@
 
 namespace engine::scene {
 
+LevelLoader::~LevelLoader() = default;
+
 void LevelLoader::setEntityBuilder(std::unique_ptr<BasicEntityBuilder> builder)
 {
     m_entityBuilder = std::move(builder);
