@@ -25,6 +25,19 @@ void LevelLoader::setEntityBuilder(std::unique_ptr<BasicEntityBuilder> builder)
 
 bool LevelLoader::loadLevel(std::string_view mapPath, engine::scene::SceneBase* scene)
 {
+    if (scene == nullptr) {
+        spdlog::error("场景指针为空");
+        return false;
+    }
+    m_scene = scene;
+
+    if (m_entityBuilder == nullptr) {
+        spdlog::info("设置默认的实体生成器");
+        m_entityBuilder = std::make_unique<BasicEntityBuilder>(*this,
+                                                               scene->context(),
+                                                               scene->registry());
+    }
+
     // 1. 加载关卡地图 JSON 文件
     auto path = std::filesystem::path{ mapPath };
     std::ifstream file{ path };
