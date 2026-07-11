@@ -1,11 +1,13 @@
 #pragma once
 
+#include "../loader/basic_entity_builder.h"
 #include "../utils/math.h"
 
 #include <glm/vec2.hpp>
 #include <nlohmann/json.hpp>
 
 #include <map>
+#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -23,6 +25,8 @@ class SceneBase;
  */
 class LevelLoader final
 {
+    friend class BasicEntityBuilder;
+
 public:
     LevelLoader() = default;
 
@@ -33,6 +37,10 @@ public:
      * @return bool 是否加载成功。
      */
     [[nodiscard]] bool loadLevel(std::string_view mapPath, SceneBase& scene);
+
+    // --- getters & setters ---
+    ///< @brief 设置实体生成器（如果不设置，则使用默认的 BasicEntityBuilder）
+    void setEntityBuilder(std::unique_ptr<BasicEntityBuilder> builder);
 
 private:
     ///< @brief 加载图片图层
@@ -114,6 +122,8 @@ private:
     glm::ivec2 m_tileSize; ///< @brief 瓦片尺寸（像素）
 
     std::map<int, nlohmann::json> m_tilesets; ///< @brief firstgid -> 瓦片集 json 数据
+
+    std::unique_ptr<BasicEntityBuilder> m_entityBuilder; ///< @brief 实体生成器（生成器模式）
 };
 
 } // namespace engine::scene

@@ -16,6 +16,11 @@
 
 namespace engine::scene {
 
+void LevelLoader::setEntityBuilder(std::unique_ptr<BasicEntityBuilder> builder)
+{
+    m_entityBuilder = std::move(builder);
+}
+
 bool LevelLoader::loadLevel(std::string_view mapPath, SceneBase& scene)
 {
     // 1. 加载关卡地图 JSON 文件
