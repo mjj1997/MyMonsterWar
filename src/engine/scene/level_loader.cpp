@@ -109,8 +109,8 @@ void LevelLoader::loadImageLayer(const nlohmann::json& layerJson)
         spdlog::error("图层 '{}' 缺少 'image' 属性。", layerJson.value("name", "Unnamed"));
         return;
     }
-    auto textureId = LevelLoader::resolvePath(imagePath, m_mapPath);
 
+    auto texturePath = LevelLoader::resolvePath(imagePath, m_mapPath);
     // 获取图层偏移量（json中没有则代表未设置，给默认值即可）
     const glm::vec2 offset{ glm::vec2{ layerJson.value("offsetx", 0.0F),
                                        layerJson.value("offsety", 0.0F) } };
@@ -220,9 +220,9 @@ engine::component::TileInfo LevelLoader::getTileInfoByGid(int gid)
     const auto& tilesetJson = iter->second;
     const auto& tilesetFirstGid = iter->first;
 
-    const std::string filePath{ tilesetJson.value("filePath", "") }; // 获取图块集文件路径
+    const std::string filePath{ tilesetJson.value("filepath", "") }; // 获取图块集文件路径
     if (filePath.empty()) {
-        spdlog::error("Tileset 文件 '{}' 缺少 'filePath' 属性。", tilesetFirstGid);
+        spdlog::error("Tileset 文件 '{}' 缺少 'filepath' 属性。", tilesetFirstGid);
         return engine::component::TileInfo{};
     }
 
@@ -231,8 +231,8 @@ engine::component::TileInfo LevelLoader::getTileInfoByGid(int gid)
     // 图块集分为两种情况，需要分别考虑
     if (tilesetJson.contains("image")) { // 这是单一图片的情况
         // 获取图片路径
-        auto textureId = LevelLoader::resolvePath(tilesetJson.at("image").get<std::string>(),
-                                                  filePath);
+        auto texturePath = LevelLoader::resolvePath(tilesetJson.at("image").get<std::string>(),
+                                                    filePath);
         // 计算在图片网格中的瓦片坐标
         auto coordinateX = localId % tilesetJson.at("columns").get<int>();
         auto coordinateY = localId / tilesetJson.at("columns").get<int>();
@@ -268,8 +268,8 @@ engine::component::TileInfo LevelLoader::getTileInfoByGid(int gid)
 
                 // --- 接下来根据必要信息创建并返回 TileInfo ---
                 // 获取图片路径
-                auto textureId = LevelLoader::resolvePath(tile.at("image").get<std::string>(),
-                                                          filePath);
+                auto texturePath = LevelLoader::resolvePath(tile.at("image").get<std::string>(),
+                                                            filePath);
                 // 先确认图片尺寸
                 auto imageWidth = tile.value("imagewidth", 0);
                 auto imageHeight = tile.value("imageheight", 0);
@@ -309,9 +309,10 @@ void LevelLoader::loadTileset(std::string_view tilesetPath, int firstGid)
     file >> tilesetJson;
 
     // 注入瓦片集文件路径，方便后续加载瓦片时解析相对路径
-    tilesetJson.emplace("filePath", tilesetPath);
+    tilesetJson.emplace("filepath", tilesetPath);
 
     m_tilesets[firstGid] = std::move(tilesetJson);
+    spdlog::info("瓦片集文件 '{}' 加载完成，firstgid: {}", tilesetPath, firstGid);
 }
 
 std::string LevelLoader::resolvePath(std::string_view relativePath, std::string_view filePath)
