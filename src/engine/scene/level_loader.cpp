@@ -220,10 +220,21 @@ void LevelLoader::loadObjectLayer(const nlohmann::json& layerJson)
     }
 
     for (const auto& object : layerJson.at("objects")) {
+        // 获取对象 gid
         auto gid = object.value("gid", 0);
-
-        if (gid == 0) { // 如果 gid 为 0，代表是自定义形状，如碰撞盒，我们以后再处理
+        // 如果 gid 为 0（即不存在），则代表是自定义形状
+        if (gid == 0) {
+            // 配置自定义形状生成器
+            m_entityBuilder->configure(&object)->build();
         } else { // 如果 gid 存在，则代表这是一个带图像的对象
+            auto tileInfo = getTileInfoByGid(gid);
+            if (!tileInfo) {
+                spdlog::warn("对象图层 '{}' 中的对象缺少有效的 'gid' 或瓦片信息。",
+                             layerJson.value("name", "Unnamed"));
+                continue;
+            }
+            // 配置图片对象生成器
+            m_entityBuilder->configure(&object, &tileInfo.value())->build();
         }
     }
 }
