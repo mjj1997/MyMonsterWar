@@ -1,15 +1,9 @@
 #include "level_loader.h"
-#include "../component/animation_component.h"
-#include "../component/audio_component.h"
-#include "../component/health_component.h"
 #include "../component/parallax_component.h"
 #include "../component/sprite_component.h"
 #include "../component/tilelayer_component.h"
 #include "../component/transform_component.h"
 #include "../core/context.h"
-#include "../object/game_object.h"
-#include "../render/animation.h"
-#include "../render/sprite.h"
 #include "../scene/scene_base.h"
 
 #include <glm/vec2.hpp>
@@ -112,13 +106,6 @@ void LevelLoader::loadImageLayer(const nlohmann::json& layerJson, SceneBase& sce
 
     /*  可用类似方法获取其它各种属性，这里我们暂时用不上 */
 
-    // 创建游戏对象
-    auto gameObject = std::make_unique<engine::object::GameObject>(layerName);
-    // 依次添加Transform，Parallax组件
-    gameObject->addComponent<engine::component::TransformComponent>(offset);
-    gameObject->addComponent<engine::component::ParallaxComponent>(textureId, scrollFactor, repeat);
-    // 添加到场景中
-    scene.addGameObject(std::move(gameObject));
     spdlog::info("加载图层: '{}' 完成", layerName);
 }
 
@@ -141,14 +128,6 @@ void LevelLoader::loadTileLayer(const nlohmann::json& layerJson, SceneBase& scen
 
     // 获取图层名称
     std::string layerName{ layerJson.value("name", "Unnamed") };
-    // 创建游戏对象
-    auto gameObject = std::make_unique<engine::object::GameObject>(layerName);
-    // 添加Tilelayer组件
-    gameObject->addComponent<engine::component::TileLayerComponent>(m_tileSize,
-                                                                    m_mapSize,
-                                                                    std::move(tiles));
-    // 添加到场景中
-    scene.addGameObject(std::move(gameObject));
     spdlog::info("加载图层: '{}' 完成", layerName);
 }
 
@@ -163,144 +142,7 @@ void LevelLoader::loadObjectLayer(const nlohmann::json& layerJson, SceneBase& sc
         auto gid = object.value("gid", 0);
 
         if (gid == 0) { // 如果 gid 为 0，代表是自定义形状，如碰撞盒，我们以后再处理
-            // 非矩形对象会有额外标识（目前不考虑）
-            if (object.value("point", false)) {          // 如果是点对象
-                continue;                                // TODO: 点对象的处理方式
-            } else if (object.value("ellipse", false)) { // 如果是椭圆对象
-                continue;                                // TODO: 椭圆对象的处理方式
-            } else if (object.value("polygon", false)) { // 如果是多边形对象
-                continue;                                // TODO: 多边形对象的处理方式
-            }
-            // 没有这些标识则默认是矩形对象
-            else {
-                // --- 创建游戏对象并添加TransfromComponent ---
-                std::string objectName = object.value("name", "Unnamed");
-                auto gameObject = std::make_unique<engine::object::GameObject>(objectName);
-                // 获取Transform相关信息 （自定义形状的坐标针对左上角）
-                auto position = glm::vec2{ object.value("x", 0.0F), object.value("y", 0.0F) };
-                auto dstRectSize = glm::vec2{ object.value("width", 0.0F),
-                                              object.value("height", 0.0F) };
-                auto rotation = object.value("rotation", 0.0F);
-                // 添加TransformComponent，缩放为设定为1.0F
-                gameObject->addComponent<engine::component::TransformComponent>(position,
-                                                                                glm::vec2{ 1.0F },
-                                                                                rotation);
-
-                // -- 根据瓦片自定义属性设置 GameObject --
-                // 获取标签信息并设置
-                if (auto tag = getTileProperty<std::string>(object, "tag"); tag) { // 如果有标签
-                    gameObject->setTag(tag.value());
-                }
-
-                // 添加到场景
-                scene.addGameObject(std::move(gameObject));
-                spdlog::info("加载对象: '{}' 完成 (类型: 自定义形状)", objectName);
-            }
         } else { // 如果 gid 存在，则代表这是一个带图像的对象
-            // -- 添加 Transform、Sprite 组件 --
-            // 获取瓦片信息
-            auto tileInfo = getTileInfoByGid(gid);
-            if (tileInfo.sprite.textureId().empty()) {
-                spdlog::error("gid为 {} 的瓦片没有图像纹理。", gid);
-                continue;
-            }
-
-            // 获取构建 Transform 组件所需的信息
-            // 1. 获取对象位置
-            auto position = glm::vec2{ object.value("x", 0.0F), object.value("y", 0.0F) };
-            auto dstRectSize = glm::vec2{ object.value("width", 0.0F),
-                                          object.value("height", 0.0F) };
-
-            /**  !! 关键的坐标转换 !!
-             * 从 Tiled 中获取的坐标是左下角，而 SDL 游戏引擎的坐标是左上角，所以需要转换
-             */
-            position = glm::vec2{ position.x, position.y - dstRectSize.y };
-
-            // 2. 获取对象旋转角度
-            auto rotation = object.value("rotation", 0.0F);
-
-            // 3. 计算缩放比例
-            auto srcRect = tileInfo.sprite.sourceRect();
-            if (!srcRect) {
-                spdlog::error("gid为 {} 的瓦片没有源矩形。", gid);
-                continue;
-            }
-            auto srcRectSize = glm::vec2{ srcRect->w, srcRect->h };
-            auto scale = dstRectSize / srcRectSize;
-
-            // 获取对象名称
-            std::string objectName{ object.value("name", "Unnamed") };
-
-            // 创建 GameObject 并添加组件
-            auto gameObject = std::make_unique<engine::object::GameObject>(objectName);
-            gameObject->addComponent<engine::component::TransformComponent>(position,
-                                                                            scale,
-                                                                            rotation);
-            gameObject->addComponent<engine::component::SpriteComponent>(std::move(tileInfo.sprite),
-                                                                         scene.context()
-                                                                             .resourceManager());
-
-            /** 获取瓦片json信息
-             * 1. 必然存在，因为 getTileInfoByGid(gid) 函数已经顺利执行
-             * 2. 这里再获取 tile JSON，实际上检索了两次，未来可以优化
-             */
-            auto tileJson = getTileJsonByGid(gid);
-
-            // -- 根据瓦片自定义属性设置 GameObject --
-            // 获取标签信息并设置
-            auto tag = getTileProperty<std::string>(tileJson, "tag");
-            if (tag) {
-                gameObject->setTag(tag.value());
-            } else if (tileInfo.type == engine::component::TileType::Hazard) {
-                // 如果是危险瓦片，且没有手动设置标签，则自动设置标签为 "hazard"
-                gameObject->setTag("hazard");
-            }
-
-            // 获取动画信息并设置
-            auto animation = getTileProperty<std::string>(tileJson, "animation");
-            if (animation) {
-                // 解析 string 到 JSON 对象
-                nlohmann::json animationJson;
-                try {
-                    animationJson = nlohmann::json::parse(animation.value());
-                } catch (const nlohmann::json::parse_error& e) {
-                    spdlog::error("解析动画 JSON 字符串失败：{}", e.what());
-                    continue; // 跳过当前对象，继续处理下一个对象
-                }
-                // 添加组件到 GameObject
-                auto* animationComponent
-                    = gameObject->addComponent<engine::component::AnimationComponent>();
-                // 添加动画到组件
-                LevelLoader::addAnimation(animationJson, animationComponent, srcRectSize);
-            }
-
-            // 获取音效信息并设置
-            auto sound = getTileProperty<std::string>(tileJson, "sound");
-            if (sound) {
-                // 解析 string 到 JSON 对象
-                nlohmann::json soundJson;
-                try {
-                    soundJson = nlohmann::json::parse(sound.value());
-                } catch (const nlohmann::json::parse_error& e) {
-                    spdlog::error("解析音效 JSON 字符串失败：{}", e.what());
-                    continue; // 跳过当前对象，继续处理下一个对象
-                }
-                // 添加组件到 GameObject
-                auto* audioComponent = gameObject->addComponent<engine::component::AudioComponent>(
-                    &scene.context().audioPlayer(), &scene.context().camera());
-                // 添加音效到组件
-                LevelLoader::addSound(soundJson, audioComponent);
-            }
-
-            // 获取生命值信息并设置
-            auto health = getTileProperty<int>(tileJson, "health");
-            if (health) {
-                gameObject->addComponent<engine::component::HealthComponent>(health.value());
-            }
-
-            // -- 添加 GameObject 到场景中 --
-            scene.addGameObject(std::move(gameObject));
-            spdlog::info("加载对象: '{}' 完成", objectName);
         }
     }
 }
@@ -313,32 +155,8 @@ engine::component::TileType LevelLoader::getTileType(const nlohmann::json& tileJ
             if (property.value("name", "") == "solid") {
                 return property.value("value", false) ? engine::component::TileType::Solid
                                                       : engine::component::TileType::Normal;
-            } else if (property.value("name", "") == "unisolid") {
-                return property.value("value", false) ? engine::component::TileType::Unisolid
-                                                      : engine::component::TileType::Normal;
-            } else if (property.value("name", "") == "slope") {
-                auto slopeType = property.value("value", "");
-                if (slopeType == "0_1") {
-                    return engine::component::TileType::Slope_0_1;
-                } else if (slopeType == "1_0") {
-                    return engine::component::TileType::Slope_1_0;
-                } else if (slopeType == "0_2") {
-                    return engine::component::TileType::Slope_0_2;
-                } else if (slopeType == "2_1") {
-                    return engine::component::TileType::Slope_2_1;
-                } else if (slopeType == "1_2") {
-                    return engine::component::TileType::Slope_1_2;
-                } else if (slopeType == "2_0") {
-                    return engine::component::TileType::Slope_2_0;
-                } else {
-                    spdlog::error("未知的斜坡类型: {}", slopeType);
-                    return engine::component::TileType::Normal;
-                }
             } else if (property.value("name", "") == "hazard") {
                 return property.value("value", false) ? engine::component::TileType::Hazard
-                                                      : engine::component::TileType::Normal;
-            } else if (property.value("name", "") == "ladder") {
-                return property.value("value", false) ? engine::component::TileType::Ladder
                                                       : engine::component::TileType::Normal;
             }
             // TODO: 可以在这里添加更多的自定义属性处理逻辑
