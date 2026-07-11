@@ -65,10 +65,11 @@ private:
             return std::nullopt;
         }
 
-        for (const auto& property : tileJson["properties"]) {
-            if (property.contains("name") && property["name"].get<std::string>() == propertyName) {
+        for (const auto& property : tileJson.at("properties")) {
+            if (property.contains("name")
+                && property.at("name").get<std::string>() == propertyName) {
                 if (property.contains("value")) {
-                    return property["value"].get<T>();
+                    return property.at("value").get<T>();
                 }
             }
         }

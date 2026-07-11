@@ -60,9 +60,15 @@ bool LevelLoader::loadLevel(std::string_view mapPath, engine::scene::SceneBase* 
     m_mapSize = glm::ivec2{ mapJson.value("width", 0), mapJson.value("height", 0) };
     m_tileSize = glm::ivec2{ mapJson.value("tilewidth", 0), mapJson.value("tileheight", 0) };
 
-    // 4. 加载瓦片集数据
+    // 4. 加载瓦片集 JSON 数据
     if (mapJson.contains("tilesets") && mapJson.at("tilesets").is_array()) {
         for (const auto& tileset : mapJson.at("tilesets")) {
+            if (!tileset.contains("source") || !tileset.at("source").is_string()
+                || !tileset.contains("firstgid") || !tileset.at("firstgid").is_number_integer()) {
+                spdlog::error("瓦片集 JSON 数据对象中缺少有效的 'source' 或 'firstgid' 字段。");
+                continue;
+            }
+
             auto tilesetPath = LevelLoader::resolvePath(tileset.at("source").get<std::string>(),
                                                         m_mapPath);
             auto firstGid = tileset.at("firstgid").get<int>();
@@ -311,7 +317,7 @@ void LevelLoader::loadTileset(std::string_view tilesetPath, int firstGid)
     // 注入瓦片集文件路径，方便后续加载瓦片时解析相对路径
     tilesetJson.emplace("filepath", tilesetPath);
 
-    m_tilesets[firstGid] = std::move(tilesetJson);
+    m_tilesets.try_emplace(firstGid, std::move(tilesetJson));
     spdlog::info("瓦片集文件 '{}' 加载完成，firstgid: {}", tilesetPath, firstGid);
 }
 
