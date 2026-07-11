@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../loader/basic_entity_builder.h"
 #include "../utils/math.h"
+#include "basic_entity_builder.h"
 
 #include <glm/vec2.hpp>
 #include <nlohmann/json.hpp>
@@ -19,7 +19,9 @@ enum class TileType;
 
 namespace engine::scene {
 class SceneBase;
+}
 
+namespace engine::loader {
 /**
  * 关卡加载器，负责加载关卡数据，并生成游戏实体
  */
@@ -147,4 +149,4 @@ private:
     std::unique_ptr<BasicEntityBuilder> m_entityBuilder; ///< @brief 实体生成器（生成器模式）
 };
 
-} // namespace engine::scene
+} // namespace engine::loader

@@ -18,7 +18,7 @@
 #include <filesystem>
 #include <fstream>
 
-namespace engine::scene {
+namespace engine::loader {
 
 LevelLoader::~LevelLoader() = default;
 
@@ -455,4 +455,4 @@ std::string LevelLoader::resolvePath(std::string_view relativePath, std::string_
     }
 }
 
-} // namespace engine::scene
+} // namespace engine::loader
