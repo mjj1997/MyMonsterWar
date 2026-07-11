@@ -166,6 +166,10 @@ void LevelLoader::loadTileLayer(const nlohmann::json& layerJson)
         return;
     }
 
+    // 获取图层名称
+    std::string layerName{ layerJson.value("name", "Unnamed") };
+    entt::id_type layerNameId{ entt::hashed_string(layerName.c_str()) };
+
     // 准备瓦片实体 Vector (瓦片数量 = 地图宽度 * 地图高度)
     std::vector<entt::entity> tiles;
     tiles.reserve(static_cast<std::size_t>(m_mapSize.x * m_mapSize.y));
@@ -194,9 +198,17 @@ void LevelLoader::loadTileLayer(const nlohmann::json& layerJson)
         ++index;
     }
 
+    // 创建图层实体
+    auto& registry = m_scene->registry();
+    auto layerEntity = registry.create();
 
-    // 获取图层名称
-    std::string layerName{ layerJson.value("name", "Unnamed") };
+    // 添加组件
+    registry.emplace<engine::component::NameComponent>(layerEntity, layerNameId, layerName);
+    registry.emplace<engine::component::TileLayerComponent>(layerEntity,
+                                                            m_tileSize,
+                                                            m_mapSize,
+                                                            tiles);
+
     spdlog::info("加载图层: '{}' 完成", layerName);
 }
 
