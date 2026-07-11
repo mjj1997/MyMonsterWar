@@ -166,15 +166,34 @@ void LevelLoader::loadTileLayer(const nlohmann::json& layerJson)
         return;
     }
 
-    // 准备 TileInfo Vector (瓦片数量 = 地图宽度 * 地图高度)
-    std::vector<engine::component::TileInfo> tiles;
+    // 准备瓦片实体 Vector (瓦片数量 = 地图宽度 * 地图高度)
+    std::vector<entt::entity> tiles;
     tiles.reserve(static_cast<std::size_t>(m_mapSize.x * m_mapSize.y));
 
-    // 根据gid获取必要信息，并依次填充 TileInfo Vector
-    std::transform(layerJson.at("data").begin(),
-                   layerJson.at("data").end(),
-                   std::back_inserter(tiles),
-                   [this](const auto& gid) { return getTileInfoByGid(gid); });
+    // 获取图层数据 (瓦片 ID 列表)
+    const auto& data = layerJson.at("data");
+    size_t index{ 0 }; // data数据的索引，它决定图块在地图中的位置
+    // --- 每一个瓦片都是一个独立的entity ---
+    for (const int gid : data) {
+        if (gid == 0) {
+            ++index;
+            continue;
+        }
+
+        auto tileInfo = getTileInfoByGid(gid);
+        if (!tileInfo) {
+            spdlog::error("瓦片 ID 为 {} 的瓦片未找到图块集。", gid);
+            ++index;
+            continue;
+        }
+
+        // 使用生成器创建瓦片实体
+        auto tileEntity = m_entityBuilder->configure(index, &tileInfo.value())->build()->entityId();
+        // 添加到vector中
+        tiles.push_back(tileEntity);
+        ++index;
+    }
+
 
     // 获取图层名称
     std::string layerName{ layerJson.value("name", "Unnamed") };
