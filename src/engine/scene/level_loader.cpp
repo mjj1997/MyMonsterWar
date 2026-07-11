@@ -327,6 +327,26 @@ std::optional<engine::component::TileInfo> LevelLoader::getTileInfoByGid(int gid
                 tileInfo.m_sprite = engine::component::Sprite{ texturePath, srcRect };
                 tileInfo.m_type = LevelLoader::getTileType(tile); // 已经有具体的瓦片 JSON 数据
             }
+
+            // 补充动画信息（瓦片动画为 animation 字段，且必须为数组，目前只考虑单一图片的情况）
+            if (tile.contains("animation") && isSingleImage && tile.at("animation").is_array()) {
+                std::vector<engine::component::AnimationFrame> animationFrames;
+                for (const auto& frame : tile.at("animation")) {
+                    // 每个瓦片动画帧 JSON 包含两个字段：tileid 和 duration
+                    float duration{ frame.value("duration", 100.0F) }; // 毫秒
+                    int tileId{ frame.value("tileid", 0) };
+                    auto frameRect = LevelLoader::getTextureRect(tilesetJson, tileId);
+                    // 帧源矩形 + 帧时长 = 动画帧
+                    animationFrames.emplace_back(frameRect, duration);
+                }
+                // 填充瓦片信息中的动画
+                tileInfo.m_animation = engine::component::Animation{ std::move(animationFrames) };
+            }
+
+            // 补充属性信息
+            if (tile.contains("properties")) {
+                tileInfo.m_properties = tile.at("properties");
+            }
         }
     }
 
