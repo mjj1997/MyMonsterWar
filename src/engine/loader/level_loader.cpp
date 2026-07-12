@@ -165,6 +165,7 @@ void LevelLoader::loadImageLayer(const nlohmann::json& layerJson)
     registry.emplace<engine::component::TransformComponent>(layerEntity, offset);
     registry.emplace<engine::component::ParallaxComponent>(layerEntity, scrollFactor, repeat);
     registry.emplace<engine::component::SpriteComponent>(layerEntity, sprite);
+    registry.emplace<engine::component::RenderComponent>(layerEntity, m_currentLayerIndex);
 
     /* 实体与组件创建完毕后，由 registry 自动管理，不需要“添加到场景”的步骤 */
 
