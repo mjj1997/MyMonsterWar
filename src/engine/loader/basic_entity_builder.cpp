@@ -205,8 +205,9 @@ void BasicEntityBuilder::buildRender()
     spdlog::trace("构建渲染组件");
 
     int currentLayerIndex{ m_levelLoader.currentLayerIndex() };
-    // 添加渲染组件，图层序号越小越先绘制
-    m_registry.emplace<engine::component::RenderComponent>(m_entityId, currentLayerIndex);
+    float depth{ m_position.y };
+    // 添加渲染组件，图层序号越小越先绘制，深度越小越先绘制
+    m_registry.emplace<engine::component::RenderComponent>(m_entityId, currentLayerIndex, depth);
 }
 
 // --- 代理函数，让子类能获取到 LevelLoader 的私有方法 ---
