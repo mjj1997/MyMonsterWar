@@ -22,6 +22,7 @@ private:
     std::unique_ptr<engine::system::MovementSystem> m_movementSystem;
     std::unique_ptr<engine::system::RenderSystem> m_renderSystem;
     std::unique_ptr<engine::system::AnimationSystem> m_animationSystem;
+    std::unique_ptr<engine::system::YSortSystem> m_ySortSystem;
 };
 
 } // namespace game::scene

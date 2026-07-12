@@ -1,10 +1,12 @@
 #include "level_loader.h"
 #include "../component/name_component.h"
 #include "../component/parallax_component.h"
+#include "../component/render_component.h"
 #include "../component/sprite_component.h"
 #include "../component/tilelayer_component.h"
 #include "../component/transform_component.h"
 #include "../core/context.h"
+#include "../render/renderer.h"
 #include "../resource/resource_manager.h"
 #include "../scene/scene_base.h"
 
@@ -59,10 +61,15 @@ bool LevelLoader::loadLevel(std::string_view mapPath, engine::scene::SceneBase* 
         return false;
     }
 
-    // 3. 获取基本地图信息（地图路径、地图尺寸、瓦片尺寸）
+    // 3. 获取基本地图信息（地图路径、地图尺寸、瓦片尺寸），并设置背景颜色
     m_mapPath = mapPath;
     m_mapSize = glm::ivec2{ mapJson.value("width", 0), mapJson.value("height", 0) };
     m_tileSize = glm::ivec2{ mapJson.value("tilewidth", 0), mapJson.value("tileheight", 0) };
+    if (mapJson.contains("backgroundcolor")) {
+        auto colorString = mapJson.at("backgroundcolor").get<std::string>();
+        auto color = engine::utils::parseHexColor(colorString);
+        m_scene->context().renderer().setBgColorFloat(color.r, color.g, color.b, color.a);
+    }
 
     // 4. 加载瓦片集 JSON 数据
     if (mapJson.contains("tilesets") && mapJson.at("tilesets").is_array()) {
@@ -105,6 +112,20 @@ bool LevelLoader::loadLevel(std::string_view mapPath, engine::scene::SceneBase* 
         } else {
             spdlog::warn("不支持的图层类型: {}", type);
         }
+
+        // 可以指定当前图层的序号（默认从 0 开始，每载入一个图层，序号加 1），这个序号用于决定渲染顺序
+        if (layer.contains("properties")) {
+            for (const auto& property : layer.at("properties")) {
+                if (property.contains("name") && property.at("name") == "order") {
+                    m_currentLayerIndex = property.at("value").get<int>();
+                }
+            }
+        }
+
+        spdlog::info("当前图层: {}, 图层序号: {}",
+                     layer.value("name", "Unnamed"),
+                     m_currentLayerIndex);
+        ++m_currentLayerIndex; // 每加载一个图层，图层序号加 1
     }
 
     spdlog::info("关卡加载完成: {}", mapPath);
@@ -153,6 +174,7 @@ void LevelLoader::loadImageLayer(const nlohmann::json& layerJson)
     registry.emplace<engine::component::TransformComponent>(layerEntity, offset);
     registry.emplace<engine::component::ParallaxComponent>(layerEntity, scrollFactor, repeat);
     registry.emplace<engine::component::SpriteComponent>(layerEntity, sprite);
+    registry.emplace<engine::component::RenderComponent>(layerEntity, m_currentLayerIndex);
 
     /* 实体与组件创建完毕后，由 registry 自动管理，不需要“添加到场景”的步骤 */
 
@@ -316,6 +338,19 @@ std::optional<engine::component::TileInfo> LevelLoader::getTileInfoByGid(int gid
     if (gid == 0) {
         return std::nullopt;
     }
+
+    // 判断并存储是否水平翻转（最高的第 32 位为 1）
+    bool isFlippedHorizontally = gid & 0x80000000;
+    /** 未来可添加其它翻转支持，目前精灵组件仅支持水平翻转
+     * // 判断并存储是否垂直翻转（最高的第 31 位为 1）
+     * bool isFlippedVertically = gid & 0x40000000;
+     * 
+     * // 判断并存储是否对角线翻转（最高的第 30 位为 1）
+     * bool isFlippedDiagonally = gid & 0x20000000;
+     */
+
+    // 还原 gid 的实际值（最高的三个标志位为 0，其余位均为 1。这个掩码的十六进制表示为 0x1FFFFFFF）
+    gid = gid & 0x1FFFFFFF;
 
     // upper_bound：查找 tilesets 中键大于 gid 的第一个元素，返回迭代器
     auto iter = m_tilesets.upper_bound(gid);

@@ -1,5 +1,6 @@
 #include "basic_entity_builder.h"
 #include "../component/name_component.h"
+#include "../component/render_component.h"
 #include "../component/sprite_component.h"
 #include "../component/tilelayer_component.h"
 #include "../component/transform_component.h"
@@ -95,6 +96,7 @@ BasicEntityBuilder* BasicEntityBuilder::build()
     buildTransform();
     buildAnimation();
     buildAudio();
+    buildRender();
 
     return this;
 }
@@ -196,6 +198,16 @@ void BasicEntityBuilder::buildAudio()
 {
     spdlog::trace("构建音频组件");
     // 当前项目并未使用，未来可约定自定义属性并解析
+}
+
+void BasicEntityBuilder::buildRender()
+{
+    spdlog::trace("构建渲染组件");
+
+    int currentLayerIndex{ m_levelLoader.currentLayerIndex() };
+    float depth{ m_position.y };
+    // 添加渲染组件，图层序号越小越先绘制，深度越小越先绘制
+    m_registry.emplace<engine::component::RenderComponent>(m_entityId, currentLayerIndex, depth);
 }
 
 // --- 代理函数，让子类能获取到 LevelLoader 的私有方法 ---

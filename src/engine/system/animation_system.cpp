@@ -3,16 +3,18 @@
 #include "../component/sprite_component.h"
 
 #include <entt/entity/registry.hpp>
+#include <spdlog/spdlog.h>
 
 namespace engine::system {
 
 void AnimationSystem::update(entt::registry& registry, float deltaTime)
 {
-    auto view
-        = registry.view<engine::component::AnimationComponent, engine::component::SpriteComponent>();
+    spdlog::trace("AnimationSystem::update");
+
+    auto view = registry.view<component::AnimationComponent, component::SpriteComponent>();
     for (auto entity : view) {
-        auto& animationComponent = view.get<engine::component::AnimationComponent>(entity);
-        auto& spriteComponent = view.get<engine::component::SpriteComponent>(entity);
+        auto& animationComponent = view.get<component::AnimationComponent>(entity);
+        auto& spriteComponent = view.get<component::SpriteComponent>(entity);
 
         // 如果动画不存在，则跳过
         auto it = animationComponent.m_animations.find(animationComponent.m_currentAnimationId);
@@ -28,7 +30,7 @@ void AnimationSystem::update(entt::registry& registry, float deltaTime)
         }
 
         // 更新当前播放时间 (推进计时器)
-        animationComponent.m_currentTime += deltaTime * 1000.0f * animationComponent.m_speed;
+        animationComponent.m_currentTime += deltaTime * 1000.0F * animationComponent.m_speed;
 
         // 获取当前帧
         const auto& currentFrame = currentAnimation.m_frames.at(

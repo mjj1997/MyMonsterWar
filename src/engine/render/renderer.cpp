@@ -134,6 +134,11 @@ void Renderer::present()
 
 void Renderer::clearScreen()
 {
+    setDrawColorFloat(m_backgroundColor.r,
+                      m_backgroundColor.g,
+                      m_backgroundColor.b,
+                      m_backgroundColor.a);
+
     if (!SDL_RenderClear(m_sdlRenderer)) {
         spdlog::error("清除渲染器失败：{}", SDL_GetError());
     }

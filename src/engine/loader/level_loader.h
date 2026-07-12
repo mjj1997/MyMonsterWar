@@ -48,6 +48,9 @@ public:
     ///< @brief 设置实体生成器（如果不设置，则使用默认的 BasicEntityBuilder）
     void setEntityBuilder(std::unique_ptr<BasicEntityBuilder> builder);
 
+    ///< @brief 获取当前图层序号
+    int currentLayerIndex() const { return m_currentLayerIndex; }
+
 private:
     ///< @brief 加载图片图层
     void loadImageLayer(const nlohmann::json& layerJson);
@@ -147,6 +150,8 @@ private:
     std::map<int, nlohmann::json> m_tilesets; ///< @brief firstgid -> 瓦片集 json 数据
 
     std::unique_ptr<BasicEntityBuilder> m_entityBuilder; ///< @brief 实体生成器（生成器模式）
+
+    int m_currentLayerIndex{ 0 }; ///< @brief 当前图层序号（用于RenderComponent，决定渲染顺序）
 };
 
 } // namespace engine::loader

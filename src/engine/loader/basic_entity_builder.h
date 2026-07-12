@@ -55,6 +55,7 @@ protected:
     void buildTransform();
     void buildAnimation();
     void buildAudio();
+    void buildRender();
 
     // --- 代理函数，让子类能获取到 LevelLoader 的私有方法 ---
     template<typename T>
