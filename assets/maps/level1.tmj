@@ -902,6 +902,12 @@
                  "y":1053.33333333333
                 }],
          "opacity":1,
+         "properties":[
+                {
+                 "name":"order",
+                 "type":"int",
+                 "value":10
+                }],
          "type":"objectgroup",
          "visible":true,
          "x":0,
