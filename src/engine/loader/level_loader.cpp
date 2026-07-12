@@ -113,6 +113,15 @@ bool LevelLoader::loadLevel(std::string_view mapPath, engine::scene::SceneBase* 
             spdlog::warn("不支持的图层类型: {}", type);
         }
 
+        // 可以指定当前图层的序号（默认从 0 开始，每载入一个图层，序号加 1），这个序号用于决定渲染顺序
+        if (layer.contains("properties")) {
+            for (const auto& property : layer.at("properties")) {
+                if (property.contains("name") && property.at("name") == "order") {
+                    m_currentLayerIndex = property.at("value").get<int>();
+                }
+            }
+        }
+
         spdlog::info("当前图层: {}, 图层序号: {}",
                      layer.value("name", "Unnamed"),
                      m_currentLayerIndex);
