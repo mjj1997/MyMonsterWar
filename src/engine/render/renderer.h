@@ -93,17 +93,25 @@ public:
     ///< @brief 获取底层的 SDL_Renderer 指针
     SDL_Renderer* renderer() const { return m_sdlRenderer; }
 
+    ///< @brief 设置背景颜色，使用 float 类型
+    void setBgColorFloat(float r, float g, float b, float a = 1.0F)
+    {
+        m_backgroundColor = { r, g, b, a };
+    }
+
 private:
     ///< @brief 获取 Image 对象的源矩形，用于具体绘制。出现错误则返回std::nullopt并跳过绘制
     std::optional<SDL_FRect> getImageSrcRect(const Image& image);
     ///< @brief 判断矩形是否在视口中，用于视口裁剪
     static bool isRectInViewport(const Camera& camera, const SDL_FRect& rect);
 
-private:
     ///< @brief 指向 SDL_Renderer 的非拥有指针
     SDL_Renderer* m_sdlRenderer{ nullptr };
     ///< @brief 指向 ResourceManager 的非拥有指针
     engine::resource::ResourceManager* m_resourceManager{ nullptr };
+
+    ///< @brief 清除屏幕的颜色（默认黑色），可调用 setBgColorFloat() 设置
+    engine::utils::FColor m_backgroundColor{ 0.0F, 0.0F, 0.0F, 1.0F };
 };
 
 } // namespace engine::render
