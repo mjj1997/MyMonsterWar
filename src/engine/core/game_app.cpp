@@ -81,6 +81,9 @@ bool GameApp::init()
     if (!initRenderer()) {
         return false;
     }
+    if (!initGameState()) {
+        return false;
+    }
     if (!initCamera()) {
         return false;
     }
@@ -91,9 +94,6 @@ bool GameApp::init()
         return false;
     }
     if (!initAudioPlayer()) {
-        return false;
-    }
-    if (!initGameState()) {
         return false;
     }
     if (!initDispatcher()) {
@@ -177,9 +177,12 @@ bool GameApp::initSDL()
         return false;
     }
 
+    // 设置窗口大小（窗口尺寸 * 窗口缩放比例）
+    int windowWidth = m_configurator->m_windowWidth * m_configurator->m_windowScale;
+    int windowHeight = m_configurator->m_windowHeight * m_configurator->m_windowScale;
     m_window = SDL_CreateWindow(m_configurator->m_windowTitle.c_str(),
-                                m_configurator->m_windowWidth,
-                                m_configurator->m_windowHeight,
+                                windowWidth,
+                                windowHeight,
                                 SDL_WINDOW_RESIZABLE);
     if (m_window == nullptr) {
         spdlog::error("SDL 创建窗口失败！SDL 错误：{}", SDL_GetError());
@@ -200,10 +203,12 @@ bool GameApp::initSDL()
     SDL_SetRenderVSync(m_sdlRenderer, vsyncMode);
     spdlog::trace("VSync 模式设置为: {}", m_configurator->m_isVSyncEnabled ? "启用" : "禁用");
 
-    // 设置逻辑分辨率为窗口大小的一半（针对像素游戏）
+    // 设置逻辑分辨率（窗口尺寸 * 逻辑缩放比例）
+    int logicalWidth = m_configurator->m_windowWidth * m_configurator->m_logicalScale;
+    int logicalHeight = m_configurator->m_windowHeight * m_configurator->m_logicalScale;
     SDL_SetRenderLogicalPresentation(m_sdlRenderer,
-                                     m_configurator->m_windowWidth / 2,
-                                     m_configurator->m_windowHeight / 2,
+                                     logicalWidth,
+                                     logicalHeight,
                                      SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
     spdlog::trace("SDL 初始化成功。");
@@ -256,8 +261,7 @@ bool GameApp::initRenderer()
 bool GameApp::initCamera()
 {
     try {
-        m_camera = std::make_unique<engine::render::Camera>(
-            glm::vec2{ m_configurator->m_windowWidth / 2, m_configurator->m_windowHeight / 2 });
+        m_camera = std::make_unique<engine::render::Camera>(m_gameState->logicalSize());
     } catch (const std::exception& e) {
         spdlog::error("初始化相机失败: {}", e.what());
         return false;

@@ -65,6 +65,8 @@ void Configurator::fromJson(const nlohmann::json& json)
         m_windowTitle = windowConfig.value("title", m_windowTitle);
         m_windowWidth = windowConfig.value("width", m_windowWidth);
         m_windowHeight = windowConfig.value("height", m_windowHeight);
+        m_windowScale = windowConfig.value("window_scale", m_windowScale);
+        m_logicalScale = windowConfig.value("logical_scale", m_logicalScale);
         m_windowResizable = windowConfig.value("resizable", m_windowResizable);
     }
 
@@ -115,6 +117,8 @@ nlohmann::ordered_json Configurator::toJson() const
           { { "title", m_windowTitle },
             { "width", m_windowWidth },
             { "height", m_windowHeight },
+            { "window_scale", m_windowScale },
+            { "logical_scale", m_logicalScale },
             { "resizable", m_windowResizable } } },
         { "graphics", { { "VSync", m_isVSyncEnabled } } },
         { "performance", { { "targetFps", m_targetFps } } },

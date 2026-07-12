@@ -17,11 +17,7 @@ public:
     void clean() override;
 
 private:
-    // --- 测试资源管理器 ---
-    void testResourceManager();
-
-    // --- 测试 ECS 系统 ---
-    void testECS();
+    [[nodiscard]] bool loadLevel();
 
     std::unique_ptr<engine::system::MovementSystem> m_movementSystem;
     std::unique_ptr<engine::system::RenderSystem> m_renderSystem;
