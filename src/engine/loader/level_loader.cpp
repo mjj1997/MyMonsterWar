@@ -5,6 +5,7 @@
 #include "../component/tilelayer_component.h"
 #include "../component/transform_component.h"
 #include "../core/context.h"
+#include "../render/renderer.h"
 #include "../resource/resource_manager.h"
 #include "../scene/scene_base.h"
 
@@ -59,10 +60,15 @@ bool LevelLoader::loadLevel(std::string_view mapPath, engine::scene::SceneBase* 
         return false;
     }
 
-    // 3. 获取基本地图信息（地图路径、地图尺寸、瓦片尺寸）
+    // 3. 获取基本地图信息（地图路径、地图尺寸、瓦片尺寸），并设置背景颜色
     m_mapPath = mapPath;
     m_mapSize = glm::ivec2{ mapJson.value("width", 0), mapJson.value("height", 0) };
     m_tileSize = glm::ivec2{ mapJson.value("tilewidth", 0), mapJson.value("tileheight", 0) };
+    if (mapJson.contains("backgroundcolor")) {
+        auto colorString = mapJson.at("backgroundcolor").get<std::string>();
+        auto color = engine::utils::parseHexColor(colorString);
+        m_scene->context().renderer().setBgColorFloat(color.r, color.g, color.b, color.a);
+    }
 
     // 4. 加载瓦片集 JSON 数据
     if (mapJson.contains("tilesets") && mapJson.at("tilesets").is_array()) {
