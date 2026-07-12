@@ -1,6 +1,7 @@
 #include "level_loader.h"
 #include "../component/name_component.h"
 #include "../component/parallax_component.h"
+#include "../component/render_component.h"
 #include "../component/sprite_component.h"
 #include "../component/tilelayer_component.h"
 #include "../component/transform_component.h"
@@ -111,6 +112,11 @@ bool LevelLoader::loadLevel(std::string_view mapPath, engine::scene::SceneBase* 
         } else {
             spdlog::warn("不支持的图层类型: {}", type);
         }
+
+        spdlog::info("当前图层: {}, 图层序号: {}",
+                     layer.value("name", "Unnamed"),
+                     m_currentLayerIndex);
+        ++m_currentLayerIndex; // 每加载一个图层，图层序号加 1
     }
 
     spdlog::info("关卡加载完成: {}", mapPath);
