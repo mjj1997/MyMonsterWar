@@ -5,6 +5,7 @@
 #include "../../engine/system/animation_system.h"
 #include "../../engine/system/movement_system.h"
 #include "../../engine/system/render_system.h"
+#include "../../engine/system/y_sort_system.h"
 
 #include <spdlog/spdlog.h>
 
@@ -19,6 +20,7 @@ GameScene::GameScene(engine::core::Context& context)
     m_movementSystem = std::make_unique<engine::system::MovementSystem>();
     m_renderSystem = std::make_unique<engine::system::RenderSystem>();
     m_animationSystem = std::make_unique<engine::system::AnimationSystem>();
+    m_ySortSystem = std::make_unique<engine::system::YSortSystem>();
 
     spdlog::info("GameScene 构造完成");
 }
@@ -37,6 +39,7 @@ void GameScene::init()
 void GameScene::update(float deltaTime)
 {
     m_movementSystem->update(m_registry, deltaTime);
+    m_ySortSystem->update(m_registry); // 调用顺序要放到移动系统之后
     m_animationSystem->update(m_registry, deltaTime);
 
     SceneBase::update(deltaTime);
