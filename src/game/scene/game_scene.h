@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../data/path_node.h"
+#include "../defs/events.h"
 #include "../system/fwd.h"
 
 #include "../../engine/scene/scene_base.h"
@@ -21,6 +22,9 @@ public:
 
 private:
     [[nodiscard]] bool loadLevel();
+
+    // 事件回调函数
+    void onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event);
 
     std::unique_ptr<engine::system::MovementSystem> m_movementSystem;
     std::unique_ptr<engine::system::RenderSystem> m_renderSystem;

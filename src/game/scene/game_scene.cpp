@@ -83,4 +83,10 @@ bool GameScene::loadLevel()
     return true;
 }
 
+void GameScene::onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event)
+{
+    spdlog::info("敌人到达基地");
+    // TODO: 处理敌人到达基地的逻辑
+}
+
 } // namespace game::scene
