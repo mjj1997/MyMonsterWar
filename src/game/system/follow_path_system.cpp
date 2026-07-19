@@ -4,6 +4,7 @@
 
 #include "../../engine/component/transform_component.h"
 #include "../../engine/component/velocity_component.h"
+#include "../../engine/utils/math.h"
 
 #include <entt/entity/registry.hpp>
 #include <glm/geometric.hpp>
@@ -30,6 +31,26 @@ void FollowPathSystem::update(entt::registry& registry,
 
         // 计算当前位置到目标位置的向量
         glm::vec2 direction{ targetPathNode.m_position - transformComponent.m_position };
+
+        // 如果距离小于阈值, 则切换到下一个节点(阈值不要太小,不然敌人速度快的话可能造成震荡)
+        if (glm::length(direction) < 5.0F) {
+            auto size = targetPathNode.m_nextNodeIds.size();
+            if (size == 0) {
+                spdlog::info("到达终点");
+
+                // TODO: 发送敌人到达终点的信号
+
+                continue;
+            }
+
+            // 随机选择下一个节点
+            auto targetIndex = engine::utils::randomInt(0, size - 1);
+            enemyComponent.m_targetPathNodeId = targetPathNode.m_nextNodeIds.at(targetIndex);
+
+            // 更新目标节点与方向矢量
+            targetPathNode = pathNodes.at(enemyComponent.m_targetPathNodeId);
+            direction = targetPathNode.m_position - transformComponent.m_position;
+        }
 
         // 更新速度组件
         velocityComponent.m_velocity = glm::normalize(direction) * enemyComponent.m_speed;
