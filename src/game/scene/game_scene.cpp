@@ -1,4 +1,5 @@
 #include "game_scene.h"
+#include "../loader/entity_builder_mw.h"
 
 #include "../../engine/core/context.h"
 #include "../../engine/loader/level_loader.h"
@@ -60,7 +61,11 @@ void GameScene::clean()
 bool GameScene::loadLevel()
 {
     engine::loader::LevelLoader levelLoader;
-    /* 不调用 setEntityBuilder，则使用默认的 BasicEntityBuilder */
+    levelLoader.setEntityBuilder(std::make_unique<game::loader::EntityBuilderMW>(levelLoader,
+                                                                                 m_context,
+                                                                                 m_registry,
+                                                                                 m_pathNodes,
+                                                                                 m_startpointIds));
     if (!levelLoader.loadLevel("assets/maps/level1.tmj", this)) {
         spdlog::error("加载关卡失败");
         return false;
