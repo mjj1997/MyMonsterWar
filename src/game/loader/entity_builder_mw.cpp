@@ -16,6 +16,18 @@ EntityBuilderMW::EntityBuilderMW(engine::loader::LevelLoader& levelLoader,
     , m_startpointIds{ startpointIds }
 {}
 
+EntityBuilderMW* EntityBuilderMW::build()
+{
+    if (m_objectJson != nullptr && m_tileInfo == nullptr) {
+        // 代表自己绘制的形状,当前游戏只用到了路径节点
+        buildPath();
+    } else {
+        BasicEntityBuilder::build();
+    }
+
+    return this;
+}
+
 void EntityBuilderMW::buildPath()
 {
     // 检查数据有效性

@@ -35,6 +35,8 @@ public:
                     std::vector<int>& startpointIds);
     ~EntityBuilderMW() = default;
 
+    EntityBuilderMW* build() override;
+
 private:
     void buildPath(); ///< @brief 生成路径节点
 
