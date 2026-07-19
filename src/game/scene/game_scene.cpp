@@ -1,5 +1,6 @@
 #include "game_scene.h"
 #include "../loader/entity_builder_mw.h"
+#include "../system/follow_path_system.h"
 
 #include "../../engine/core/context.h"
 #include "../../engine/loader/level_loader.h"
@@ -8,6 +9,7 @@
 #include "../../engine/system/render_system.h"
 #include "../../engine/system/y_sort_system.h"
 
+#include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
 
 using namespace entt::literals;
@@ -22,6 +24,8 @@ GameScene::GameScene(engine::core::Context& context)
     m_renderSystem = std::make_unique<engine::system::RenderSystem>();
     m_animationSystem = std::make_unique<engine::system::AnimationSystem>();
     m_ySortSystem = std::make_unique<engine::system::YSortSystem>();
+
+    m_followPathSystem = std::make_unique<game::system::FollowPathSystem>();
 
     spdlog::info("GameScene 构造完成");
 }
@@ -39,6 +43,11 @@ void GameScene::init()
 
 void GameScene::update(float deltaTime)
 {
+    auto& dispatcher = m_context.dispatcher();
+
+    // 注意系统更新顺序, 路径跟随系统要放到移动系统之前
+    m_followPathSystem->update(m_registry, dispatcher, m_pathNodes);
+
     m_movementSystem->update(m_registry, deltaTime);
     m_ySortSystem->update(m_registry); // 调用顺序要放到移动系统之后
     m_animationSystem->update(m_registry, deltaTime);
