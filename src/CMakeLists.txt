@@ -35,7 +35,8 @@ target_sources(
           engine/system/animation_system.cpp
           engine/loader/level_loader.cpp
           engine/loader/basic_entity_builder.cpp
-          engine/system/y_sort_system.cpp)
+          engine/system/y_sort_system.cpp
+          game/loader/entity_builder_mw.cpp)
 
 target_link_libraries(
   MonsterWar
