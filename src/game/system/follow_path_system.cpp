@@ -1,18 +1,21 @@
 #include "follow_path_system.h"
 #include "../component/enemy_component.h"
 #include "../data/path_node.h"
+#include "../defs/events.h"
 
 #include "../../engine/component/transform_component.h"
 #include "../../engine/component/velocity_component.h"
 #include "../../engine/utils/math.h"
 
 #include <entt/entity/registry.hpp>
+#include <entt/signal/dispatcher.hpp>
 #include <glm/geometric.hpp>
 #include <spdlog/spdlog.h>
 
 namespace game::system {
 
 void FollowPathSystem::update(entt::registry& registry,
+                              entt::dispatcher& dispatcher,
                               std::unordered_map<int, game::data::PathNode>& pathNodes)
 {
     spdlog::trace("FollowPathSystem::update");
@@ -38,7 +41,8 @@ void FollowPathSystem::update(entt::registry& registry,
             if (size == 0) {
                 spdlog::info("到达终点");
 
-                // TODO: 发送敌人到达终点的信号
+                // 发送敌人到达基地的信号
+                dispatcher.enqueue<game::defs::EnemyArriveBaseEvent>(); // 具体做什么, 由回调函数处理
 
                 continue;
             }

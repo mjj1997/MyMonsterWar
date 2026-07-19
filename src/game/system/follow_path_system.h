@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entt/entity/fwd.hpp>
+#include <entt/signal/fwd.hpp>
 
 #include <unordered_map>
 
@@ -17,6 +18,7 @@ class FollowPathSystem
 {
 public:
     void update(entt::registry& registry,
+                entt::dispatcher& dispatcher,
                 std::unordered_map<int, game::data::PathNode>& pathNodes);
 };
 
