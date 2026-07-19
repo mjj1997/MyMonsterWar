@@ -37,6 +37,10 @@ void GameScene::init()
     if (!loadLevel()) {
         return;
     }
+    if (!initEventConnections()) {
+        spdlog::error("初始化事件连接失败");
+        return;
+    }
 
     SceneBase::init();
 }
@@ -64,6 +68,10 @@ void GameScene::render()
 
 void GameScene::clean()
 {
+    // 断开所有事件连接
+    auto& dispatcher = m_context.dispatcher();
+    dispatcher.disconnect(this);
+
     SceneBase::clean();
 }
 
@@ -79,6 +87,15 @@ bool GameScene::loadLevel()
         spdlog::error("加载关卡失败");
         return false;
     }
+
+    return true;
+}
+
+bool GameScene::initEventConnections()
+{
+    auto& dispatcher = m_context.dispatcher();
+    // 连接敌人到达基地事件
+    dispatcher.sink<game::defs::EnemyArriveBaseEvent>().connect<&GameScene::onEnemyArriveBase>(this);
 
     return true;
 }
