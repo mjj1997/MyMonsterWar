@@ -36,6 +36,8 @@ public:
     ~EntityBuilderMW() = default;
 
 private:
+    void buildPath(); ///< @brief 生成路径节点
+
     // 保存路径节点和起点数据（非拥有）
     std::unordered_map<int, game::data::PathNode>& m_pathNodes;
     std::vector<int>& m_startpointIds;
