@@ -1,7 +1,12 @@
 #include "game_scene.h"
+#include "../component/enemy_component.h"
 #include "../loader/entity_builder_mw.h"
 #include "../system/follow_path_system.h"
 
+#include "../../engine/component/render_component.h"
+#include "../../engine/component/sprite_component.h"
+#include "../../engine/component/transform_component.h"
+#include "../../engine/component/velocity_component.h"
 #include "../../engine/core/context.h"
 #include "../../engine/loader/level_loader.h"
 #include "../../engine/system/animation_system.h"
@@ -41,6 +46,7 @@ void GameScene::init()
         spdlog::error("初始化事件连接失败");
         return;
     }
+    createTestEnemy();
 
     SceneBase::init();
 }
@@ -104,6 +110,29 @@ void GameScene::onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event)
 {
     spdlog::info("敌人到达基地");
     // TODO: 处理敌人到达基地的逻辑
+}
+
+void GameScene::createTestEnemy()
+{
+    // 每个起点创建一个敌人
+    for (auto startpointId : m_startpointIds) {
+        auto position = m_pathNodes.at(startpointId).m_position;
+
+        auto enemy = m_registry.create();
+        m_registry.emplace<engine::component::TransformComponent>(enemy, position);
+        m_registry.emplace<engine::component::VelocityComponent>(enemy, glm::vec2(0.0F));
+        m_registry.emplace<game::component::EnemyComponent>(enemy, startpointId, 100.0F);
+
+        auto sprite = engine::component::Sprite{ "assets/textures/Enemy/wolf.png",
+                                                 engine::utils::Rect{ 0, 0, 192, 192 } };
+        // 设置精灵组件时, 需设置偏移量以调整中心点位置(否则会默认以左上角为中心点)
+        m_registry.emplace<engine::component::SpriteComponent>(enemy,
+                                                               std::move(sprite),
+                                                               glm::vec2(192.0F),
+                                                               glm::vec2{ -96.0F, -128.0F });
+        // 暂定主战斗图层编号为 10
+        m_registry.emplace<engine::component::RenderComponent>(enemy, 10);
+    }
 }
 
 } // namespace game::scene

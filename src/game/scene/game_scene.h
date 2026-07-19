@@ -27,6 +27,9 @@ private:
     // 事件回调函数
     void onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event);
 
+    // 测试函数
+    void createTestEnemy();
+
     std::unique_ptr<engine::system::MovementSystem> m_movementSystem;
     std::unique_ptr<engine::system::RenderSystem> m_renderSystem;
     std::unique_ptr<engine::system::AnimationSystem> m_animationSystem;
