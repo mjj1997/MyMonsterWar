@@ -2,6 +2,7 @@
 #include "../component/enemy_component.h"
 #include "../data/path_node.h"
 #include "../defs/events.h"
+#include "../defs/tags.h"
 
 #include "../../engine/component/transform_component.h"
 #include "../../engine/component/velocity_component.h"
@@ -37,12 +38,14 @@ void FollowPathSystem::update(entt::registry& registry,
 
         // 如果距离小于阈值, 则切换到下一个节点(阈值不要太小,不然敌人速度快的话可能造成震荡)
         if (glm::length(direction) < 5.0F) {
+            // 如果下一个节点 ID 列表为空, 代表到达终点, 则发送信号并添加删除标签
             auto size = targetPathNode.m_nextNodeIds.size();
             if (size == 0) {
                 spdlog::info("到达终点");
 
-                // 发送敌人到达基地的信号
+                // 发送敌人到达基地的信号并添加删除标签
                 dispatcher.enqueue<game::defs::EnemyArriveBaseEvent>(); // 具体做什么, 由回调函数处理
+                registry.emplace<game::defs::DeadTag>(entity);          // 用于延时删除
 
                 continue;
             }
