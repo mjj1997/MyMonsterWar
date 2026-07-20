@@ -2,6 +2,7 @@
 #include "../component/enemy_component.h"
 #include "../loader/entity_builder_mw.h"
 #include "../system/follow_path_system.h"
+#include "../system/remove_dead_system.h"
 
 #include "../../engine/component/render_component.h"
 #include "../../engine/component/sprite_component.h"
@@ -31,6 +32,7 @@ GameScene::GameScene(engine::core::Context& context)
     m_ySortSystem = std::make_unique<engine::system::YSortSystem>();
 
     m_followPathSystem = std::make_unique<game::system::FollowPathSystem>();
+    m_removeDeadSystem = std::make_unique<game::system::RemoveDeadSystem>();
 
     spdlog::info("GameScene 构造完成");
 }
@@ -55,9 +57,11 @@ void GameScene::update(float deltaTime)
 {
     auto& dispatcher = m_context.dispatcher();
 
+    // 每一帧最先清理死亡实体(要在 dispatcher 处理完事件后再清理, 因此放在下一帧开头)
+    m_removeDeadSystem->update(m_registry);
+
     // 注意系统更新顺序, 路径跟随系统要放到移动系统之前
     m_followPathSystem->update(m_registry, dispatcher, m_pathNodes);
-
     m_movementSystem->update(m_registry, deltaTime);
     m_ySortSystem->update(m_registry); // 调用顺序要放到移动系统之后
     m_animationSystem->update(m_registry, deltaTime);
