@@ -35,6 +35,7 @@ private:
     std::unique_ptr<engine::system::AnimationSystem> m_animationSystem;
     std::unique_ptr<engine::system::YSortSystem> m_ySortSystem;
     std::unique_ptr<game::system::FollowPathSystem> m_followPathSystem;
+    std::unique_ptr<game::system::RemoveDeadSystem> m_removeDeadSystem;
 
     std::unordered_map<int, game::data::PathNode> m_pathNodes; // 路径节点ID -> 路径节点
     std::vector<int> m_startpointIds;                          // 起点ID列表
