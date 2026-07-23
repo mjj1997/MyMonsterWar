@@ -54,4 +54,11 @@ struct EnemyBlueprint
     float m_speed{ 0.0F };
 };
 
+/// @brief 显示信息蓝图, 可用于查找对应职业的名称和描述
+struct DisplayInfoBlueprint
+{
+    std::string m_name;
+    std::string m_description;
+};
+
 } // namespace game::data
