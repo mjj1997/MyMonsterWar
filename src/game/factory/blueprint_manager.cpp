@@ -27,16 +27,18 @@ bool BlueprintManager::loadEnemyClassBlueprints(std::string_view enemyJsonPath)
             const entt::id_type classId{ entt::hashed_string(enemyClassName.c_str()) };
             // 解析 Stats
             auto stats = BlueprintManager::parseStats(enemyClassDataJson);
+            // 解析 Enemy
+            auto enemy = BlueprintManager::parseEnemy(enemyClassDataJson);
             // TODO: 解析 Sprite
             // TODO: 解析 Animation
             // TODO: 解析 Sounds
-            // TODO: 解析 Enemy
             // TODO: 解析 DisplayInfo
             // TODO: 解析完毕，组合蓝图并插入容器
             m_enemyClassBlueprints.emplace(classId,
                                            data::EnemyClassBlueprint{ .m_classId = classId,
                                                                       .m_className = enemyClassName,
-                                                                      .m_stats = stats });
+                                                                      .m_stats = stats,
+                                                                      .m_enemy = enemy });
         }
     } catch (const std::exception& e) {
         spdlog::error("加载敌人类型蓝图数据时出错: {}", e.what());
@@ -63,6 +65,13 @@ data::StatsBlueprint BlueprintManager::parseStats(const nlohmann::json& json)
                                 .m_range = json.at("range").get<float>(),
                                 .m_atkInterval = json.at("atk_interval").get<float>() };
     return stats;
+}
+
+data::EnemyBlueprint BlueprintManager::parseEnemy(const nlohmann::json& json)
+{
+    data::EnemyBlueprint enemy{ .m_isRanged = json.at("is_ranged").get<bool>(),
+                                .m_speed = json.at("speed").get<float>() };
+    return enemy;
 }
 
 } // namespace game::factory
