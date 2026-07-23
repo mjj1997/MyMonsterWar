@@ -1,8 +1,17 @@
 #pragma once
 
+#include <entt/entity/fwd.hpp>
+
+#include <string_view>
+#include <unordered_map>
+
 namespace engine::resource {
 class ResourceManager;
 }
+
+namespace game::data {
+struct EnemyClassBlueprint;
+} // namespace game::data
 
 namespace game::factory {
 
@@ -16,8 +25,19 @@ class BlueprintManager
 public:
     BlueprintManager(engine::resource::ResourceManager& resourceManager);
 
+    ///< @brief 加载敌人类型蓝图, 返回是否成功
+    [[nodiscard]] bool loadEnemyClassBlueprints(std::string_view enemyJsonPath);
+    // TODO: 未来添加其他蓝图加载函数
+
+    ///< @brief 获取指定ID的敌人类型蓝图
+    const data::EnemyClassBlueprint& getEnemyClassBlueprint(entt::id_type id) const;
+    // TODO: 未来添加其他蓝图获取函数
+
 private:
     engine::resource::ResourceManager& m_resourceManager;
+    ///< @brief 敌人类型蓝图
+    std::unordered_map<entt::id_type, data::EnemyClassBlueprint> m_enemyClassBlueprints;
+    // TODO: 未来添加其他蓝图容器
 };
 
 } // namespace game::factory
