@@ -47,4 +47,11 @@ struct SoundsBlueprint
     std::unordered_map<entt::id_type, entt::id_type> m_sounds;
 };
 
+/// @brief 敌人蓝图, 用于创建敌人组件
+struct EnemyBlueprint
+{
+    bool m_isRanged{ false };
+    float m_speed{ 0.0F };
+};
+
 } // namespace game::data
