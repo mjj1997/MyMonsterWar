@@ -35,16 +35,19 @@ bool BlueprintManager::loadEnemyClassBlueprints(std::string_view enemyJsonPath)
             auto sounds = parseSounds(enemyClassDataJson);
             // 解析 Sprite
             auto sprite = BlueprintManager::parseSprite(enemyClassDataJson);
+            // 解析 DisplayInfo
+            auto displayInfo = BlueprintManager::parseDisplayInfo(enemyClassDataJson);
             // TODO: 解析 Animation
-            // TODO: 解析 DisplayInfo
             // TODO: 解析完毕，组合蓝图并插入容器
             m_enemyClassBlueprints.emplace(classId,
-                                           data::EnemyClassBlueprint{ .m_classId = classId,
-                                                                      .m_className = enemyClassName,
-                                                                      .m_stats = stats,
-                                                                      .m_enemy = enemy,
-                                                                      .m_sounds = sounds,
-                                                                      .m_sprite = sprite });
+                                           data::EnemyClassBlueprint{
+                                               .m_classId = classId,
+                                               .m_className = enemyClassName,
+                                               .m_stats = stats,
+                                               .m_enemy = enemy,
+                                               .m_sounds = sounds,
+                                               .m_sprite = sprite,
+                                               .m_displayInfo = displayInfo });
         }
     } catch (const std::exception& e) {
         spdlog::error("加载敌人类型蓝图数据时出错: {}", e.what());
@@ -117,6 +120,13 @@ data::SpriteBlueprint BlueprintManager::parseSprite(const nlohmann::json& json)
         .m_isFacedRight = json.value("is_faced_right", true)
     };
     return sprite;
+}
+
+data::DisplayInfoBlueprint BlueprintManager::parseDisplayInfo(const nlohmann::json& json)
+{
+    data::DisplayInfoBlueprint displayInfo{ .m_name = json.value("name", ""),
+                                            .m_description = json.value("description", "") };
+    return displayInfo;
 }
 
 } // namespace game::factory
