@@ -6,6 +6,7 @@
 #include <glm/vec2.hpp>
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 /* 蓝图结构体，为实体工厂提供数据 */
@@ -38,6 +39,12 @@ struct AnimationBlueprint
     float m_durationPerFrame{ 0.0F };
     int m_row{ 0 };
     std::vector<int> m_frameIndices; ///< @brief 动画帧索引数组
+};
+
+/// @brief 声音蓝图, 用于创建音频组件
+struct SoundsBlueprint
+{
+    std::unordered_map<entt::id_type, entt::id_type> m_sounds;
 };
 
 } // namespace game::data
