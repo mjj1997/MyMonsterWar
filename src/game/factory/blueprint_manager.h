@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entt/entity/fwd.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 #include <string_view>
 #include <unordered_map>
@@ -11,6 +12,7 @@ class ResourceManager;
 
 namespace game::data {
 struct EnemyClassBlueprint;
+struct StatsBlueprint;
 } // namespace game::data
 
 namespace game::factory {
@@ -34,6 +36,9 @@ public:
     // TODO: 未来添加其他蓝图获取函数
 
 private:
+    // --- 分别针对各个子蓝图进行json解析，并创建(返回)对应的蓝图结构体 ---
+    static data::StatsBlueprint parseStats(const nlohmann::json& json);
+
     engine::resource::ResourceManager& m_resourceManager;
     ///< @brief 敌人类型蓝图
     std::unordered_map<entt::id_type, data::EnemyClassBlueprint> m_enemyClassBlueprints;
