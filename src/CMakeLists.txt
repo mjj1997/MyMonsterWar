@@ -38,7 +38,8 @@ target_sources(
           engine/system/y_sort_system.cpp
           game/loader/entity_builder_mw.cpp
           game/system/follow_path_system.cpp
-          game/system/remove_dead_system.cpp)
+          game/system/remove_dead_system.cpp
+          game/factory/blueprint_manager.cpp)
 
 target_link_libraries(
   MonsterWar
