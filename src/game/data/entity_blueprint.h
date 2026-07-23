@@ -61,4 +61,17 @@ struct DisplayInfoBlueprint
     std::string m_description;
 };
 
+/// @brief 敌人类型蓝图, 包含所有必要的子蓝图，用于创建敌人实体中的所有组件
+struct EnemyClassBlueprint
+{
+    entt::id_type m_classId{ entt::null };
+    std::string m_className;
+    StatsBlueprint m_stats{};
+    EnemyBlueprint m_enemy{};
+    SoundsBlueprint m_sounds{};
+    SpriteBlueprint m_sprite{};
+    DisplayInfoBlueprint m_displayInfo{};
+    std::unordered_map<entt::id_type, AnimationBlueprint> m_animations;
+};
+
 } // namespace game::data
