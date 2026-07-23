@@ -14,6 +14,7 @@ namespace game::data {
 struct EnemyClassBlueprint;
 struct StatsBlueprint;
 struct EnemyBlueprint;
+struct SoundsBlueprint;
 } // namespace game::data
 
 namespace game::factory {
@@ -40,6 +41,7 @@ private:
     // --- 分别针对各个子蓝图进行json解析，并创建(返回)对应的蓝图结构体 ---
     static data::StatsBlueprint parseStats(const nlohmann::json& json);
     static data::EnemyBlueprint parseEnemy(const nlohmann::json& json);
+    data::SoundsBlueprint parseSounds(const nlohmann::json& json);
 
     engine::resource::ResourceManager& m_resourceManager;
     ///< @brief 敌人类型蓝图
