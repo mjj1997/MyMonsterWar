@@ -33,7 +33,8 @@ bool BlueprintManager::loadEnemyClassBlueprints(std::string_view enemyJsonPath)
             auto enemy = BlueprintManager::parseEnemy(enemyClassDataJson);
             // 解析 Sounds
             auto sounds = parseSounds(enemyClassDataJson);
-            // TODO: 解析 Sprite
+            // 解析 Sprite
+            auto sprite = BlueprintManager::parseSprite(enemyClassDataJson);
             // TODO: 解析 Animation
             // TODO: 解析 DisplayInfo
             // TODO: 解析完毕，组合蓝图并插入容器
@@ -42,7 +43,8 @@ bool BlueprintManager::loadEnemyClassBlueprints(std::string_view enemyJsonPath)
                                                                       .m_className = enemyClassName,
                                                                       .m_stats = stats,
                                                                       .m_enemy = enemy,
-                                                                      .m_sounds = sounds });
+                                                                      .m_sounds = sounds,
+                                                                      .m_sprite = sprite });
         }
     } catch (const std::exception& e) {
         spdlog::error("加载敌人类型蓝图数据时出错: {}", e.what());
@@ -92,6 +94,29 @@ data::SoundsBlueprint BlueprintManager::parseSounds(const nlohmann::json& json)
         }
     }
     return sounds;
+}
+
+data::SpriteBlueprint BlueprintManager::parseSprite(const nlohmann::json& json)
+{
+    auto width = json.at("width").get<float>();
+    auto height = json.at("height").get<float>();
+    auto texturePath = json.at("sprite_sheet").get<std::string>();
+    entt::id_type textureId{ entt::hashed_string(texturePath.c_str()) };
+
+    /**
+     * 可选部分: 源矩形的起点默认值为 (0, 0); 渲染目标大小默认值为 (width, height);
+     * 如果指定, 则起点为 (x, y); 渲染目标大小为 (size_x, size_y);
+     */
+    data::SpriteBlueprint sprite{
+        .m_textureId = textureId,
+        .m_texturePath = texturePath,
+        .m_sourceRect = engine::utils::Rect{ glm::vec2{ json.value("x", 0), json.value("y", 0) },
+                                             glm::vec2{ width, height } },
+        .m_size = glm::vec2{ json.value("size_x", width), json.value("size_y", height) },
+        .m_offset = glm::vec2{ json.value("offset_x", 0), json.value("offset_y", 0) },
+        .m_isFacedRight = json.value("is_faced_right", true)
+    };
+    return sprite;
 }
 
 } // namespace game::factory

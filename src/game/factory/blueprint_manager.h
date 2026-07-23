@@ -15,6 +15,7 @@ struct EnemyClassBlueprint;
 struct StatsBlueprint;
 struct EnemyBlueprint;
 struct SoundsBlueprint;
+struct SpriteBlueprint;
 } // namespace game::data
 
 namespace game::factory {
@@ -42,6 +43,7 @@ private:
     static data::StatsBlueprint parseStats(const nlohmann::json& json);
     static data::EnemyBlueprint parseEnemy(const nlohmann::json& json);
     data::SoundsBlueprint parseSounds(const nlohmann::json& json);
+    static data::SpriteBlueprint parseSprite(const nlohmann::json& json);
 
     engine::resource::ResourceManager& m_resourceManager;
     ///< @brief 敌人类型蓝图
