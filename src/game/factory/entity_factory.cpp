@@ -1,4 +1,5 @@
 #include "entity_factory.h"
+#include "../component/class_name_component.h"
 #include "../component/enemy_component.h"
 #include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
@@ -40,6 +41,10 @@ entt::entity EntityFactory::createEnemyUnit(
     addStatsComponent(entity, blueprint.m_stats, level, rarity);
     // 添加敌人组件
     addEnemyComponent(entity, blueprint.m_enemy, targetPathNodeId);
+    // 补充其它必要组件
+    m_registry.emplace<game::component::ClassNameComponent>(entity,
+                                                            classId,
+                                                            blueprint.m_displayInfo.m_name);
 
     // TODO: 未来可添加其它组件
 
