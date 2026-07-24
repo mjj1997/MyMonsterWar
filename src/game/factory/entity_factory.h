@@ -17,6 +17,9 @@ public:
     /// @brief 实体工厂构造函数, 需要传入注册表和蓝图管理器。通过蓝图数据创建不同实体
     EntityFactory(entt::registry& registry, BlueprintManager& blueprintManager);
 
+    entt::entity createEnemyUnit(entt::id_type classId);
+    // TODO: 未来添加其他实体的创建函数
+
 private:
     entt::registry& m_registry;
     BlueprintManager& m_blueprintManager;
