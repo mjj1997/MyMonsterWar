@@ -9,6 +9,7 @@ namespace game::data {
 struct SpriteBlueprint;
 struct AnimationBlueprint;
 struct SoundsBlueprint;
+struct StatsBlueprint;
 } // namespace game::data
 
 namespace game::factory {
@@ -26,7 +27,10 @@ public:
     /// @brief 实体工厂构造函数, 需要传入注册表和蓝图管理器。通过蓝图数据创建不同实体
     EntityFactory(entt::registry& registry, BlueprintManager& blueprintManager);
 
-    entt::entity createEnemyUnit(entt::id_type classId, glm::vec2 position);
+    entt::entity createEnemyUnit(entt::id_type classId,
+                                 glm::vec2 position,
+                                 int level = 1,
+                                 int rarity = 1);
     // TODO: 未来添加其他实体的创建函数
 
 private:
@@ -44,6 +48,10 @@ private:
         const data::SpriteBlueprint& spriteBlueprint,
         entt::id_type defaultAnimationId);
     void addAudioComponent(entt::entity entity, const data::SoundsBlueprint& sounds);
+    void addStatsComponent(entt::entity entity,
+                           const data::StatsBlueprint& stats,
+                           int level = 1,
+                           int rarity = 1);
     // TODO: 未来添加其他组件创建函数
 
     entt::registry& m_registry;

@@ -1,4 +1,5 @@
 #include "entity_factory.h"
+#include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
 #include "blueprint_manager.h"
 
@@ -18,7 +19,10 @@ EntityFactory::EntityFactory(entt::registry& registry, BlueprintManager& bluepri
     , m_blueprintManager{ blueprintManager }
 {}
 
-entt::entity EntityFactory::createEnemyUnit(entt::id_type classId, glm::vec2 position)
+entt::entity EntityFactory::createEnemyUnit(entt::id_type classId,
+                                            glm::vec2 position,
+                                            int level,
+                                            int rarity)
 {
     auto entity = m_registry.create();
     const auto& blueprint = m_blueprintManager.getEnemyClassBlueprint(classId);
@@ -32,7 +36,8 @@ entt::entity EntityFactory::createEnemyUnit(entt::id_type classId, glm::vec2 pos
     addAnimationComponent(entity, blueprint.m_animations, blueprint.m_sprite, "walk"_hs);
     // 添加音频组件
     addAudioComponent(entity, blueprint.m_sounds);
-    // TODO: 添加属性组件
+    // 添加属性组件
+    addStatsComponent(entity, blueprint.m_stats, level, rarity);
     // TODO: 添加敌人组件
 
     // TODO: 未来可添加其它组件
@@ -108,6 +113,19 @@ void EntityFactory::addAudioComponent(entt::entity entity, const data::SoundsBlu
     }
 
     m_registry.emplace<engine::component::AudioComponent>(entity, std::move(audioMap));
+}
+
+void EntityFactory::addStatsComponent(entt::entity entity,
+                                      const data::StatsBlueprint& stats,
+                                      int level,
+                                      int rarity)
+{
+    auto hp = engine::utils::statModify(stats.m_hp, level, rarity);
+    auto atk = engine::utils::statModify(stats.m_atk, level, rarity);
+    auto def = engine::utils::statModify(stats.m_def, level, rarity);
+
+    m_registry.emplace_or_replace<game::component::StatsComponent>(
+        entity, hp, hp, atk, def, stats.m_range, stats.m_atkInterval, 0.0F, level, rarity);
 }
 
 } // namespace game::factory
