@@ -3,6 +3,7 @@
 #include "../component/enemy_component.h"
 #include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
+#include "../defs/tags.h"
 #include "blueprint_manager.h"
 
 #include "../../engine/component/animation_component.h"
@@ -72,7 +73,10 @@ void EntityFactory::addSpriteComponent(entt::entity entity,
                                                                isFlipped },
                                                            sprite.m_size,
                                                            sprite.m_offset);
-    // TODO: 如果图片不是面向右侧, 添加 FaceLeftTag
+    // 如果图片不是面向右侧, 添加朝左标签
+    if (!sprite.m_isFacedRight) {
+        m_registry.emplace<game::defs::FacedLeftTag>(entity);
+    }
 }
 
 void EntityFactory::addAnimationComponent(
@@ -143,7 +147,13 @@ void EntityFactory::addEnemyComponent(entt::entity entity,
     m_registry.emplace<game::component::EnemyComponent>(entity, targetPathNodeId, enemy.m_speed);
     // 顺便添加速度组件
     m_registry.emplace<engine::component::VelocityComponent>(entity, glm::vec2(0.0F));
-    // TODO: 添加远程或近战标签
+
+    // 添加远程或近战标签备用
+    if (enemy.m_isRanged) {
+        m_registry.emplace<game::defs::RangedUnitTag>(entity);
+    } else {
+        m_registry.emplace<game::defs::MeleeUnitTag>(entity);
+    }
 }
 
 } // namespace game::factory
