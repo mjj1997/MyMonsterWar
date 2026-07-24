@@ -3,6 +3,10 @@
 #include <entt/entity/fwd.hpp>
 #include <glm/vec2.hpp>
 
+namespace game::data {
+struct SpriteBlueprint;
+} // namespace game::data
+
 namespace game::factory {
 
 class BlueprintManager;
@@ -27,6 +31,9 @@ private:
                                glm::vec2 position,
                                glm::vec2 scale = glm::vec2(1.0F),
                                float rotation = 0.0F);
+    void addSpriteComponent(entt::entity entity,
+                            const data::SpriteBlueprint& sprite,
+                            bool isFlipped = false);
     // TODO: 未来添加其他组件创建函数
 
     entt::registry& m_registry;

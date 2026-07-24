@@ -1,6 +1,8 @@
 #include "entity_factory.h"
+#include "../data/entity_blueprint.h"
 #include "blueprint_manager.h"
 
+#include "../../engine/component/sprite_component.h"
 #include "../../engine/component/transform_component.h"
 
 #include <entt/entity/registry.hpp>
@@ -20,7 +22,8 @@ entt::entity EntityFactory::createEnemyUnit(entt::id_type classId, glm::vec2 pos
     /* --- 添加组件 --- */
     // 添加变换组件
     addTransformComponent(entity, position);
-    // TODO: 添加精灵组件
+    // 添加精灵组件
+    addSpriteComponent(entity, blueprint.m_sprite);
     // TODO: 添加动画组件
     // TODO: 添加音频组件
     // TODO: 添加属性组件
@@ -37,6 +40,20 @@ void EntityFactory::addTransformComponent(entt::entity entity,
                                           float rotation)
 {
     m_registry.emplace<engine::component::TransformComponent>(entity, position, scale, rotation);
+}
+
+void EntityFactory::addSpriteComponent(entt::entity entity,
+                                       const data::SpriteBlueprint& sprite,
+                                       bool isFlipped)
+{
+    m_registry.emplace<engine::component::SpriteComponent>(entity,
+                                                           engine::component::Sprite{
+                                                               sprite.m_texturePath,
+                                                               sprite.m_sourceRect,
+                                                               isFlipped },
+                                                           sprite.m_size,
+                                                           sprite.m_offset);
+    // TODO: 如果图片不是面向右侧, 添加 FaceLeftTag
 }
 
 } // namespace game::factory
