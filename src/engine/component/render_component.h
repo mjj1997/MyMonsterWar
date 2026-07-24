@@ -7,7 +7,10 @@ namespace engine::component {
  */
 struct RenderComponent
 {
-    RenderComponent(int layerIndex = 0, float depth = 0.0F)
+    /// @brief 主图层序号, 默认为 10
+    static constexpr int MAIN_LAYER_INDEX{ 10 };
+
+    RenderComponent(int layerIndex = MAIN_LAYER_INDEX, float depth = 0.0F)
         : m_layerIndex{ layerIndex }
         , m_depth{ depth }
     {}
