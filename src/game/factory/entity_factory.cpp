@@ -7,6 +7,7 @@
 
 #include "../../engine/component/animation_component.h"
 #include "../../engine/component/audio_component.h"
+#include "../../engine/component/render_component.h"
 #include "../../engine/component/sprite_component.h"
 #include "../../engine/component/transform_component.h"
 #include "../../engine/component/velocity_component.h"
@@ -45,6 +46,7 @@ entt::entity EntityFactory::createEnemyUnit(
     m_registry.emplace<game::component::ClassNameComponent>(entity,
                                                             classId,
                                                             blueprint.m_displayInfo.m_name);
+    m_registry.emplace<engine::component::RenderComponent>(entity); // 默认添加到主图层
 
     // TODO: 未来可添加其它组件
 
