@@ -3,8 +3,11 @@
 #include <entt/entity/fwd.hpp>
 #include <glm/vec2.hpp>
 
+#include <unordered_map>
+
 namespace game::data {
 struct SpriteBlueprint;
+struct AnimationBlueprint;
 } // namespace game::data
 
 namespace game::factory {
@@ -34,6 +37,11 @@ private:
     void addSpriteComponent(entt::entity entity,
                             const data::SpriteBlueprint& sprite,
                             bool isFlipped = false);
+    void addAnimationComponent(
+        entt::entity entity,
+        const std::unordered_map<entt::id_type, data::AnimationBlueprint>& animationBlueprints,
+        const data::SpriteBlueprint& spriteBlueprint,
+        entt::id_type defaultAnimationId);
     // TODO: 未来添加其他组件创建函数
 
     entt::registry& m_registry;

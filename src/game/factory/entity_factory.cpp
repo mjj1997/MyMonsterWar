@@ -2,10 +2,13 @@
 #include "../data/entity_blueprint.h"
 #include "blueprint_manager.h"
 
+#include "../../engine/component/animation_component.h"
 #include "../../engine/component/sprite_component.h"
 #include "../../engine/component/transform_component.h"
 
 #include <entt/entity/registry.hpp>
+
+using namespace entt::literals;
 
 namespace game::factory {
 
@@ -24,7 +27,8 @@ entt::entity EntityFactory::createEnemyUnit(entt::id_type classId, glm::vec2 pos
     addTransformComponent(entity, position);
     // 添加精灵组件
     addSpriteComponent(entity, blueprint.m_sprite);
-    // TODO: 添加动画组件
+    // 添加动画组件
+    addAnimationComponent(entity, blueprint.m_animations, blueprint.m_sprite, "walk"_hs);
     // TODO: 添加音频组件
     // TODO: 添加属性组件
     // TODO: 添加敌人组件
@@ -54,6 +58,39 @@ void EntityFactory::addSpriteComponent(entt::entity entity,
                                                            sprite.m_size,
                                                            sprite.m_offset);
     // TODO: 如果图片不是面向右侧, 添加 FaceLeftTag
+}
+
+void EntityFactory::addAnimationComponent(
+    entt::entity entity,
+    const std::unordered_map<entt::id_type, data::AnimationBlueprint>& animationBlueprints,
+    const data::SpriteBlueprint& spriteBlueprint,
+    entt::id_type defaultAnimationId)
+{
+    // 先创建动画 map 容器
+    std::unordered_map<entt::id_type, engine::component::Animation> animations;
+    // 依次读取动画蓝图数据
+    for (const auto& [animationId, animationBlueprint] : animationBlueprints) {
+        // 创建动画帧容器
+        std::vector<engine::component::AnimationFrame> frames;
+        // 依次读取蓝图中的每一个帧索引
+        for (const auto& frameIndex : animationBlueprint.m_frameIndices) {
+            engine::utils::Rect sourceRect{ spriteBlueprint.m_sourceRect };
+            // 通过索引计算每一帧的源矩形位置
+            sourceRect.position.x += frameIndex * sourceRect.size.x;
+            sourceRect.position.y += animationBlueprint.m_row * sourceRect.size.y;
+            // 创建动画帧并填充到容器中
+            frames.emplace_back(sourceRect, animationBlueprint.m_durationPerFrame);
+        }
+
+        // 使用填充好的动画帧容器创建动画, 并填充到动画 map 容器中
+        engine::component::Animation animation{ std::move(frames) };
+        animations.emplace(animationId, animation);
+    }
+
+    // 使用动画 map 容器创建动画组件
+    m_registry.emplace<engine::component::AnimationComponent>(entity,
+                                                              std::move(animations),
+                                                              defaultAnimationId);
 }
 
 } // namespace game::factory
