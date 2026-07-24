@@ -3,6 +3,7 @@
 #include "blueprint_manager.h"
 
 #include "../../engine/component/animation_component.h"
+#include "../../engine/component/audio_component.h"
 #include "../../engine/component/sprite_component.h"
 #include "../../engine/component/transform_component.h"
 
@@ -29,7 +30,8 @@ entt::entity EntityFactory::createEnemyUnit(entt::id_type classId, glm::vec2 pos
     addSpriteComponent(entity, blueprint.m_sprite);
     // 添加动画组件
     addAnimationComponent(entity, blueprint.m_animations, blueprint.m_sprite, "walk"_hs);
-    // TODO: 添加音频组件
+    // 添加音频组件
+    addAudioComponent(entity, blueprint.m_sounds);
     // TODO: 添加属性组件
     // TODO: 添加敌人组件
 
@@ -91,6 +93,21 @@ void EntityFactory::addAnimationComponent(
     m_registry.emplace<engine::component::AnimationComponent>(entity,
                                                               std::move(animations),
                                                               defaultAnimationId);
+}
+
+void EntityFactory::addAudioComponent(entt::entity entity, const data::SoundsBlueprint& sounds)
+{
+    if (sounds.m_sounds.empty()) {
+        return;
+    }
+
+    // 将 m_sounds 中的键值对保存到临时容器 audioMap 中
+    std::unordered_map<entt::id_type, entt::id_type> audioMap;
+    for (const auto& [soundNameId, soundPathId] : sounds.m_sounds) {
+        audioMap.emplace(soundNameId, soundPathId);
+    }
+
+    m_registry.emplace<engine::component::AudioComponent>(entity, std::move(audioMap));
 }
 
 } // namespace game::factory

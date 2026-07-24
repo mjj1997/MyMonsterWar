@@ -8,6 +8,7 @@
 namespace game::data {
 struct SpriteBlueprint;
 struct AnimationBlueprint;
+struct SoundsBlueprint;
 } // namespace game::data
 
 namespace game::factory {
@@ -42,6 +43,7 @@ private:
         const std::unordered_map<entt::id_type, data::AnimationBlueprint>& animationBlueprints,
         const data::SpriteBlueprint& spriteBlueprint,
         entt::id_type defaultAnimationId);
+    void addAudioComponent(entt::entity entity, const data::SoundsBlueprint& sounds);
     // TODO: 未来添加其他组件创建函数
 
     entt::registry& m_registry;
