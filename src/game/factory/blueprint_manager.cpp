@@ -37,17 +37,19 @@ bool BlueprintManager::loadEnemyClassBlueprints(std::string_view enemyJsonPath)
             auto sprite = BlueprintManager::parseSprite(enemyClassDataJson);
             // 解析 DisplayInfo
             auto displayInfo = BlueprintManager::parseDisplayInfo(enemyClassDataJson);
-            // TODO: 解析 Animation
-            // TODO: 解析完毕，组合蓝图并插入容器
+            // 解析 Animation
+            auto animations = BlueprintManager::parseAnimationsMap(enemyClassDataJson);
+            // 解析完毕，组合蓝图并插入容器
             m_enemyClassBlueprints.emplace(classId,
                                            data::EnemyClassBlueprint{
                                                .m_classId = classId,
                                                .m_className = enemyClassName,
                                                .m_stats = stats,
                                                .m_enemy = enemy,
-                                               .m_sounds = sounds,
-                                               .m_sprite = sprite,
-                                               .m_displayInfo = displayInfo });
+                                               .m_sounds = std::move(sounds),
+                                               .m_sprite = std::move(sprite),
+                                               .m_displayInfo = std::move(displayInfo),
+                                               .m_animations = std::move(animations) });
         }
     } catch (const std::exception& e) {
         spdlog::error("加载敌人类型蓝图数据时出错: {}", e.what());
@@ -127,6 +129,25 @@ data::DisplayInfoBlueprint BlueprintManager::parseDisplayInfo(const nlohmann::js
     data::DisplayInfoBlueprint displayInfo{ .m_name = json.value("name", ""),
                                             .m_description = json.value("description", "") };
     return displayInfo;
+}
+
+std::unordered_map<entt::id_type, data::AnimationBlueprint> BlueprintManager::parseAnimationsMap(
+    const nlohmann::json& json)
+{
+    std::unordered_map<entt::id_type, data::AnimationBlueprint> animations;
+    for (const auto& [animeName, animeData] : json.at("animation").items()) {
+        entt::id_type animeNameId{ entt::hashed_string(animeName.c_str()) };
+        // 直接获取帧索引列表
+        std::vector<int> frameIndices{ animeData.at("frames").get<std::vector<int>>() };
+        // 创建单个动画蓝图
+        data::AnimationBlueprint animation{ .m_durationPerFrame = animeData.value("duration",
+                                                                                  100.0F),
+                                            .m_row = animeData.value("row", 0),
+                                            .m_frameIndices = std::move(frameIndices) };
+        // 插入动画蓝图到映射中
+        animations.emplace(animeNameId, animation);
+    }
+    return animations;
 }
 
 } // namespace game::factory

@@ -17,6 +17,7 @@ struct EnemyBlueprint;
 struct SoundsBlueprint;
 struct SpriteBlueprint;
 struct DisplayInfoBlueprint;
+struct AnimationBlueprint;
 } // namespace game::data
 
 namespace game::factory {
@@ -46,6 +47,8 @@ private:
     data::SoundsBlueprint parseSounds(const nlohmann::json& json);
     static data::SpriteBlueprint parseSprite(const nlohmann::json& json);
     static data::DisplayInfoBlueprint parseDisplayInfo(const nlohmann::json& json);
+    static std::unordered_map<entt::id_type, data::AnimationBlueprint> parseAnimationsMap(
+        const nlohmann::json& json);
 
     engine::resource::ResourceManager& m_resourceManager;
     ///< @brief 敌人类型蓝图
