@@ -1,4 +1,5 @@
 #include "entity_factory.h"
+#include "../component/enemy_component.h"
 #include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
 #include "blueprint_manager.h"
@@ -7,6 +8,7 @@
 #include "../../engine/component/audio_component.h"
 #include "../../engine/component/sprite_component.h"
 #include "../../engine/component/transform_component.h"
+#include "../../engine/component/velocity_component.h"
 
 #include <entt/entity/registry.hpp>
 
@@ -19,10 +21,8 @@ EntityFactory::EntityFactory(entt::registry& registry, BlueprintManager& bluepri
     , m_blueprintManager{ blueprintManager }
 {}
 
-entt::entity EntityFactory::createEnemyUnit(entt::id_type classId,
-                                            glm::vec2 position,
-                                            int level,
-                                            int rarity)
+entt::entity EntityFactory::createEnemyUnit(
+    entt::id_type classId, glm::vec2 position, int targetPathNodeId, int level, int rarity)
 {
     auto entity = m_registry.create();
     const auto& blueprint = m_blueprintManager.getEnemyClassBlueprint(classId);
@@ -38,7 +38,8 @@ entt::entity EntityFactory::createEnemyUnit(entt::id_type classId,
     addAudioComponent(entity, blueprint.m_sounds);
     // 添加属性组件
     addStatsComponent(entity, blueprint.m_stats, level, rarity);
-    // TODO: 添加敌人组件
+    // 添加敌人组件
+    addEnemyComponent(entity, blueprint.m_enemy, targetPathNodeId);
 
     // TODO: 未来可添加其它组件
 
@@ -126,6 +127,16 @@ void EntityFactory::addStatsComponent(entt::entity entity,
 
     m_registry.emplace_or_replace<game::component::StatsComponent>(
         entity, hp, hp, atk, def, stats.m_range, stats.m_atkInterval, 0.0F, level, rarity);
+}
+
+void EntityFactory::addEnemyComponent(entt::entity entity,
+                                      const data::EnemyBlueprint& enemy,
+                                      int targetPathNodeId)
+{
+    m_registry.emplace<game::component::EnemyComponent>(entity, targetPathNodeId, enemy.m_speed);
+    // 顺便添加速度组件
+    m_registry.emplace<engine::component::VelocityComponent>(entity, glm::vec2(0.0F));
+    // TODO: 添加远程或近战标签
 }
 
 } // namespace game::factory
