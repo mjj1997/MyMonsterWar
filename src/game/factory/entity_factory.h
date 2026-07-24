@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entt/entity/fwd.hpp>
+#include <glm/vec2.hpp>
 
 namespace game::factory {
 
@@ -17,10 +18,17 @@ public:
     /// @brief 实体工厂构造函数, 需要传入注册表和蓝图管理器。通过蓝图数据创建不同实体
     EntityFactory(entt::registry& registry, BlueprintManager& blueprintManager);
 
-    entt::entity createEnemyUnit(entt::id_type classId);
+    entt::entity createEnemyUnit(entt::id_type classId, glm::vec2 position);
     // TODO: 未来添加其他实体的创建函数
 
 private:
+    // --- 组件创建函数 ---
+    void addTransformComponent(entt::entity entity,
+                               glm::vec2 position,
+                               glm::vec2 scale = glm::vec2(1.0F),
+                               float rotation = 0.0F);
+    // TODO: 未来添加其他组件创建函数
+
     entt::registry& m_registry;
     BlueprintManager& m_blueprintManager;
 };
