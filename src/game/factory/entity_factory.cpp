@@ -1,6 +1,7 @@
 #include "entity_factory.h"
 #include "../component/class_name_component.h"
 #include "../component/enemy_component.h"
+#include "../component/player_component.h"
 #include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
 #include "../defs/tags.h"
@@ -14,6 +15,8 @@
 #include "../../engine/component/velocity_component.h"
 
 #include <entt/entity/registry.hpp>
+
+#include <cmath>
 
 using namespace entt::literals;
 
@@ -185,6 +188,15 @@ void EntityFactory::addEnemyComponent(entt::entity entity,
     } else {
         m_registry.emplace<game::defs::MeleeUnitTag>(entity);
     }
+}
+
+void EntityFactory::addPlayerComponent(entt::entity entity,
+                                       const data::PlayerBlueprint& player,
+                                       int rarity)
+{
+    // 根据稀有度调整玩家成本
+    auto cost = static_cast<int>(std::round(player.m_cost * (0.9F + 0.1F * rarity)));
+    m_registry.emplace<game::component::PlayerComponent>(entity, cost);
 }
 
 } // namespace game::factory

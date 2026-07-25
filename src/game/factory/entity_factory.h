@@ -11,6 +11,7 @@ struct AnimationBlueprint;
 struct SoundsBlueprint;
 struct StatsBlueprint;
 struct EnemyBlueprint;
+struct PlayerBlueprint;
 } // namespace game::data
 
 namespace game::factory {
@@ -61,6 +62,7 @@ private:
     void addEnemyComponent(entt::entity entity,
                            const data::EnemyBlueprint& enemy,
                            int targetPathNodeId);
+    void addPlayerComponent(entt::entity entity, const data::PlayerBlueprint& player, int rarity);
     // TODO: 未来添加其他组件创建函数
 
     entt::registry& m_registry;
