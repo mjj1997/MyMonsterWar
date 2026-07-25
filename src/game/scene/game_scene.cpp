@@ -1,5 +1,6 @@
 #include "game_scene.h"
 #include "../component/enemy_component.h"
+#include "../data/entity_blueprint.h"
 #include "../factory/blueprint_manager.h"
 #include "../factory/entity_factory.h"
 #include "../loader/entity_builder_mw.h"
