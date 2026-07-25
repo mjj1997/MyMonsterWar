@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../defs/constants.h"
+
 #include "../../engine/utils/math.h"
 
 #include <entt/entity/entity.hpp>
@@ -53,6 +55,16 @@ struct EnemyBlueprint
 {
     bool m_isRanged{ false };
     float m_speed{ 0.0F };
+};
+
+/// @brief 玩家蓝图, 用于创建玩家组件
+struct PlayerBlueprint
+{
+    game::defs::PlayerType m_type{ game::defs::PlayerType::Unknown };
+    entt::id_type m_skillId{ entt::null };
+    bool m_isHealer{ false };
+    int m_block{ 0 };
+    int m_cost{ 0 };
 };
 
 /// @brief 显示信息蓝图, 可用于查找对应职业的名称和描述
