@@ -58,6 +58,46 @@ bool BlueprintManager::loadEnemyClassBlueprints(std::string_view enemyJsonPath)
     return true;
 }
 
+bool BlueprintManager::loadPlayerClassBlueprints(std::string_view playerJsonPath)
+{
+    auto path = std::filesystem::path{ playerJsonPath };
+    std::ifstream file{ path };
+    nlohmann::json json;
+    file >> json;
+
+    // --- 解析蓝图 ---
+    try {
+        for (const auto& [playerClassName, playerClassDataJson] : json.items()) {
+            const entt::id_type classId{ entt::hashed_string(playerClassName.c_str()) };
+            // 解析 Stats
+            auto stats = BlueprintManager::parseStats(playerClassDataJson);
+            // TODO: 解析 Player
+            // 解析 Sounds
+            auto sounds = parseSounds(playerClassDataJson);
+            // 解析 Sprite
+            auto sprite = BlueprintManager::parseSprite(playerClassDataJson);
+            // 解析 DisplayInfo
+            auto displayInfo = BlueprintManager::parseDisplayInfo(playerClassDataJson);
+            // 解析 Animation
+            auto animations = BlueprintManager::parseAnimationsMap(playerClassDataJson);
+            // 解析完毕，组合蓝图并插入容器
+            m_playerClassBlueprints.emplace(classId,
+                                            data::PlayerClassBlueprint{
+                                                .m_classId = classId,
+                                                .m_className = playerClassName,
+                                                .m_stats = stats,
+                                                .m_sounds = std::move(sounds),
+                                                .m_sprite = std::move(sprite),
+                                                .m_displayInfo = std::move(displayInfo),
+                                                .m_animations = std::move(animations) });
+        }
+    } catch (const std::exception& e) {
+        spdlog::error("加载玩家类型蓝图数据时出错: {}", e.what());
+        return false;
+    }
+    return true;
+}
+
 const data::EnemyClassBlueprint& BlueprintManager::getEnemyClassBlueprint(entt::id_type id) const
 {
     if (m_enemyClassBlueprints.contains(id)) {
@@ -66,6 +106,16 @@ const data::EnemyClassBlueprint& BlueprintManager::getEnemyClassBlueprint(entt::
 
     spdlog::error("未找到对应 ID 的敌人类型蓝图: {}", id);
     return m_enemyClassBlueprints.begin()->second;
+}
+
+const data::PlayerClassBlueprint& BlueprintManager::getPlayerClassBlueprint(entt::id_type id) const
+{
+    if (m_playerClassBlueprints.contains(id)) {
+        return m_playerClassBlueprints.at(id);
+    }
+
+    spdlog::error("未找到对应 ID 的玩家类型蓝图: {}", id);
+    return m_playerClassBlueprints.begin()->second;
 }
 
 data::StatsBlueprint BlueprintManager::parseStats(const nlohmann::json& json)
