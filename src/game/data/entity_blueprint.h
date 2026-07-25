@@ -44,6 +44,7 @@ struct AnimationBlueprint
 /// @brief 声音蓝图, 用于创建音频组件
 struct SoundsBlueprint
 {
+    /// @brief 键为音效名称 id，值为音效路径 id
     std::unordered_map<entt::id_type, entt::id_type> m_sounds;
 };
 
