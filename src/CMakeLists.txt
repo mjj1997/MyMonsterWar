@@ -58,32 +58,18 @@ target_link_libraries(
 set(RESOURCE_SRC_DIR "${PROJECT_SOURCE_DIR}/assets")
 set(RESOURCE_DST_DIR "$<TARGET_FILE_DIR:MonsterWar>/assets")
 
-# 2. 使用 GLOB 递归获取源资源文件列表（推荐使用 CONFIGURE_DEPENDS）
-file(
-  GLOB_RECURSE RESOURCE_FILES CONFIGURE_DEPENDS
-  RELATIVE "${RESOURCE_SRC_DIR}"
-  "${RESOURCE_SRC_DIR}/*")
-
-# 3. 创建自定义目标用于增量复制资源
+# 2. 创建自定义目标用于增量复制资源
 add_custom_target(
   CopyAssets ALL
   COMMENT "Copying only changed asset files..."
   VERBATIM)
 
-# 4. 为每个资源文件添加复制命令
-foreach(RSRC_FILE IN LISTS RESOURCE_FILES)
-  get_filename_component(RSRC_DIR "${RSRC_FILE}" DIRECTORY)
+# 3. 创建自定义命令复制整个资源目录到输出目录
+add_custom_command(
+  TARGET CopyAssets
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${RESOURCE_SRC_DIR}" "${RESOURCE_DST_DIR}"
+  COMMENT "Copying assets to output directory...")
 
-  # 为每个文件定义复制命令
-  add_custom_command(
-    TARGET CopyAssets
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${RESOURCE_DST_DIR}/${RSRC_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${RESOURCE_SRC_DIR}/${RSRC_FILE}" "${RESOURCE_DST_DIR}/${RSRC_FILE}"
-    COMMENT "Checking: ${RSRC_FILE}"
-    WORKING_DIRECTORY "${RESOURCE_SRC_DIR}" # 确保相对路径正确
-  )
-endforeach()
-
-# 5. 为可执行目标添加依赖
+# 4. 为可执行目标添加依赖
 add_dependencies(MonsterWar CopyAssets)
