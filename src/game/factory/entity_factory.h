@@ -33,6 +33,10 @@ public:
                                  int targetPathNodeId,
                                  int level = 1,
                                  int rarity = 1);
+    entt::entity createPlayerUnit(entt::id_type classId,
+                                  glm::vec2 position,
+                                  int level = 1,
+                                  int rarity = 1);
     // TODO: 未来添加其他实体的创建函数
 
 private:

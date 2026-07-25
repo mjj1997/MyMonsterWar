@@ -54,6 +54,37 @@ entt::entity EntityFactory::createEnemyUnit(
     return entity;
 }
 
+entt::entity EntityFactory::createPlayerUnit(entt::id_type classId,
+                                             glm::vec2 position,
+                                             int level,
+                                             int rarity)
+{
+    auto entity = m_registry.create();
+    const auto& blueprint = m_blueprintManager.getPlayerClassBlueprint(classId);
+
+    /* --- 添加组件 --- */
+    // 添加变换组件
+    addTransformComponent(entity, position);
+    // 添加精灵组件
+    addSpriteComponent(entity, blueprint.m_sprite);
+    // 添加动画组件
+    addAnimationComponent(entity, blueprint.m_animations, blueprint.m_sprite, "walk"_hs);
+    // 添加音频组件
+    addAudioComponent(entity, blueprint.m_sounds);
+    // 添加属性组件
+    addStatsComponent(entity, blueprint.m_stats, level, rarity);
+    // TODO: 添加玩家组件
+    // 补充其它必要组件
+    m_registry.emplace<game::component::ClassNameComponent>(entity,
+                                                            classId,
+                                                            blueprint.m_displayInfo.m_name);
+    m_registry.emplace<engine::component::RenderComponent>(entity); // 默认添加到主图层
+
+    // TODO: 未来可添加其它组件
+
+    return entity;
+}
+
 void EntityFactory::addTransformComponent(entt::entity entity,
                                           glm::vec2 position,
                                           glm::vec2 scale,
