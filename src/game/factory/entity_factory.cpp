@@ -197,6 +197,19 @@ void EntityFactory::addPlayerComponent(entt::entity entity,
     // 根据稀有度调整玩家成本
     auto cost = static_cast<int>(std::round(player.m_cost * (0.9F + 0.1F * rarity)));
     m_registry.emplace<game::component::PlayerComponent>(entity, cost);
+
+    // 添加玩家职业类型标签（近战、远程、治疗）
+    if (player.m_type == game::defs::PlayerType::Melee) {
+        m_registry.emplace<game::defs::MeleeUnitTag>(entity); // 近战单位标签
+        // TODO: 近战类型添加阻挡者组件
+    } else if (player.m_type == game::defs::PlayerType::Ranged) {
+        m_registry.emplace<game::defs::RangedUnitTag>(entity); // 远程单位标签
+        if (player.m_isHealer) {
+            m_registry.emplace<game::defs::HealerTag>(entity); // 治疗单位标签
+        }
+    }
+
+    // TODO: 未来可以处理玩家职业类型为 PlayerType::Mixed 的情况
 }
 
 } // namespace game::factory
