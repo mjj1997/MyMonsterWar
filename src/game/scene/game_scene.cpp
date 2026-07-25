@@ -142,24 +142,14 @@ void GameScene::onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event)
 
 void GameScene::createTestEnemy()
 {
-    // 每个起点创建一个敌人
+    // 每个起点创建一批敌人
     for (auto startpointId : m_startpointIds) {
         auto position = m_pathNodes.at(startpointId).m_position;
 
-        auto enemy = m_registry.create();
-        m_registry.emplace<engine::component::TransformComponent>(enemy, position);
-        m_registry.emplace<engine::component::VelocityComponent>(enemy, glm::vec2(0.0F));
-        m_registry.emplace<game::component::EnemyComponent>(enemy, startpointId, 100.0F);
-
-        auto sprite = engine::component::Sprite{ "assets/textures/Enemy/wolf.png",
-                                                 engine::utils::Rect{ 0, 0, 192, 192 } };
-        // 设置精灵组件时, 需设置偏移量以调整中心点位置(否则会默认以左上角为中心点)
-        m_registry.emplace<engine::component::SpriteComponent>(enemy,
-                                                               std::move(sprite),
-                                                               glm::vec2(192.0F),
-                                                               glm::vec2{ -96.0F, -128.0F });
-        // 暂定主战斗图层编号为 10
-        m_registry.emplace<engine::component::RenderComponent>(enemy, 10);
+        m_entityFactory->createEnemyUnit("wolf"_hs, position, startpointId);
+        m_entityFactory->createEnemyUnit("slime"_hs, position, startpointId);
+        m_entityFactory->createEnemyUnit("goblin"_hs, position, startpointId);
+        m_entityFactory->createEnemyUnit("dark_witch"_hs, position, startpointId);
     }
 }
 
