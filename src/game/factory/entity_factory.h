@@ -11,6 +11,7 @@ struct AnimationBlueprint;
 struct SoundsBlueprint;
 struct StatsBlueprint;
 struct EnemyBlueprint;
+struct PlayerBlueprint;
 } // namespace game::data
 
 namespace game::factory {
@@ -33,6 +34,10 @@ public:
                                  int targetPathNodeId,
                                  int level = 1,
                                  int rarity = 1);
+    entt::entity createPlayerUnit(entt::id_type classId,
+                                  glm::vec2 position,
+                                  int level = 1,
+                                  int rarity = 1);
     // TODO: 未来添加其他实体的创建函数
 
 private:
@@ -57,6 +62,7 @@ private:
     void addEnemyComponent(entt::entity entity,
                            const data::EnemyBlueprint& enemy,
                            int targetPathNodeId);
+    void addPlayerComponent(entt::entity entity, const data::PlayerBlueprint& player, int rarity);
     // TODO: 未来添加其他组件创建函数
 
     entt::registry& m_registry;

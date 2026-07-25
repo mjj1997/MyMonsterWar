@@ -18,4 +18,7 @@ struct MeleeUnitTag // 近战单位标签
 struct RangedUnitTag // 远程单位标签
 {};
 
+struct HealerTag // 治疗单位标签
+{};
+
 } // namespace game::defs
