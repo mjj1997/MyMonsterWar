@@ -71,7 +71,8 @@ bool BlueprintManager::loadPlayerClassBlueprints(std::string_view playerJsonPath
             const entt::id_type classId{ entt::hashed_string(playerClassName.c_str()) };
             // 解析 Stats
             auto stats = BlueprintManager::parseStats(playerClassDataJson);
-            // TODO: 解析 Player
+            // 解析 Player
+            auto player = BlueprintManager::parsePlayer(playerClassDataJson);
             // 解析 Sounds
             auto sounds = parseSounds(playerClassDataJson);
             // 解析 Sprite
@@ -86,6 +87,7 @@ bool BlueprintManager::loadPlayerClassBlueprints(std::string_view playerJsonPath
                                                 .m_classId = classId,
                                                 .m_className = playerClassName,
                                                 .m_stats = stats,
+                                                .m_player = player,
                                                 .m_sounds = std::move(sounds),
                                                 .m_sprite = std::move(sprite),
                                                 .m_displayInfo = std::move(displayInfo),
@@ -198,6 +200,31 @@ std::unordered_map<entt::id_type, data::AnimationBlueprint> BlueprintManager::pa
         animations.emplace(animeNameId, animation);
     }
     return animations;
+}
+
+data::PlayerBlueprint BlueprintManager::parsePlayer(const nlohmann::json& json)
+{
+    // 解析玩家类型
+    auto typeStr = json.at("type").get<std::string>();
+    auto type = typeStr == "melee"    ? game::defs::PlayerType::Melee
+                : typeStr == "ranged" ? game::defs::PlayerType::Ranged
+                : typeStr == "mixed"  ? game::defs::PlayerType::Mixed
+                                      : game::defs::PlayerType::Unknown;
+
+    // 解析技能
+    entt::id_type skillId{ entt::null };
+    if (json.contains("skill")) {
+        skillId = entt::hashed_string(json.at("skill").get<std::string>().c_str());
+    }
+
+    // 解析其它数据并返回
+    data::PlayerBlueprint player{ .m_type = type,
+                                  .m_skillId = skillId,
+                                  .m_isHealer = json.at("is_healer").get<bool>(),
+                                  .m_block = json.at("block").get<int>(),
+                                  .m_cost = json.at("cost").get<int>() };
+
+    return player;
 }
 
 } // namespace game::factory

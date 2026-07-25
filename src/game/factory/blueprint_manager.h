@@ -19,6 +19,7 @@ struct SpriteBlueprint;
 struct DisplayInfoBlueprint;
 struct AnimationBlueprint;
 struct PlayerClassBlueprint;
+struct PlayerBlueprint;
 } // namespace game::data
 
 namespace game::factory {
@@ -54,6 +55,7 @@ private:
     static data::DisplayInfoBlueprint parseDisplayInfo(const nlohmann::json& json);
     static std::unordered_map<entt::id_type, data::AnimationBlueprint> parseAnimationsMap(
         const nlohmann::json& json);
+    static data::PlayerBlueprint parsePlayer(const nlohmann::json& json);
 
     engine::resource::ResourceManager& m_resourceManager;
     ///< @brief 敌人类型蓝图
