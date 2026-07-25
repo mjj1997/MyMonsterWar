@@ -87,4 +87,17 @@ struct EnemyClassBlueprint
     std::unordered_map<entt::id_type, AnimationBlueprint> m_animations;
 };
 
+/// @brief 玩家类型蓝图, 包含所有必要的子蓝图，用于创建玩家实体中的所有组件
+struct PlayerClassBlueprint
+{
+    entt::id_type m_classId{ entt::null };
+    std::string m_className;
+    StatsBlueprint m_stats{};
+    PlayerBlueprint m_player{};
+    SoundsBlueprint m_sounds{};
+    SpriteBlueprint m_sprite{};
+    DisplayInfoBlueprint m_displayInfo{};
+    std::unordered_map<entt::id_type, AnimationBlueprint> m_animations;
+};
+
 } // namespace game::data
