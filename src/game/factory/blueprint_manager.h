@@ -18,6 +18,8 @@ struct SoundsBlueprint;
 struct SpriteBlueprint;
 struct DisplayInfoBlueprint;
 struct AnimationBlueprint;
+struct PlayerClassBlueprint;
+struct PlayerBlueprint;
 } // namespace game::data
 
 namespace game::factory {
@@ -34,10 +36,14 @@ public:
 
     ///< @brief 加载敌人类型蓝图, 返回是否成功
     [[nodiscard]] bool loadEnemyClassBlueprints(std::string_view enemyJsonPath);
+    ///< @brief 加载玩家类型蓝图, 返回是否成功
+    [[nodiscard]] bool loadPlayerClassBlueprints(std::string_view playerJsonPath);
     // TODO: 未来添加其他蓝图加载函数
 
     ///< @brief 获取指定ID的敌人类型蓝图
     const data::EnemyClassBlueprint& getEnemyClassBlueprint(entt::id_type id) const;
+    ///< @brief 获取指定ID的玩家类型蓝图
+    const data::PlayerClassBlueprint& getPlayerClassBlueprint(entt::id_type id) const;
     // TODO: 未来添加其他蓝图获取函数
 
 private:
@@ -49,10 +55,13 @@ private:
     static data::DisplayInfoBlueprint parseDisplayInfo(const nlohmann::json& json);
     static std::unordered_map<entt::id_type, data::AnimationBlueprint> parseAnimationsMap(
         const nlohmann::json& json);
+    static data::PlayerBlueprint parsePlayer(const nlohmann::json& json);
 
     engine::resource::ResourceManager& m_resourceManager;
     ///< @brief 敌人类型蓝图
     std::unordered_map<entt::id_type, data::EnemyClassBlueprint> m_enemyClassBlueprints;
+    ///< @brief 玩家类型蓝图
+    std::unordered_map<entt::id_type, data::PlayerClassBlueprint> m_playerClassBlueprints;
     // TODO: 未来添加其他蓝图容器
 };
 
