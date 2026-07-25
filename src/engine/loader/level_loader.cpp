@@ -95,22 +95,9 @@ bool LevelLoader::loadLevel(std::string_view mapPath, engine::scene::SceneBase* 
     }
 
     for (const auto& layer : mapJson.at("layers")) {
-        // 获取各图层对象中的类型（type）字段
-        std::string type{ layer.value("type", "none") };
         if (!layer.value("visible", true)) {
             spdlog::info("图层 '{}' 不可见，跳过加载。", layer.value("name", "Unnamed"));
             continue;
-        }
-
-        // 根据图层类型决定加载方法
-        if (type == "imagelayer") {
-            loadImageLayer(layer);
-        } else if (type == "tilelayer") {
-            loadTileLayer(layer);
-        } else if (type == "objectgroup") {
-            loadObjectLayer(layer);
-        } else {
-            spdlog::warn("不支持的图层类型: {}", type);
         }
 
         // 可以指定当前图层的序号（默认从 0 开始，每载入一个图层，序号加 1），这个序号用于决定渲染顺序
@@ -120,6 +107,19 @@ bool LevelLoader::loadLevel(std::string_view mapPath, engine::scene::SceneBase* 
                     m_currentLayerIndex = property.at("value").get<int>();
                 }
             }
+        }
+
+        // 获取各图层对象中的类型（type）字段
+        std::string type{ layer.value("type", "none") };
+        // 根据图层类型决定加载方法
+        if (type == "imagelayer") {
+            loadImageLayer(layer);
+        } else if (type == "tilelayer") {
+            loadTileLayer(layer);
+        } else if (type == "objectgroup") {
+            loadObjectLayer(layer);
+        } else {
+            spdlog::warn("不支持的图层类型: {}", type);
         }
 
         spdlog::info("当前图层: {}, 图层序号: {}",
