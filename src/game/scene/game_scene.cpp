@@ -1,5 +1,7 @@
 #include "game_scene.h"
 #include "../component/enemy_component.h"
+#include "../factory/blueprint_manager.h"
+#include "../factory/entity_factory.h"
 #include "../loader/entity_builder_mw.h"
 #include "../system/follow_path_system.h"
 #include "../system/remove_dead_system.h"
@@ -46,6 +48,10 @@ void GameScene::init()
     }
     if (!initEventConnections()) {
         spdlog::error("初始化事件连接失败");
+        return;
+    }
+    if (!initEntityFactory()) {
+        spdlog::error("初始化实体工厂失败");
         return;
     }
     createTestEnemy();
@@ -107,6 +113,24 @@ bool GameScene::initEventConnections()
     // 连接敌人到达基地事件
     dispatcher.sink<game::defs::EnemyArriveBaseEvent>().connect<&GameScene::onEnemyArriveBase>(this);
 
+    return true;
+}
+
+bool GameScene::initEntityFactory()
+{
+    // 如果蓝图管理器为空，则创建一个（将来可能由构造函数传入）
+    if (m_blueprintManager == nullptr) {
+        m_blueprintManager = std::make_shared<game::factory::BlueprintManager>(
+            m_context.resourceManager());
+        if (!m_blueprintManager->loadEnemyClassBlueprints("assets/data/enemy_data.json")) {
+            spdlog::error("加载蓝图失败");
+            return false;
+        }
+    }
+
+    m_entityFactory = std::make_unique<game::factory::EntityFactory>(m_registry,
+                                                                     *m_blueprintManager);
+    spdlog::info("实体工厂初始化完成");
     return true;
 }
 

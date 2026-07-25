@@ -28,6 +28,7 @@ public:
 private:
     [[nodiscard]] bool loadLevel();
     [[nodiscard]] bool initEventConnections();
+    [[nodiscard]] bool initEntityFactory();
 
     // 事件回调函数
     void onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event);
