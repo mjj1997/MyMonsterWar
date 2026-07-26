@@ -1,4 +1,5 @@
 #include "follow_path_system.h"
+#include "../component/blocked_by_component.h"
 #include "../component/enemy_component.h"
 #include "../data/path_node.h"
 #include "../defs/events.h"
@@ -21,10 +22,10 @@ void FollowPathSystem::update(entt::registry& registry,
 {
     spdlog::trace("FollowPathSystem::update");
 
-    // 筛选依据: 速度组件, 变换组件, 敌人组件
+    // 筛选依据: 速度组件, 变换组件, 敌人组件, 排除“被阻挡的敌人”
     auto view = registry.view<engine::component::VelocityComponent,
                               engine::component::TransformComponent,
-                              game::component::EnemyComponent>();
+                              game::component::EnemyComponent>(entt::exclude<BlockedByComponent>);
     for (auto entity : view) {
         auto& velocityComponent = view.get<engine::component::VelocityComponent>(entity);
         auto& transformComponent = view.get<engine::component::TransformComponent>(entity);
