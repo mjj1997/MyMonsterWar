@@ -18,6 +18,21 @@ void BlockSystem::update(entt::registry& registry)
 {
     spdlog::trace("BlockSystem::update");
 
+    /* --- 检查阻挡者是否依然有效 --- */
+    auto blockedByView = registry.view<game::component::BlockedByComponent>();
+    for (auto blockedByEntity : blockedByView) {
+        auto& blockedByComponent = blockedByView.get<game::component::BlockedByComponent>(
+            blockedByEntity);
+        // 如果被阻挡组件指向的阻挡者实体无效（比如死亡），则移除被阻挡组件
+        if (!registry.valid(blockedByComponent.m_entity)) {
+            registry.remove<game::component::BlockedByComponent>(blockedByEntity);
+            spdlog::info("阻挡者 ID：{} 无效，移除被阻挡组件",
+                         entt::to_integral(blockedByComponent.m_entity));
+
+            // TODO: 播放动画“walk”
+        }
+    }
+
     /* --- 判断敌人实体是否需要添加被阻挡组件 --- */
     // 获取所有阻挡者
     auto blockerView
