@@ -1,4 +1,5 @@
 #include "entity_factory.h"
+#include "../component/blocker_component.h"
 #include "../component/class_name_component.h"
 #include "../component/enemy_component.h"
 #include "../component/player_component.h"
@@ -201,7 +202,8 @@ void EntityFactory::addPlayerComponent(entt::entity entity,
     // 添加玩家职业类型标签（近战、远程、治疗）
     if (player.m_type == game::defs::PlayerType::Melee) {
         m_registry.emplace<game::defs::MeleeUnitTag>(entity); // 近战单位标签
-        // TODO: 近战类型添加阻挡者组件
+        // 近战类型添加阻挡者组件
+        m_registry.emplace<game::component::BlockerComponent>(entity, player.m_block);
     } else if (player.m_type == game::defs::PlayerType::Ranged) {
         m_registry.emplace<game::defs::RangedUnitTag>(entity); // 远程单位标签
         if (player.m_isHealer) {

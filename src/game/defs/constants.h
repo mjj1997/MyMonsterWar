@@ -2,6 +2,8 @@
 
 namespace game::defs {
 
+constexpr float BLOCK_RADIUS{ 40.0F }; // 阻挡判断半径
+
 /// @brief 玩家类型枚举
 enum class PlayerType {
     Unknown,
