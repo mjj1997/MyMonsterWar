@@ -1,6 +1,7 @@
 #include "animation_system.h"
 #include "../component/animation_component.h"
 #include "../component/sprite_component.h"
+#include "../utils/events.h"
 
 #include <entt/entity/registry.hpp>
 #include <entt/signal/dispatcher.hpp>
@@ -66,6 +67,22 @@ void AnimationSystem::update(entt::registry& registry, float deltaTime)
         // 更新 SpriteComponent 的源矩形 （根据当前动画帧的源矩形信息）
         const auto& nextFrame = currentAnimation.m_frames.at(animationComponent.m_currentFrameIndex);
         spriteComponent.m_sprite.m_sourceRect = nextFrame.m_sourceRect;
+    }
+}
+
+void AnimationSystem::playAnimation(const engine::utils::PlayAnimationEvent& event)
+{
+    // 使用 try_get 安全获取可能存在的组件，如果不存在则返回 nullptr
+    if (auto animationComponent = m_registry.try_get<engine::component::AnimationComponent>(
+            event.m_entity);
+        animationComponent != nullptr) {
+        // 替换为事件中的动画 ID
+        animationComponent->m_currentAnimationId = event.m_animationId;
+        // 从头播放动画
+        animationComponent->m_currentFrameIndex = 0;
+        animationComponent->m_currentTime = 0.0F;
+        // 设置是否循环播放
+        animationComponent->m_animations.at(event.m_animationId).m_isLoop = event.m_loop;
     }
 }
 

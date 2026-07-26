@@ -3,6 +3,10 @@
 #include <entt/entity/fwd.hpp>
 #include <entt/signal/fwd.hpp>
 
+namespace engine::utils {
+struct PlayAnimationEvent;
+}
+
 namespace engine::system {
 
 /**
@@ -24,6 +28,10 @@ public:
     void update(entt::registry& registry, float deltaTime);
 
 private:
+    /* --- 回调函数 --- */
+    /// @brief 播放动画事件的处理函数
+    void playAnimation(const engine::utils::PlayAnimationEvent& event);
+
     /* --- 将依赖保存为成员变量，方便在回调函数中使用 --- */
     entt::registry& m_registry;
     entt::dispatcher& m_dispatcher;
