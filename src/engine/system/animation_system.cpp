@@ -3,9 +3,20 @@
 #include "../component/sprite_component.h"
 
 #include <entt/entity/registry.hpp>
+#include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
 
 namespace engine::system {
+
+AnimationSystem::AnimationSystem(entt::registry& registry, entt::dispatcher& dispatcher)
+    : m_registry{ registry }
+    , m_dispatcher{ dispatcher }
+{
+}
+
+AnimationSystem::~AnimationSystem()
+{
+}
 
 void AnimationSystem::update(entt::registry& registry, float deltaTime)
 {
