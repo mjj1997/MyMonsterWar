@@ -22,10 +22,10 @@ public:
 
     /**
      * @brief 更新所有拥有动画组件和精灵组件的实体
-     * @param registry entt::registry 的引用
      * @param deltaTime 增量时间
+     * @note 现在更新方法只需要传入 deltaTime，registry 和 dispatcher 已经在构造函数中传入。
      */
-    void update(entt::registry& registry, float deltaTime);
+    void update(float deltaTime);
 
 private:
     /* --- 回调函数 --- */

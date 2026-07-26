@@ -22,11 +22,11 @@ AnimationSystem::~AnimationSystem()
     m_dispatcher.disconnect(this);
 }
 
-void AnimationSystem::update(entt::registry& registry, float deltaTime)
+void AnimationSystem::update(float deltaTime)
 {
     spdlog::trace("AnimationSystem::update");
 
-    auto view = registry.view<component::AnimationComponent, component::SpriteComponent>();
+    auto view = m_registry.view<component::AnimationComponent, component::SpriteComponent>();
     for (auto entity : view) {
         auto& animationComponent = view.get<component::AnimationComponent>(entity);
         auto& spriteComponent = view.get<component::SpriteComponent>(entity);
