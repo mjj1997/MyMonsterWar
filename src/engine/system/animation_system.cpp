@@ -13,10 +13,13 @@ AnimationSystem::AnimationSystem(entt::registry& registry, entt::dispatcher& dis
     : m_registry{ registry }
     , m_dispatcher{ dispatcher }
 {
+    m_dispatcher.sink<engine::utils::PlayAnimationEvent>().connect<&AnimationSystem::playAnimation>(
+        this);
 }
 
 AnimationSystem::~AnimationSystem()
 {
+    m_dispatcher.disconnect(this);
 }
 
 void AnimationSystem::update(entt::registry& registry, float deltaTime)
