@@ -28,6 +28,7 @@ public:
 private:
     [[nodiscard]] bool loadLevel();
     [[nodiscard]] bool initEventConnections();
+    [[nodiscard]] bool initInputConnections();
     [[nodiscard]] bool initEntityFactory();
 
     // 事件回调函数
@@ -35,6 +36,9 @@ private:
 
     // 测试函数
     void createTestEnemy();
+    bool createTestPlayerMelee();
+    bool createTestPlayerRanged();
+    bool clearAllPlayers();
 
     std::unique_ptr<engine::system::MovementSystem> m_movementSystem;
     std::unique_ptr<engine::system::RenderSystem> m_renderSystem;
@@ -42,6 +46,7 @@ private:
     std::unique_ptr<engine::system::YSortSystem> m_ySortSystem;
     std::unique_ptr<game::system::FollowPathSystem> m_followPathSystem;
     std::unique_ptr<game::system::RemoveDeadSystem> m_removeDeadSystem;
+    std::unique_ptr<game::system::BlockSystem> m_blockSystem;
 
     std::unordered_map<int, game::data::PathNode> m_pathNodes; // 路径节点ID -> 路径节点
     std::vector<int> m_startpointIds;                          // 起点ID列表
