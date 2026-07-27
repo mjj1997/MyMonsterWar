@@ -4,6 +4,7 @@
 #include "../factory/blueprint_manager.h"
 #include "../factory/entity_factory.h"
 #include "../loader/entity_builder_mw.h"
+#include "../system/block_system.h"
 #include "../system/follow_path_system.h"
 #include "../system/remove_dead_system.h"
 
@@ -36,6 +37,7 @@ GameScene::GameScene(engine::core::Context& context)
 
     m_followPathSystem = std::make_unique<game::system::FollowPathSystem>();
     m_removeDeadSystem = std::make_unique<game::system::RemoveDeadSystem>();
+    m_blockSystem = std::make_unique<game::system::BlockSystem>();
 
     spdlog::info("GameScene 构造完成");
 }
@@ -69,6 +71,7 @@ void GameScene::update(float deltaTime)
 
     // 注意系统更新顺序, 路径跟随系统要放到移动系统之前
     m_followPathSystem->update(m_registry, dispatcher, m_pathNodes);
+    m_blockSystem->update(m_registry, dispatcher);
     m_movementSystem->update(m_registry, deltaTime);
     m_ySortSystem->update(m_registry); // 调用顺序要放到移动系统之后
     m_animationSystem->update(m_registry, deltaTime);
