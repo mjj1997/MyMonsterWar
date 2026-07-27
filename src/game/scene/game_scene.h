@@ -35,6 +35,9 @@ private:
 
     // 测试函数
     void createTestEnemy();
+    bool createTestPlayerMelee();
+    bool createTestPlayerRanged();
+    bool clearAllPlayers();
 
     std::unique_ptr<engine::system::MovementSystem> m_movementSystem;
     std::unique_ptr<engine::system::RenderSystem> m_renderSystem;

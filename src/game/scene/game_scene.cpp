@@ -1,5 +1,6 @@
 #include "game_scene.h"
 #include "../component/enemy_component.h"
+#include "../component/player_component.h"
 #include "../data/entity_blueprint.h"
 #include "../factory/blueprint_manager.h"
 #include "../factory/entity_factory.h"
@@ -157,6 +158,31 @@ void GameScene::createTestEnemy()
         m_entityFactory->createEnemyUnit("goblin"_hs, position, startpointId);
         m_entityFactory->createEnemyUnit("dark_witch"_hs, position, startpointId);
     }
+}
+
+bool GameScene::createTestPlayerMelee()
+{
+    auto position = m_context.inputManager().logicalMousePosition();
+    m_entityFactory->createPlayerUnit("warrior"_hs, position);
+    spdlog::info("创建战士: 位置: {}, {}", position.x, position.y);
+    return true;
+}
+
+bool GameScene::createTestPlayerRanged()
+{
+    auto position = m_context.inputManager().logicalMousePosition();
+    m_entityFactory->createPlayerUnit("archer"_hs, position);
+    spdlog::info("创建弓箭手: 位置: {}, {}", position.x, position.y);
+    return true;
+}
+
+bool GameScene::clearAllPlayers()
+{
+    auto view = m_registry.view<game::component::PlayerComponent>();
+    for (auto entity : view) {
+        m_registry.destroy(entity);
+    }
+    return true;
 }
 
 } // namespace game::scene
