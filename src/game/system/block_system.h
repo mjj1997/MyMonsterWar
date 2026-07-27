@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entt/entity/fwd.hpp>
+#include <entt/signal/fwd.hpp>
 
 namespace game::system {
 
@@ -11,7 +12,7 @@ namespace game::system {
 class BlockSystem
 {
 public:
-    void update(entt::registry& registry);
+    void update(entt::registry& registry, entt::dispatcher& dispatcher);
 };
 
 } // namespace game::system
