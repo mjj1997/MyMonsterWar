@@ -77,7 +77,8 @@ entt::entity EntityFactory::createPlayerUnit(entt::id_type classId,
     addAudioComponent(entity, blueprint.m_sounds);
     // 添加属性组件
     addStatsComponent(entity, blueprint.m_stats, level, rarity);
-    // TODO: 添加玩家组件
+    // 添加玩家组件
+    addPlayerComponent(entity, blueprint.m_player, rarity);
     // 补充其它必要组件
     m_registry.emplace<game::component::ClassNameComponent>(entity,
                                                             classId,
