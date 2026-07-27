@@ -117,49 +117,51 @@ void InputManager::initInputMappings(const engine::core::Configurator* config)
     m_actionStates.clear();
 
     // 获取配置中的输入映射（动作 -> 按键名称）
-    auto actionToKeyNames = config->m_inputMappings;
+    auto actionToKeys = config->m_inputMappings;
     // 如果配置中没有定义鼠标按钮动作(通常不需要配置),则添加默认映射, 用于 UI
-    if (!actionToKeyNames.contains("mouse_left")) {
+    if (!actionToKeys.contains("mouse_left")) {
         spdlog::debug("配置中没有定义 'mouse_left' 动作,添加默认映射到 'MouseLeft'.");
-        actionToKeyNames["mouse_left"] = { "MouseLeft" }; // 如果缺失则添加默认映射
+        actionToKeys.emplace("mouse_left",
+                             std::vector<std::string>{ "MouseLeft" }); // 如果缺失则添加默认映射
     }
-    if (!actionToKeyNames.contains("mouse_right")) {
+    if (!actionToKeys.contains("mouse_right")) {
         spdlog::debug("配置中没有定义 'mouse_right' 动作,添加默认映射到 'MouseRight'.");
-        actionToKeyNames["mouse_right"] = { "MouseRight" }; // 如果缺失则添加默认映射
+        actionToKeys.emplace("mouse_right",
+                             std::vector<std::string>{ "MouseRight" }); // 如果缺失则添加默认映射
     }
 
-    // 遍历 动作 -> 按键名称 的映射
-    for (const auto& [action, keyNames] : actionToKeyNames) {
+    // 遍历 动作 -> 按键 的映射
+    for (const auto& [action, keys] : actionToKeys) {
         // 每个动作对应一个动作状态，初始化为 Inactive
         auto actionId = entt::hashed_string(action.c_str());
         m_actionStates.emplace(actionId, ActionState::Inactive);
 
         // 设置 "按键 -> 动作" 的映射
         spdlog::trace("映射动作: {}", action);
-        for (std::string_view keyName : keyNames) {
+        for (std::string_view key : keys) {
             // 尝试根据按键名称获取scancode
-            SDL_Scancode scancode{ InputManager::scancodeFromString(keyName) };
+            SDL_Scancode scancode{ InputManager::scancodeFromString(key) };
             // 尝试根据按键名称获取鼠标按钮
-            Uint32 mouseButton{ InputManager::mouseButtonUint32FromString(keyName) };
+            Uint32 mouseButton{ InputManager::mouseButtonUint32FromString(key) };
             // 未来可添加其它输入类型 ...
 
             if (scancode != SDL_SCANCODE_UNKNOWN) {
                 // 如果 scancode 有效,则将 action 添加到 m_inputKeyToActions 中的对应列表
                 m_inputKeyToActions[scancode].push_back(actionId);
                 spdlog::trace("  映射按键: {} (Scancode: {}) 到动作: {}",
-                              keyName,
+                              key,
                               static_cast<int>(scancode),
                               action);
             } else if (mouseButton != 0) {
                 // 如果鼠标按钮有效,则将 action 添加到 m_inputKeyToActions 中的对应列表
                 m_inputKeyToActions[mouseButton].push_back(actionId);
                 spdlog::trace("  映射鼠标按钮: {} (Button ID: {}) 到动作: {}",
-                              keyName,
+                              key,
                               static_cast<int>(mouseButton),
                               action);
                 // else if: 未来可添加其它输入类型 ...
             } else {
-                spdlog::warn("输入映射警告: 未知键或按钮名称 '{}' 用于动作 '{}'.", keyName, action);
+                spdlog::warn("输入映射警告: 未知键或按钮 '{}' 用于动作 '{}'.", key, action);
             }
         }
     }
