@@ -14,6 +14,7 @@
 #include "../../engine/component/transform_component.h"
 #include "../../engine/component/velocity_component.h"
 #include "../../engine/core/context.h"
+#include "../../engine/input/input_manager.h"
 #include "../../engine/loader/level_loader.h"
 #include "../../engine/system/animation_system.h"
 #include "../../engine/system/movement_system.h"
@@ -56,6 +57,10 @@ void GameScene::init()
         spdlog::error("初始化事件连接失败");
         return;
     }
+    if (!initInputConnections()) {
+        spdlog::error("初始化输入连接失败");
+        return;
+    }
     if (!initEntityFactory()) {
         spdlog::error("初始化实体工厂失败");
         return;
@@ -95,6 +100,12 @@ void GameScene::clean()
     auto& dispatcher = m_context.dispatcher();
     dispatcher.disconnect(this);
 
+    // 断开输入信号连接
+    auto& inputManager = m_context.inputManager();
+    inputManager.actionSink("mouse_right"_hs).disconnect<&GameScene::createTestPlayerMelee>(this);
+    inputManager.actionSink("mouse_left"_hs).disconnect<&GameScene::createTestPlayerRanged>(this);
+    inputManager.actionSink("pause"_hs).disconnect<&GameScene::clearAllPlayers>(this);
+
     SceneBase::clean();
 }
 
@@ -120,6 +131,15 @@ bool GameScene::initEventConnections()
     // 连接敌人到达基地事件
     dispatcher.sink<game::defs::EnemyArriveBaseEvent>().connect<&GameScene::onEnemyArriveBase>(this);
 
+    return true;
+}
+
+bool GameScene::initInputConnections()
+{
+    auto& inputManager = m_context.inputManager();
+    inputManager.actionSink("mouse_right"_hs).connect<&GameScene::createTestPlayerMelee>(this);
+    inputManager.actionSink("mouse_left"_hs).connect<&GameScene::createTestPlayerRanged>(this);
+    inputManager.actionSink("pause"_hs).connect<&GameScene::clearAllPlayers>(this);
     return true;
 }
 

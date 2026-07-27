@@ -28,6 +28,7 @@ public:
 private:
     [[nodiscard]] bool loadLevel();
     [[nodiscard]] bool initEventConnections();
+    [[nodiscard]] bool initInputConnections();
     [[nodiscard]] bool initEntityFactory();
 
     // 事件回调函数
