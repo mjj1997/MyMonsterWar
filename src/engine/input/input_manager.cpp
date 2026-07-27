@@ -79,25 +79,25 @@ entt::sink<entt::sigh<bool()>> InputManager::actionSink(entt::id_type actionId,
 
 // --- 状态查询方法 ---
 
-bool InputManager::isActionDown(std::string_view action) const
+bool InputManager::isActionDown(entt::id_type actionId) const
 {
-    if (auto iter = m_actionStates.find(std::string(action)); iter != m_actionStates.end()) {
+    if (auto iter = m_actionStates.find(actionId); iter != m_actionStates.end()) {
         return iter->second == ActionState::Pressed || iter->second == ActionState::Held;
     }
     return false;
 }
 
-bool InputManager::isActionPressed(std::string_view action) const
+bool InputManager::isActionPressed(entt::id_type actionId) const
 {
-    if (auto iter = m_actionStates.find(std::string(action)); iter != m_actionStates.end()) {
+    if (auto iter = m_actionStates.find(actionId); iter != m_actionStates.end()) {
         return iter->second == ActionState::Pressed;
     }
     return false;
 }
 
-bool InputManager::isActionReleased(std::string_view action) const
+bool InputManager::isActionReleased(entt::id_type actionId) const
 {
-    if (auto iter = m_actionStates.find(std::string(action)); iter != m_actionStates.end()) {
+    if (auto iter = m_actionStates.find(actionId); iter != m_actionStates.end()) {
         return iter->second == ActionState::Released;
     }
     return false;

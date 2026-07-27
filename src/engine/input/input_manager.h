@@ -51,9 +51,9 @@ public:
 
     // 动作状态检查
     ///< @brief 动作当前是否触发 (持续按下或本帧按下)
-    bool isActionDown(std::string_view action) const;
-    bool isActionPressed(std::string_view action) const;  ///< @brief 动作是否在本帧刚刚按下
-    bool isActionReleased(std::string_view action) const; ///< @brief 动作是否在本帧刚刚释放
+    bool isActionDown(entt::id_type actionId) const;
+    bool isActionPressed(entt::id_type actionId) const;  ///< @brief 动作是否在本帧刚刚按下
+    bool isActionReleased(entt::id_type actionId) const; ///< @brief 动作是否在本帧刚刚释放
 
     glm::vec2 mousePosition() const;        ///< @brief 获取鼠标位置 （屏幕坐标）
     glm::vec2 logicalMousePosition() const; ///< @brief 获取鼠标位置 （逻辑坐标）
