@@ -6,15 +6,19 @@
 
 #include "../../engine/component/transform_component.h"
 #include "../../engine/component/velocity_component.h"
+#include "../../engine/utils/events.h"
 #include "../../engine/utils/math.h"
 
 #include <entt/entity/registry.hpp>
 #include <entt/entity/view.hpp>
+#include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
+
+using namespace entt::literals;
 
 namespace game::system {
 
-void BlockSystem::update(entt::registry& registry)
+void BlockSystem::update(entt::registry& registry, entt::dispatcher& dispatcher)
 {
     spdlog::trace("BlockSystem::update");
 
@@ -29,7 +33,8 @@ void BlockSystem::update(entt::registry& registry)
             spdlog::info("阻挡者 ID：{} 无效，移除被阻挡组件",
                          entt::to_integral(blockedByComponent.m_entity));
 
-            // TODO: 播放动画“walk”
+            // 播放动画“walk”
+            dispatcher.enqueue<engine::utils::PlayAnimationEvent>(blockedByEntity, "walk"_hs, true);
         }
     }
 
@@ -73,7 +78,10 @@ void BlockSystem::update(entt::registry& registry)
                              entt::to_integral(enemyEntity),
                              entt::to_integral(blockerEntity));
 
-                // TODO: 播放动画“attack”
+                // 播放动画“attack”
+                dispatcher.enqueue<engine::utils::PlayAnimationEvent>(enemyEntity,
+                                                                      "attack"_hs,
+                                                                      true);
             }
         }
     }
