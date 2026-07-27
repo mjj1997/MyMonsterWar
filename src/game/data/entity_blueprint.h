@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../defs/constants.h"
+
 #include "../../engine/utils/math.h"
 
 #include <entt/entity/entity.hpp>
@@ -55,6 +57,16 @@ struct EnemyBlueprint
     float m_speed{ 0.0F };
 };
 
+/// @brief 玩家蓝图, 用于创建玩家组件
+struct PlayerBlueprint
+{
+    game::defs::PlayerType m_type{ game::defs::PlayerType::Unknown };
+    entt::id_type m_skillId{ entt::null };
+    bool m_isHealer{ false };
+    int m_block{ 0 };
+    int m_cost{ 0 };
+};
+
 /// @brief 显示信息蓝图, 可用于查找对应职业的名称和描述
 struct DisplayInfoBlueprint
 {
@@ -69,6 +81,19 @@ struct EnemyClassBlueprint
     std::string m_className;
     StatsBlueprint m_stats{};
     EnemyBlueprint m_enemy{};
+    SoundsBlueprint m_sounds{};
+    SpriteBlueprint m_sprite{};
+    DisplayInfoBlueprint m_displayInfo{};
+    std::unordered_map<entt::id_type, AnimationBlueprint> m_animations;
+};
+
+/// @brief 玩家类型蓝图, 包含所有必要的子蓝图，用于创建玩家实体中的所有组件
+struct PlayerClassBlueprint
+{
+    entt::id_type m_classId{ entt::null };
+    std::string m_className;
+    StatsBlueprint m_stats{};
+    PlayerBlueprint m_player{};
     SoundsBlueprint m_sounds{};
     SpriteBlueprint m_sprite{};
     DisplayInfoBlueprint m_displayInfo{};

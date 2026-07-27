@@ -23,7 +23,7 @@ std::unique_ptr<UiStateBase> UiPressedState::handleInput(engine::core::Context& 
 {
     const auto& inputManager = context.inputManager();
     const auto& mousePos = inputManager.logicalMousePosition();
-    if (inputManager.isActionReleased("mouseLeftClick")) {
+    if (inputManager.isActionReleased("mouse_left"_hs)) {
         if (!m_owner->isPointInside(mousePos)) {
             // 松开鼠标时，如果鼠标不在 UI 元素内，切换到正常状态
             return std::make_unique<UiNormalState>(m_owner);

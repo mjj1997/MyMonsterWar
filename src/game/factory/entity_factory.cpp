@@ -1,6 +1,8 @@
 #include "entity_factory.h"
+#include "../component/blocker_component.h"
 #include "../component/class_name_component.h"
 #include "../component/enemy_component.h"
+#include "../component/player_component.h"
 #include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
 #include "../defs/tags.h"
@@ -14,6 +16,8 @@
 #include "../../engine/component/velocity_component.h"
 
 #include <entt/entity/registry.hpp>
+
+#include <cmath>
 
 using namespace entt::literals;
 
@@ -43,6 +47,38 @@ entt::entity EntityFactory::createEnemyUnit(
     addStatsComponent(entity, blueprint.m_stats, level, rarity);
     // 添加敌人组件
     addEnemyComponent(entity, blueprint.m_enemy, targetPathNodeId);
+    // 补充其它必要组件
+    m_registry.emplace<game::component::ClassNameComponent>(entity,
+                                                            classId,
+                                                            blueprint.m_displayInfo.m_name);
+    m_registry.emplace<engine::component::RenderComponent>(entity); // 默认添加到主图层
+
+    // TODO: 未来可添加其它组件
+
+    return entity;
+}
+
+entt::entity EntityFactory::createPlayerUnit(entt::id_type classId,
+                                             glm::vec2 position,
+                                             int level,
+                                             int rarity)
+{
+    auto entity = m_registry.create();
+    const auto& blueprint = m_blueprintManager.getPlayerClassBlueprint(classId);
+
+    /* --- 添加组件 --- */
+    // 添加变换组件
+    addTransformComponent(entity, position);
+    // 添加精灵组件
+    addSpriteComponent(entity, blueprint.m_sprite);
+    // 添加动画组件
+    addAnimationComponent(entity, blueprint.m_animations, blueprint.m_sprite, "walk"_hs);
+    // 添加音频组件
+    addAudioComponent(entity, blueprint.m_sounds);
+    // 添加属性组件
+    addStatsComponent(entity, blueprint.m_stats, level, rarity);
+    // 添加玩家组件
+    addPlayerComponent(entity, blueprint.m_player, rarity);
     // 补充其它必要组件
     m_registry.emplace<game::component::ClassNameComponent>(entity,
                                                             classId,
@@ -154,6 +190,29 @@ void EntityFactory::addEnemyComponent(entt::entity entity,
     } else {
         m_registry.emplace<game::defs::MeleeUnitTag>(entity);
     }
+}
+
+void EntityFactory::addPlayerComponent(entt::entity entity,
+                                       const data::PlayerBlueprint& player,
+                                       int rarity)
+{
+    // 根据稀有度调整玩家成本
+    auto cost = static_cast<int>(std::round(player.m_cost * (0.9F + 0.1F * rarity)));
+    m_registry.emplace<game::component::PlayerComponent>(entity, cost);
+
+    // 添加玩家职业类型标签（近战、远程、治疗）
+    if (player.m_type == game::defs::PlayerType::Melee) {
+        m_registry.emplace<game::defs::MeleeUnitTag>(entity); // 近战单位标签
+        // 近战类型添加阻挡者组件
+        m_registry.emplace<game::component::BlockerComponent>(entity, player.m_block);
+    } else if (player.m_type == game::defs::PlayerType::Ranged) {
+        m_registry.emplace<game::defs::RangedUnitTag>(entity); // 远程单位标签
+        if (player.m_isHealer) {
+            m_registry.emplace<game::defs::HealerTag>(entity); // 治疗单位标签
+        }
+    }
+
+    // TODO: 未来可以处理玩家职业类型为 PlayerType::Mixed 的情况
 }
 
 } // namespace game::factory
