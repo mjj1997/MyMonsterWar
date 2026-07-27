@@ -42,11 +42,11 @@ public:
 
     /**
      * @brief 注册一个动作的回调函数
-     * @param actionName 动作名称
+     * @param actionId 动作名称 ID
      * @param actionState 动作状态, 默认为按下瞬间
      * @return 一个 sink 对象，用于注册回调函数
      */
-    entt::sink<entt::sigh<bool()>> actionSink(std::string_view actionName,
+    entt::sink<entt::sigh<bool()>> actionSink(entt::id_type actionId,
                                               ActionState actionState = ActionState::Pressed);
 
     // 动作状态检查

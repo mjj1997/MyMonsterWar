@@ -69,10 +69,10 @@ void InputManager::update()
     }
 }
 
-entt::sink<entt::sigh<bool()>> InputManager::actionSink(std::string_view actionName,
+entt::sink<entt::sigh<bool()>> InputManager::actionSink(entt::id_type actionId,
                                                         ActionState actionState)
 {
-    auto [iter, isInserted] = m_actionToCallbacks.try_emplace(std::string(actionName),
+    auto [iter, isInserted] = m_actionToCallbacks.try_emplace(actionId,
                                                               std::array<entt::sigh<bool()>, 3>{});
     return entt::sink{ iter->second.at(static_cast<std::size_t>(actionState)) };
 }
