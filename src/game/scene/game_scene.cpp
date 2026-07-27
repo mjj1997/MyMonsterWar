@@ -29,10 +29,12 @@ namespace game::scene {
 GameScene::GameScene(engine::core::Context& context)
     : SceneBase{ "GameScene", context }
 {
+    auto& dispatcher = m_context.dispatcher();
+
     // 初始化系统
     m_movementSystem = std::make_unique<engine::system::MovementSystem>();
     m_renderSystem = std::make_unique<engine::system::RenderSystem>();
-    m_animationSystem = std::make_unique<engine::system::AnimationSystem>();
+    m_animationSystem = std::make_unique<engine::system::AnimationSystem>(m_registry, dispatcher);
     m_ySortSystem = std::make_unique<engine::system::YSortSystem>();
 
     m_followPathSystem = std::make_unique<game::system::FollowPathSystem>();
@@ -74,7 +76,7 @@ void GameScene::update(float deltaTime)
     m_blockSystem->update(m_registry, dispatcher);
     m_movementSystem->update(m_registry, deltaTime);
     m_ySortSystem->update(m_registry); // 调用顺序要放到移动系统之后
-    m_animationSystem->update(m_registry, deltaTime);
+    m_animationSystem->update(deltaTime);
 
     SceneBase::update(deltaTime);
 }
