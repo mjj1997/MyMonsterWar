@@ -25,7 +25,7 @@ std::unique_ptr<UiStateBase> UiHoverState::handleInput(engine::core::Context& co
         return std::make_unique<UiNormalState>(m_owner);
     }
 
-    if (inputManager.isActionPressed("mouseLeftClick")) { // 如果鼠标点击了左键，切换到按下状态
+    if (inputManager.isActionPressed("mouse_left"_hs)) { // 如果鼠标点击了左键，切换到按下状态
         return std::make_unique<UiPressedState>(m_owner);
     }
 

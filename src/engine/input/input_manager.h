@@ -4,7 +4,7 @@
 #include <glm/vec2.hpp>
 
 #include <array>
-#include <string>
+#include <string_view>
 #include <unordered_map>
 #include <variant>
 #include <vector>
@@ -42,18 +42,18 @@ public:
 
     /**
      * @brief 注册一个动作的回调函数
-     * @param actionName 动作名称
+     * @param actionId 动作名称 ID
      * @param actionState 动作状态, 默认为按下瞬间
      * @return 一个 sink 对象，用于注册回调函数
      */
-    entt::sink<entt::sigh<bool()>> actionSink(std::string_view actionName,
+    entt::sink<entt::sigh<bool()>> actionSink(entt::id_type actionId,
                                               ActionState actionState = ActionState::Pressed);
 
     // 动作状态检查
     ///< @brief 动作当前是否触发 (持续按下或本帧按下)
-    bool isActionDown(std::string_view action) const;
-    bool isActionPressed(std::string_view action) const;  ///< @brief 动作是否在本帧刚刚按下
-    bool isActionReleased(std::string_view action) const; ///< @brief 动作是否在本帧刚刚释放
+    bool isActionDown(entt::id_type actionId) const;
+    bool isActionPressed(entt::id_type actionId) const;  ///< @brief 动作是否在本帧刚刚按下
+    bool isActionReleased(entt::id_type actionId) const; ///< @brief 动作是否在本帧刚刚释放
 
     glm::vec2 mousePosition() const;        ///< @brief 获取鼠标位置 （屏幕坐标）
     glm::vec2 logicalMousePosition() const; ///< @brief 获取鼠标位置 （逻辑坐标）
@@ -72,7 +72,7 @@ private:
     ///< @brief 将字符串按钮名转换为 SDL_Button
     static Uint32 mouseButtonUint32FromString(std::string_view buttonName);
     ///< @brief 辅助更新动作状态
-    void updateActionState(std::string_view action, bool isInputActive, bool isRepeatEvent);
+    void updateActionState(entt::id_type actionId, bool isInputActive, bool isRepeatEvent);
 
     ///< @brief 用于获取逻辑坐标的 SDL_Renderer 指针
     SDL_Renderer* m_sdlRenderer;
@@ -80,16 +80,16 @@ private:
     entt::dispatcher* m_dispatcher;
 
     ///< @brief 从键盘（Scancode）或鼠标按钮 (Uint32) 到关联的动作名称列表
-    std::unordered_map<InputKey, std::vector<std::string>> m_inputKeyToActions;
-
-    std::unordered_map<std::string, ActionState> m_actionStates; ///< @brief 存储每个动作的当前状态
+    std::unordered_map<InputKey, std::vector<entt::id_type>> m_inputKeyToActions;
+    ///< @brief 存储每个动作的当前状态
+    std::unordered_map<entt::id_type, ActionState> m_actionStates;
 
     /** @brief 核心数据结构: 存储动作名称函数列表的映射
      * 
      * @note 每个动作有3个状态: Pressed, Held, Released，每个状态对应一个回调函数
      * @note 绑定动作时再插入元素（懒加载），初始化时为空
      */
-    std::unordered_map<std::string, std::array<entt::sigh<bool()>, 3>> m_actionToCallbacks;
+    std::unordered_map<entt::id_type, std::array<entt::sigh<bool()>, 3>> m_actionToCallbacks;
 
     glm::vec2 m_mousePosition{ 0.0F, 0.0F };        ///< @brief 鼠标位置 (针对屏幕坐标)
     glm::vec2 m_logicalMousePosition{ 0.0F, 0.0F }; ///< @brief 鼠标位置 (针对逻辑坐标)
