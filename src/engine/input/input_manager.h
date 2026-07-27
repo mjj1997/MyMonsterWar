@@ -72,7 +72,7 @@ private:
     ///< @brief 将字符串按钮名转换为 SDL_Button
     static Uint32 mouseButtonUint32FromString(std::string_view buttonName);
     ///< @brief 辅助更新动作状态
-    void updateActionState(std::string_view action, bool isInputActive, bool isRepeatEvent);
+    void updateActionState(entt::id_type actionId, bool isInputActive, bool isRepeatEvent);
 
     ///< @brief 用于获取逻辑坐标的 SDL_Renderer 指针
     SDL_Renderer* m_sdlRenderer;

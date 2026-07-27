@@ -256,11 +256,11 @@ Uint32 InputManager::mouseButtonUint32FromString(std::string_view buttonName)
     return 0;
 }
 
-void InputManager::updateActionState(std::string_view action, bool isInputActive, bool isRepeatEvent)
+void InputManager::updateActionState(entt::id_type actionId, bool isInputActive, bool isRepeatEvent)
 {
-    auto iter = m_actionStates.find(std::string(action));
+    auto iter = m_actionStates.find(actionId);
     if (iter == m_actionStates.end()) {
-        spdlog::warn("尝试更新未注册动作的状态: {}", action);
+        spdlog::warn("尝试更新未注册动作的状态: {}", actionId);
         return;
     }
 
