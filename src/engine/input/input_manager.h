@@ -4,7 +4,7 @@
 #include <glm/vec2.hpp>
 
 #include <array>
-#include <string>
+#include <string_view>
 #include <unordered_map>
 #include <variant>
 #include <vector>
@@ -80,16 +80,16 @@ private:
     entt::dispatcher* m_dispatcher;
 
     ///< @brief 从键盘（Scancode）或鼠标按钮 (Uint32) 到关联的动作名称列表
-    std::unordered_map<InputKey, std::vector<std::string>> m_inputKeyToActions;
-
-    std::unordered_map<std::string, ActionState> m_actionStates; ///< @brief 存储每个动作的当前状态
+    std::unordered_map<InputKey, std::vector<entt::id_type>> m_inputKeyToActions;
+    ///< @brief 存储每个动作的当前状态
+    std::unordered_map<entt::id_type, ActionState> m_actionStates;
 
     /** @brief 核心数据结构: 存储动作名称函数列表的映射
      * 
      * @note 每个动作有3个状态: Pressed, Held, Released，每个状态对应一个回调函数
      * @note 绑定动作时再插入元素（懒加载），初始化时为空
      */
-    std::unordered_map<std::string, std::array<entt::sigh<bool()>, 3>> m_actionToCallbacks;
+    std::unordered_map<entt::id_type, std::array<entt::sigh<bool()>, 3>> m_actionToCallbacks;
 
     glm::vec2 m_mousePosition{ 0.0F, 0.0F };        ///< @brief 鼠标位置 (针对屏幕坐标)
     glm::vec2 m_logicalMousePosition{ 0.0F, 0.0F }; ///< @brief 鼠标位置 (针对逻辑坐标)

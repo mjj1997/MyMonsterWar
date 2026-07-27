@@ -38,7 +38,7 @@ InputManager::InputManager(SDL_Renderer* sdlRenderer,
 void InputManager::update()
 {
     // 1. 根据上一帧的值更新默认的动作状态
-    for (auto& [action, state] : m_actionStates) {
+    for (auto& [actionId, state] : m_actionStates) {
         if (state == ActionState::Pressed) {
             state = ActionState::Held; // 当某个键按下不动时，并不会生成SDL_Event。
         } else if (state == ActionState::Released) {
@@ -53,9 +53,9 @@ void InputManager::update()
     }
 
     // 3. 触发回调
-    for (auto& [action, state] : m_actionStates) {
+    for (auto& [actionId, state] : m_actionStates) {
         if (state != ActionState::Inactive) { // 如果动作状态不是 Inactive，且有绑定回调函数
-            if (auto iter = m_actionToCallbacks.find(action); iter != m_actionToCallbacks.end()) {
+            if (auto iter = m_actionToCallbacks.find(actionId); iter != m_actionToCallbacks.end()) {
                 /**
                  * collect() 会依次分发信号给回调函数，并获取回调函数的返回值，放入 lambda 函数的参数 result 中。
                  * 当 lambda 函数的返回值为 true 时，停止分发信号。
@@ -131,7 +131,8 @@ void InputManager::initInputMappings(const engine::core::Configurator* config)
     // 遍历 动作 -> 按键名称 的映射
     for (const auto& [action, keyNames] : actionToKeyNames) {
         // 每个动作对应一个动作状态，初始化为 Inactive
-        m_actionStates[action] = ActionState::Inactive;
+        auto actionId = entt::hashed_string(action.c_str());
+        m_actionStates.emplace(actionId, ActionState::Inactive);
 
         // 设置 "按键 -> 动作" 的映射
         spdlog::trace("映射动作: {}", action);
@@ -144,14 +145,14 @@ void InputManager::initInputMappings(const engine::core::Configurator* config)
 
             if (scancode != SDL_SCANCODE_UNKNOWN) {
                 // 如果 scancode 有效,则将 action 添加到 m_inputKeyToActions 中的对应列表
-                m_inputKeyToActions[scancode].push_back(action);
+                m_inputKeyToActions[scancode].push_back(actionId);
                 spdlog::trace("  映射按键: {} (Scancode: {}) 到动作: {}",
                               keyName,
                               static_cast<int>(scancode),
                               action);
             } else if (mouseButton != 0) {
                 // 如果鼠标按钮有效,则将 action 添加到 m_inputKeyToActions 中的对应列表
-                m_inputKeyToActions[mouseButton].push_back(action);
+                m_inputKeyToActions[mouseButton].push_back(actionId);
                 spdlog::trace("  映射鼠标按钮: {} (Button ID: {}) 到动作: {}",
                               keyName,
                               static_cast<int>(mouseButton),
@@ -176,13 +177,13 @@ void InputManager::processEvent(const SDL_Event& event)
     case SDL_EVENT_KEY_DOWN:
     case SDL_EVENT_KEY_UP: {
         SDL_Scancode scancode{ event.key.scancode }; // 获取按键的scancode
-        // 如果按键有对应的 actions
+        // 如果按键有对应的动作
         if (auto iter = m_inputKeyToActions.find(scancode); iter != m_inputKeyToActions.end()) {
-            const std::vector<std::string>& actions{ iter->second };
+            const std::vector<entt::id_type>& actionIds{ iter->second };
             const bool isDown{ event.key.down };
             const bool isRepeat{ event.key.repeat };
-            for (const std::string_view action : actions) {
-                updateActionState(action, isDown, isRepeat); // 更新action状态
+            for (const entt::id_type actionId : actionIds) {
+                updateActionState(actionId, isDown, isRepeat); // 更新action状态
             }
         }
         break;
@@ -190,13 +191,13 @@ void InputManager::processEvent(const SDL_Event& event)
     case SDL_EVENT_MOUSE_BUTTON_DOWN:
     case SDL_EVENT_MOUSE_BUTTON_UP: {
         Uint8 button{ event.button.button }; // 获取鼠标按钮
-        // 如果鼠标按钮有对应的 actions
+        // 如果鼠标按钮有对应的动作
         if (auto iter = m_inputKeyToActions.find(button); iter != m_inputKeyToActions.end()) {
-            const std::vector<std::string>& actions{ iter->second };
+            const std::vector<entt::id_type>& actionIds{ iter->second };
             const bool isDown{ event.button.down };
-            for (const std::string_view action : actions) {
+            for (const entt::id_type actionId : actionIds) {
                 // 鼠标事件不考虑repeat, 所以第三个参数传false
-                updateActionState(action, isDown, false); // 更新action状态
+                updateActionState(actionId, isDown, false); // 更新action状态
             }
         }
         // 在点击时更新鼠标位置，同时更新逻辑坐标
