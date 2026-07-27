@@ -149,7 +149,8 @@ bool GameScene::initEntityFactory()
     if (m_blueprintManager == nullptr) {
         m_blueprintManager = std::make_shared<game::factory::BlueprintManager>(
             m_context.resourceManager());
-        if (!m_blueprintManager->loadEnemyClassBlueprints("assets/data/enemy_data.json")) {
+        if (!m_blueprintManager->loadEnemyClassBlueprints("assets/data/enemy_data.json")
+            || !m_blueprintManager->loadPlayerClassBlueprints("assets/data/player_data.json")) {
             spdlog::error("加载蓝图失败");
             return false;
         }

@@ -25,7 +25,8 @@ void FollowPathSystem::update(entt::registry& registry,
     // 筛选依据: 速度组件, 变换组件, 敌人组件, 排除“被阻挡的敌人”
     auto view = registry.view<engine::component::VelocityComponent,
                               engine::component::TransformComponent,
-                              game::component::EnemyComponent>(entt::exclude<BlockedByComponent>);
+                              game::component::EnemyComponent>(
+        entt::exclude<game::component::BlockedByComponent>);
     for (auto entity : view) {
         auto& velocityComponent = view.get<engine::component::VelocityComponent>(entity);
         auto& transformComponent = view.get<engine::component::TransformComponent>(entity);
