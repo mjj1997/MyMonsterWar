@@ -20,6 +20,8 @@ private:
     void updatePlayerWithoutTarget(entt::registry& registry);
     /// @brief 处理没有目标的敌人角色
     void updateEnemyWithoutTarget(entt::registry& registry);
+    /// @brief 处理治疗角色
+    void updateHealer(entt::registry& registry);
 };
 
 } // namespace game::system
