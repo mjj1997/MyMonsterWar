@@ -1,13 +1,19 @@
 #include "game_scene.h"
-#include "../component/enemy_component.h"
 #include "../component/player_component.h"
+#include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
+#include "../defs/tags.h"
 #include "../factory/blueprint_manager.h"
 #include "../factory/entity_factory.h"
 #include "../loader/entity_builder_mw.h"
+#include "../system/animation_state_system.h"
+#include "../system/attack_starter_system.h"
 #include "../system/block_system.h"
 #include "../system/follow_path_system.h"
+#include "../system/orientation_system.h"
 #include "../system/remove_dead_system.h"
+#include "../system/set_target_system.h"
+#include "../system/timer_system.h"
 
 #include "../../engine/component/render_component.h"
 #include "../../engine/component/sprite_component.h"
@@ -42,6 +48,12 @@ GameScene::GameScene(engine::core::Context& context)
     m_followPathSystem = std::make_unique<game::system::FollowPathSystem>();
     m_removeDeadSystem = std::make_unique<game::system::RemoveDeadSystem>();
     m_blockSystem = std::make_unique<game::system::BlockSystem>();
+    m_setTargetSystem = std::make_unique<game::system::SetTargetSystem>();
+    m_timerSystem = std::make_unique<game::system::TimerSystem>();
+    m_attackStarterSystem = std::make_unique<game::system::AttackStarterSystem>();
+    m_animationStateSystem = std::make_unique<game::system::AnimationStateSystem>(m_registry,
+                                                                                  dispatcher);
+    m_orientationSystem = std::make_unique<game::system::OrientationSystem>();
 
     spdlog::info("GameScene 构造完成");
 }
@@ -77,9 +89,16 @@ void GameScene::update(float deltaTime)
     // 每一帧最先清理死亡实体(要在 dispatcher 处理完事件后再清理, 因此放在下一帧开头)
     m_removeDeadSystem->update(m_registry);
 
-    // 注意系统更新顺序, 路径跟随系统要放到移动系统之前
-    m_followPathSystem->update(m_registry, dispatcher, m_pathNodes);
+    /* 注意系统更新顺序 */
+    m_timerSystem->update(m_registry, deltaTime);
+    // 注意阻挡要发生在移动之前，否则敌人本帧会先移动一段距离再被停下，表现会“滑一下”
     m_blockSystem->update(m_registry, dispatcher);
+    m_setTargetSystem->update(m_registry);
+    // 路径跟随系统要放到移动系统之前
+    m_followPathSystem->update(m_registry, dispatcher, m_pathNodes);
+    // 朝向系统要放到阻挡、设置目标、路径跟随系统之后
+    m_orientationSystem->update(m_registry);
+    m_attackStarterSystem->update(m_registry, dispatcher);
     m_movementSystem->update(m_registry, deltaTime);
     m_ySortSystem->update(m_registry); // 调用顺序要放到移动系统之后
     m_animationSystem->update(deltaTime);
@@ -104,6 +123,7 @@ void GameScene::clean()
     auto& inputManager = m_context.inputManager();
     inputManager.actionSink("mouse_right"_hs).disconnect<&GameScene::createTestPlayerMelee>(this);
     inputManager.actionSink("mouse_left"_hs).disconnect<&GameScene::createTestPlayerRanged>(this);
+    inputManager.actionSink("move_left"_hs).disconnect<&GameScene::createTestPlayerHealer>(this);
     inputManager.actionSink("pause"_hs).disconnect<&GameScene::clearAllPlayers>(this);
 
     SceneBase::clean();
@@ -139,6 +159,7 @@ bool GameScene::initInputConnections()
     auto& inputManager = m_context.inputManager();
     inputManager.actionSink("mouse_right"_hs).connect<&GameScene::createTestPlayerMelee>(this);
     inputManager.actionSink("mouse_left"_hs).connect<&GameScene::createTestPlayerRanged>(this);
+    inputManager.actionSink("move_left"_hs).connect<&GameScene::createTestPlayerHealer>(this);
     inputManager.actionSink("pause"_hs).connect<&GameScene::clearAllPlayers>(this);
     return true;
 }
@@ -184,7 +205,11 @@ void GameScene::createTestEnemy()
 bool GameScene::createTestPlayerMelee()
 {
     auto position = m_context.inputManager().logicalMousePosition();
-    m_entityFactory->createPlayerUnit("warrior"_hs, position);
+    auto entity = m_entityFactory->createPlayerUnit("warrior"_hs, position);
+    // 让玩家处于受伤状态（治疗师不会锁定满血目标）
+    m_registry.emplace<game::defs::InjuredTag>(entity);
+    auto& stats = m_registry.get<game::component::StatsComponent>(entity);
+    stats.m_hp = stats.m_maxHp / 2;
     spdlog::info("创建战士: 位置: {}, {}", position.x, position.y);
     return true;
 }
@@ -192,8 +217,20 @@ bool GameScene::createTestPlayerMelee()
 bool GameScene::createTestPlayerRanged()
 {
     auto position = m_context.inputManager().logicalMousePosition();
-    m_entityFactory->createPlayerUnit("archer"_hs, position);
+    auto entity = m_entityFactory->createPlayerUnit("archer"_hs, position);
+    // 让玩家处于受伤状态（治疗师不会锁定满血目标）
+    m_registry.emplace<game::defs::InjuredTag>(entity);
+    auto& stats = m_registry.get<game::component::StatsComponent>(entity);
+    stats.m_hp = stats.m_maxHp / 2;
     spdlog::info("创建弓箭手: 位置: {}, {}", position.x, position.y);
+    return true;
+}
+
+bool GameScene::createTestPlayerHealer()
+{
+    auto position = m_context.inputManager().logicalMousePosition();
+    m_entityFactory->createPlayerUnit("witch"_hs, position);
+    spdlog::info("创建治疗师: 位置: {}, {}", position.x, position.y);
     return true;
 }
 

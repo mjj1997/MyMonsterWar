@@ -3,6 +3,7 @@
 #include "../component/blocker_component.h"
 #include "../component/enemy_component.h"
 #include "../defs/constants.h"
+#include "../defs/tags.h"
 
 #include "../../engine/component/transform_component.h"
 #include "../../engine/component/velocity_component.h"
@@ -33,6 +34,8 @@ void BlockSystem::update(entt::registry& registry, entt::dispatcher& dispatcher)
             spdlog::info("阻挡者 ID：{} 无效，移除被阻挡组件",
                          entt::to_integral(blockedByComponent.m_entity));
 
+            // 移除可能存在的动作锁定标签
+            registry.remove<game::defs::ActionLockedTag>(blockedByEntity);
             // 播放动画“walk”
             dispatcher.enqueue<engine::utils::PlayAnimationEvent>(blockedByEntity, "walk"_hs, true);
         }
@@ -73,15 +76,11 @@ void BlockSystem::update(entt::registry& registry, entt::dispatcher& dispatcher)
                 enemyVelocity.m_velocity = glm::vec2(0.0F); // 设置敌人速度为 0，停止移动
 
                 // 给敌人添加被阻挡组件
-                registry.emplace<game::component::BlockedByComponent>(enemyEntity, blockerEntity);
+                registry.emplace_or_replace<game::component::BlockedByComponent>(enemyEntity,
+                                                                                 blockerEntity);
                 spdlog::info("敌人 ID：{} 被阻挡，阻挡者 ID：{}",
                              entt::to_integral(enemyEntity),
                              entt::to_integral(blockerEntity));
-
-                // 播放动画“attack”
-                dispatcher.enqueue<engine::utils::PlayAnimationEvent>(enemyEntity,
-                                                                      "attack"_hs,
-                                                                      true);
             }
         }
     }
