@@ -15,9 +15,15 @@ namespace game::system {
 AnimationStateSystem::AnimationStateSystem(entt::registry& registry, entt::dispatcher& dispatcher)
     : m_registry{ registry }
     , m_dispatcher{ dispatcher }
-{}
+{
+    m_dispatcher.sink<engine::utils::FinishAnimationEvent>()
+        .connect<&AnimationStateSystem::finishAnimation>(this);
+}
 
-AnimationStateSystem::~AnimationStateSystem() {}
+AnimationStateSystem::~AnimationStateSystem()
+{
+    m_dispatcher.disconnect(this);
+}
 
 void AnimationStateSystem::finishAnimation(const engine::utils::FinishAnimationEvent& event)
 {
