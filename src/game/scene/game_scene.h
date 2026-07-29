@@ -38,6 +38,7 @@ private:
     void createTestEnemy();
     bool createTestPlayerMelee();
     bool createTestPlayerRanged();
+    bool createTestPlayerHealer();
     bool clearAllPlayers();
 
     std::unique_ptr<engine::system::MovementSystem> m_movementSystem;

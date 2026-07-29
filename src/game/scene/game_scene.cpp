@@ -214,6 +214,14 @@ bool GameScene::createTestPlayerRanged()
     return true;
 }
 
+bool GameScene::createTestPlayerHealer()
+{
+    auto position = m_context.inputManager().logicalMousePosition();
+    m_entityFactory->createPlayerUnit("witch"_hs, position);
+    spdlog::info("创建治疗师: 位置: {}, {}", position.x, position.y);
+    return true;
+}
+
 bool GameScene::clearAllPlayers()
 {
     auto view = m_registry.view<game::component::PlayerComponent>();
