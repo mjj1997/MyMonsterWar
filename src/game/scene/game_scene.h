@@ -47,6 +47,11 @@ private:
     std::unique_ptr<game::system::FollowPathSystem> m_followPathSystem;
     std::unique_ptr<game::system::RemoveDeadSystem> m_removeDeadSystem;
     std::unique_ptr<game::system::BlockSystem> m_blockSystem;
+    std::unique_ptr<game::system::SetTargetSystem> m_setTargetSystem;
+    std::unique_ptr<game::system::TimerSystem> m_timerSystem;
+    std::unique_ptr<game::system::AttackStarterSystem> m_attackStarterSystem;
+    std::unique_ptr<game::system::AnimationStateSystem> m_animationStateSystem;
+    std::unique_ptr<game::system::OrientationSystem> m_orientationSystem;
 
     std::unordered_map<int, game::data::PathNode> m_pathNodes; // 路径节点ID -> 路径节点
     std::vector<int> m_startpointIds;                          // 起点ID列表

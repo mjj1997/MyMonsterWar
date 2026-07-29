@@ -1,13 +1,17 @@
 #include "game_scene.h"
-#include "../component/enemy_component.h"
 #include "../component/player_component.h"
 #include "../data/entity_blueprint.h"
 #include "../factory/blueprint_manager.h"
 #include "../factory/entity_factory.h"
 #include "../loader/entity_builder_mw.h"
+#include "../system/animation_state_system.h"
+#include "../system/attack_starter_system.h"
 #include "../system/block_system.h"
 #include "../system/follow_path_system.h"
+#include "../system/orientation_system.h"
 #include "../system/remove_dead_system.h"
+#include "../system/set_target_system.h"
+#include "../system/timer_system.h"
 
 #include "../../engine/component/render_component.h"
 #include "../../engine/component/sprite_component.h"
@@ -42,6 +46,12 @@ GameScene::GameScene(engine::core::Context& context)
     m_followPathSystem = std::make_unique<game::system::FollowPathSystem>();
     m_removeDeadSystem = std::make_unique<game::system::RemoveDeadSystem>();
     m_blockSystem = std::make_unique<game::system::BlockSystem>();
+    m_setTargetSystem = std::make_unique<game::system::SetTargetSystem>();
+    m_timerSystem = std::make_unique<game::system::TimerSystem>();
+    m_attackStarterSystem = std::make_unique<game::system::AttackStarterSystem>();
+    m_animationStateSystem = std::make_unique<game::system::AnimationStateSystem>(m_registry,
+                                                                                  dispatcher);
+    m_orientationSystem = std::make_unique<game::system::OrientationSystem>();
 
     spdlog::info("GameScene 构造完成");
 }
