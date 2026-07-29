@@ -13,6 +13,12 @@ class TimerSystem
 {
 public:
     void update(entt::registry& registry, float deltaTime);
+
+private:
+    /* 拆分逻辑的函数，在 update 中调用 */
+    /// @brief 处理攻击计时器
+    void updateAttackTimer(entt::registry& registry, float deltaTime);
+    // TODO: 处理其它计时器
 };
 
 } // namespace game::system
