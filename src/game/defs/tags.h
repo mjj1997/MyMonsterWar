@@ -21,4 +21,7 @@ struct RangedUnitTag // 远程单位标签
 struct HealerTag // 治疗单位标签
 {};
 
+struct InjuredTag // 受伤标签，用于标记实体受伤（有HP损失）
+{};
+
 } // namespace game::defs
