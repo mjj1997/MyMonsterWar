@@ -1,6 +1,8 @@
 #include "game_scene.h"
 #include "../component/player_component.h"
+#include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
+#include "../defs/tags.h"
 #include "../factory/blueprint_manager.h"
 #include "../factory/entity_factory.h"
 #include "../loader/entity_builder_mw.h"
@@ -203,7 +205,11 @@ void GameScene::createTestEnemy()
 bool GameScene::createTestPlayerMelee()
 {
     auto position = m_context.inputManager().logicalMousePosition();
-    m_entityFactory->createPlayerUnit("warrior"_hs, position);
+    auto entity = m_entityFactory->createPlayerUnit("warrior"_hs, position);
+    // 让玩家处于受伤状态（治疗师不会锁定满血目标）
+    m_registry.emplace<game::defs::InjuredTag>(entity);
+    auto& stats = m_registry.get<game::component::StatsComponent>(entity);
+    stats.m_hp = stats.m_maxHp / 2;
     spdlog::info("创建战士: 位置: {}, {}", position.x, position.y);
     return true;
 }
@@ -211,7 +217,11 @@ bool GameScene::createTestPlayerMelee()
 bool GameScene::createTestPlayerRanged()
 {
     auto position = m_context.inputManager().logicalMousePosition();
-    m_entityFactory->createPlayerUnit("archer"_hs, position);
+    auto entity = m_entityFactory->createPlayerUnit("archer"_hs, position);
+    // 让玩家处于受伤状态（治疗师不会锁定满血目标）
+    m_registry.emplace<game::defs::InjuredTag>(entity);
+    auto& stats = m_registry.get<game::component::StatsComponent>(entity);
+    stats.m_hp = stats.m_maxHp / 2;
     spdlog::info("创建弓箭手: 位置: {}, {}", position.x, position.y);
     return true;
 }
