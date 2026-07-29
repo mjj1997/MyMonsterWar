@@ -15,7 +15,12 @@ using namespace entt::literals;
 
 namespace game::system {
 
-void AttackStarterSystem::update(entt::registry& registry, entt::dispatcher& dispatcher) {}
+void AttackStarterSystem::update(entt::registry& registry, entt::dispatcher& dispatcher)
+{
+    updateEnemyBlocked(registry, dispatcher);
+    updateEnemyRanged(registry, dispatcher);
+    updatePlayer(registry, dispatcher);
+}
 
 void AttackStarterSystem::updateEnemyBlocked(entt::registry& registry, entt::dispatcher& dispatcher)
 {
