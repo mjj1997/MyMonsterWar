@@ -14,7 +14,13 @@
 
 namespace game::system {
 
-void SetTargetSystem::update(entt::registry& registry) {}
+void SetTargetSystem::update(entt::registry& registry)
+{
+    updateEntityWithTarget(registry);
+    updatePlayerWithoutTarget(registry);
+    updateEnemyWithoutTarget(registry);
+    updateHealer(registry);
+}
 
 void SetTargetSystem::updateEntityWithTarget(entt::registry& registry)
 {
