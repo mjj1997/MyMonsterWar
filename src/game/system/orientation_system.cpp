@@ -1,10 +1,12 @@
 #include "orientation_system.h"
 #include "../component/blocked_by_component.h"
+#include "../component/enemy_component.h"
 #include "../component/target_component.h"
 #include "../defs/tags.h"
 
 #include "../../engine/component/sprite_component.h"
 #include "../../engine/component/transform_component.h"
+#include "../../engine/component/velocity_component.h"
 
 #include <entt/entity/registry.hpp>
 
@@ -51,6 +53,28 @@ void OrientationSystem::updateEnemyBlocked(entt::registry& registry)
         auto& entitySprite = view.get<engine::component::SpriteComponent>(entity);
         // 如果阻挡者位置.x > 自身位置.x，说明阻挡者位于自身的右侧
         bool isFacedRight{ blockedByTransform.m_position.x > entityTransform.m_position.x };
+        // 使用 all_of 检查实体是否拥有指定标签（FacedLeftTag）
+        if (registry.all_of<game::defs::FacedLeftTag>(entity)) {
+            entitySprite.m_sprite.m_isFlipped = isFacedRight;
+        } else {
+            entitySprite.m_sprite.m_isFlipped = !isFacedRight;
+        }
+    }
+}
+
+void OrientationSystem::updateEnemyMoving(entt::registry& registry)
+{
+    /* 面朝移动方向 */
+    // 筛选依据：移动中的敌方角色（排除被阻挡、正在进行动作的角色）
+    auto view = registry.view<game::component::EnemyComponent,
+                              engine::component::VelocityComponent,
+                              engine::component::SpriteComponent>(
+        entt::exclude<game::component::BlockedByComponent, game::defs::ActionLockedTag>);
+    for (auto entity : view) {
+        const auto& entityVelocity = view.get<engine::component::VelocityComponent>(entity);
+        auto& entitySprite = view.get<engine::component::SpriteComponent>(entity);
+        // 如果移动速度.x > 0，说明移动方向为右侧
+        bool isFacedRight{ entityVelocity.m_velocity.x > 0.0F };
         // 使用 all_of 检查实体是否拥有指定标签（FacedLeftTag）
         if (registry.all_of<game::defs::FacedLeftTag>(entity)) {
             entitySprite.m_sprite.m_isFlipped = isFacedRight;
