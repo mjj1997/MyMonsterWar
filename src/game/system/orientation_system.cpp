@@ -12,7 +12,12 @@
 
 namespace game::system {
 
-void OrientationSystem::update(entt::registry& registry) {}
+void OrientationSystem::update(entt::registry& registry)
+{
+    updateEntityWithTarget(registry);
+    updateEnemyBlocked(registry);
+    updateEnemyMoving(registry);
+}
 
 void OrientationSystem::updateEntityWithTarget(entt::registry& registry)
 {
