@@ -24,4 +24,7 @@ struct HealerTag // 治疗单位标签
 struct InjuredTag // 受伤标签，用于标记实体受伤（有HP损失）
 {};
 
+struct AttackReadyTag // 攻击就绪标签，用于标记实体可以进行攻击（冷却完成）
+{};
+
 } // namespace game::defs
