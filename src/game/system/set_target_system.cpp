@@ -187,7 +187,8 @@ void SetTargetSystem::updateHealer(entt::registry& registry)
         // 如果找到了最低血量玩家角色，则设置治疗角色的目标为该玩家角色
         if (lowestHpPlayerEntity != entt::null) {
             // 设置（更新）目标
-            registry.emplace<game::component::TargetComponent>(healerEntity, lowestHpPlayerEntity);
+            registry.emplace_or_replace<game::component::TargetComponent>(healerEntity,
+                                                                          lowestHpPlayerEntity);
         } else {
             // 否则移除目标（即使没有组件，也可以安全调用 remove）
             registry.remove<game::component::TargetComponent>(healerEntity);
