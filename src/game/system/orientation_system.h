@@ -11,6 +11,10 @@ class OrientationSystem
 {
 public:
     void update(entt::registry& registry);
+
+private:
+    /// @brief 处理有目标的角色
+    void updateEntityWithTarget(entt::registry& registry);
 };
 
 } // namespace game::system
