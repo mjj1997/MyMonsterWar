@@ -1,6 +1,7 @@
 #include "attack_starter_system.h"
 #include "../component/blocked_by_component.h"
 #include "../component/enemy_component.h"
+#include "../component/player_component.h"
 #include "../component/target_component.h"
 #include "../defs/tags.h"
 
@@ -48,6 +49,26 @@ void AttackStarterSystem::updateEnemyRanged(entt::registry& registry, entt::disp
         registry.remove<game::defs::AttackReadyTag>(enemyEntity);
         dispatcher.enqueue(
             engine::utils::PlayAnimationEvent{ enemyEntity, "ranged_attack"_hs, false });
+    }
+}
+
+void AttackStarterSystem::updatePlayer(entt::registry& registry, entt::dispatcher& dispatcher)
+{
+    // 筛选条件：有目标的玩家角色，且攻击就绪
+    auto playerView = registry.view<game::component::PlayerComponent,
+                                    game::component::TargetComponent,
+                                    game::defs::AttackReadyTag>();
+
+    for (auto playerEntity : playerView) {
+        // 攻击型或治疗型玩家角色播放不同的动画
+        if (registry.all_of<game::defs::HealerTag>(playerEntity)) {
+            dispatcher.enqueue(engine::utils::PlayAnimationEvent{ playerEntity, "heal"_hs, false });
+        } else {
+            dispatcher.enqueue(
+                engine::utils::PlayAnimationEvent{ playerEntity, "attack"_hs, false });
+        }
+        registry.remove<game::defs::AttackReadyTag>(playerEntity);
+        /* 玩家静止不动，因此不需要添加动作锁定标签 */
     }
 }
 

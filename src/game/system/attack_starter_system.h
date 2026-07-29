@@ -19,6 +19,8 @@ private:
     void updateEnemyBlocked(entt::registry& registry, entt::dispatcher& dispatcher);
     /// @brief 处理远程敌人角色
     void updateEnemyRanged(entt::registry& registry, entt::dispatcher& dispatcher);
+    /// @brief 处理玩家角色
+    void updatePlayer(entt::registry& registry, entt::dispatcher& dispatcher);
 };
 
 } // namespace game::system
