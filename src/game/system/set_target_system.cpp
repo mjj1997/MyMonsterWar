@@ -1,4 +1,5 @@
 #include "set_target_system.h"
+#include "../component/enemy_component.h"
 #include "../component/player_component.h"
 #include "../component/stats_component.h"
 #include "../component/target_component.h"
@@ -87,6 +88,44 @@ void SetTargetSystem::updatePlayerWithoutTarget(entt::registry& registry)
                              entt::to_integral(playerEntity),
                              entt::to_integral(enemyEntity));
                 break; // 设置一个目标敌人角色就停止检查
+            }
+        }
+    }
+}
+
+void SetTargetSystem::updateEnemyWithoutTarget(entt::registry& registry)
+{
+    // 筛选条件：无目标的敌方角色（只考虑远程型，近战型敌人的目标就是阻挡者）
+    auto enemyWithoutTargetView = registry.view<game::component::EnemyComponent,
+                                                game::defs::RangedUnitTag,
+                                                engine::component::TransformComponent,
+                                                game::component::StatsComponent>(
+        entt::exclude<game::component::TargetComponent>);
+
+    // 获取所有玩家角色用于检测
+    auto playerView
+        = registry.view<game::component::PlayerComponent, engine::component::TransformComponent>();
+
+    // 遍历每一个无目标的敌方角色
+    for (auto enemyEntity : enemyWithoutTargetView) {
+        const auto& enemyTransform = enemyWithoutTargetView
+                                         .get<engine::component::TransformComponent>(enemyEntity);
+        const auto& enemyStats = enemyWithoutTargetView.get<game::component::StatsComponent>(
+            enemyEntity);
+        auto atkCheckingRadius = enemyStats.m_range + game::defs::UNIT_RADIUS;
+
+        // 检查是否有玩家在敌人的攻击范围内
+        for (auto playerEntity : playerView) {
+            const auto& playerTransform = playerView.get<engine::component::TransformComponent>(
+                playerEntity);
+            if (engine::utils::distanceSquared(enemyTransform.m_position, playerTransform.m_position)
+                <= atkCheckingRadius * atkCheckingRadius) {
+                // 如果玩家在敌人的攻击范围内，则设置敌人的目标为该玩家
+                registry.emplace<game::component::TargetComponent>(enemyEntity, playerEntity);
+                spdlog::info("敌人 ID: {}, 设置目标 ID: {}",
+                             entt::to_integral(enemyEntity),
+                             entt::to_integral(playerEntity));
+                break; // 设置一个目标玩家角色就停止检查
             }
         }
     }

@@ -18,6 +18,8 @@ private:
     void updateEntityWithTarget(entt::registry& registry);
     /// @brief 处理没有目标的玩家攻击型角色
     void updatePlayerWithoutTarget(entt::registry& registry);
+    /// @brief 处理没有目标的敌人角色
+    void updateEnemyWithoutTarget(entt::registry& registry);
 };
 
 } // namespace game::system
