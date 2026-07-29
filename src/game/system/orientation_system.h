@@ -15,6 +15,8 @@ public:
 private:
     /// @brief 处理有目标的角色
     void updateEntityWithTarget(entt::registry& registry);
+    /// @brief 处理被阻挡的敌方角色
+    void updateEnemyBlocked(entt::registry& registry);
 };
 
 } // namespace game::system
