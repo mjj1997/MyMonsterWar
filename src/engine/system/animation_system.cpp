@@ -63,6 +63,9 @@ void AnimationSystem::update(float deltaTime)
                 } else {
                     // 动画播放完毕且不循环，停在最后一帧
                     animationComponent.m_currentFrameIndex = currentAnimation.m_frames.size() - 1;
+                    // 发送完成动画播放事件
+                    m_dispatcher.enqueue(engine::utils::FinishAnimationEvent{
+                        entity, animationComponent.m_currentAnimationId });
                 }
             }
         }
