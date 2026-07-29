@@ -43,7 +43,8 @@ target_sources(
           game/factory/entity_factory.cpp
           game/system/block_system.cpp
           game/system/set_target_system.cpp
-          game/system/timer_system.cpp)
+          game/system/timer_system.cpp
+          game/system/attack_starter_system.cpp)
 
 target_link_libraries(
   MonsterWar

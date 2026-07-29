@@ -27,4 +27,7 @@ struct InjuredTag // 受伤标签，用于标记实体受伤（有HP损失）
 struct AttackReadyTag // 攻击就绪标签，用于标记实体可以进行攻击（冷却完成）
 {};
 
+struct ActionLockedTag // 动作锁定标签，让角色播放完当前动画再进行下一步动作（硬直）
+{};
+
 } // namespace game::defs
