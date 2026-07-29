@@ -121,6 +121,7 @@ void GameScene::clean()
     auto& inputManager = m_context.inputManager();
     inputManager.actionSink("mouse_right"_hs).disconnect<&GameScene::createTestPlayerMelee>(this);
     inputManager.actionSink("mouse_left"_hs).disconnect<&GameScene::createTestPlayerRanged>(this);
+    inputManager.actionSink("move_left"_hs).disconnect<&GameScene::createTestPlayerHealer>(this);
     inputManager.actionSink("pause"_hs).disconnect<&GameScene::clearAllPlayers>(this);
 
     SceneBase::clean();
@@ -156,6 +157,7 @@ bool GameScene::initInputConnections()
     auto& inputManager = m_context.inputManager();
     inputManager.actionSink("mouse_right"_hs).connect<&GameScene::createTestPlayerMelee>(this);
     inputManager.actionSink("mouse_left"_hs).connect<&GameScene::createTestPlayerRanged>(this);
+    inputManager.actionSink("move_left"_hs).connect<&GameScene::createTestPlayerHealer>(this);
     inputManager.actionSink("pause"_hs).connect<&GameScene::clearAllPlayers>(this);
     return true;
 }
