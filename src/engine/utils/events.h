@@ -35,4 +35,10 @@ struct PlayAnimationEvent // 播放动画事件
     bool m_loop{ true };                       // 是否循环播放
 };
 
+struct FinishAnimationEvent // 完成动画播放事件
+{
+    entt::entity m_entity{ entt::null };       // 目标实体
+    entt::id_type m_animationId{ entt::null }; // 动画 ID
+};
+
 } // namespace engine::utils
