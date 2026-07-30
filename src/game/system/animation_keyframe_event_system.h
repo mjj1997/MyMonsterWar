@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../engine/utils/events.h"
+
 #include <entt/entity/fwd.hpp>
 #include <entt/signal/fwd.hpp>
 
@@ -15,6 +17,10 @@ public:
     ~AnimationKeyframeEventSystem();
 
 private:
+    /* --- 回调函数 --- */
+    /// @brief 处理动画关键帧事件的函数
+    void handleKeyframeEvent(const engine::utils::AnimationKeyframeEvent& event);
+
     entt::registry& m_registry;
     entt::dispatcher& m_dispatcher;
 };
