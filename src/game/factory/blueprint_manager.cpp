@@ -191,11 +191,19 @@ std::unordered_map<entt::id_type, data::AnimationBlueprint> BlueprintManager::pa
         entt::id_type animeNameId{ entt::hashed_string(animeName.c_str()) };
         // 直接获取帧索引列表
         std::vector<int> frameIndices{ animeData.at("frames").get<std::vector<int>>() };
+        // 处理可能存在的关键帧事件信息
+        std::unordered_map<int, entt::id_type> events;
+        if (animeData.contains("events")) {
+            for (const auto& [eventName, keyframeIndex] : animeData.at("events").items()) {
+                events.emplace(keyframeIndex.get<int>(), entt::hashed_string(eventName.c_str()));
+            }
+        }
         // 创建单个动画蓝图
         data::AnimationBlueprint animation{ .m_durationPerFrame = animeData.value("duration",
                                                                                   100.0F),
                                             .m_row = animeData.value("row", 0),
-                                            .m_frameIndices = std::move(frameIndices) };
+                                            .m_frameIndices = std::move(frameIndices),
+                                            .m_events = std::move(events) };
         // 插入动画蓝图到映射中
         animations.emplace(animeNameId, animation);
     }
