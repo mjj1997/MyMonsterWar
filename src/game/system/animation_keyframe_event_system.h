@@ -21,6 +21,10 @@ private:
     /// @brief 处理动画关键帧事件的函数
     void handleKeyframeEvent(const engine::utils::AnimationKeyframeEvent& event);
 
+    /* 根据不同的事件 ID，拆分出的处理函数 */
+    /// @brief 处理击中事件的函数
+    void handleHitEvent(const engine::utils::AnimationKeyframeEvent& event);
+
     entt::registry& m_registry;
     entt::dispatcher& m_dispatcher;
 };
