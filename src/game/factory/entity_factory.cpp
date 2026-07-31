@@ -137,8 +137,8 @@ void EntityFactory::addAnimationComponent(
             frames.emplace_back(sourceRect, animationBlueprint.m_durationPerFrame);
         }
 
-        // 使用填充好的动画帧容器创建动画, 并填充到动画 map 容器中
-        engine::component::Animation animation{ std::move(frames) };
+        // 使用填充好的动画帧容器创建动画, 并填充到动画 map 容器中（直接使用蓝图中的关键帧事件信息）
+        engine::component::Animation animation{ std::move(frames), animationBlueprint.m_events };
         animations.emplace(animationId, animation);
     }
 
