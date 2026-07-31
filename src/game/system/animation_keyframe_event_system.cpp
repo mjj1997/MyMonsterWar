@@ -10,6 +10,8 @@
 #include <entt/entity/registry.hpp>
 #include <entt/signal/dispatcher.hpp>
 
+using namespace entt::literals;
+
 namespace game::system {
 
 AnimationKeyframeEventSystem::AnimationKeyframeEventSystem(entt::registry& registry,
@@ -34,6 +36,10 @@ void AnimationKeyframeEventSystem::handleKeyframeEvent(
     }
 
     // 根据不同的事件 ID，调用不同的处理函数
+    if (event.m_eventId == "hit"_hs) {
+        handleHitEvent(event);
+    }
+    // TODO: 其他事件 ID 的处理函数
 }
 
 void AnimationKeyframeEventSystem::handleHitEvent(const engine::utils::AnimationKeyframeEvent& event)
