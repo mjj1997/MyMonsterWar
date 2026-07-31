@@ -46,7 +46,8 @@ target_sources(
           game/system/timer_system.cpp
           game/system/attack_starter_system.cpp
           game/system/animation_state_system.cpp
-          game/system/orientation_system.cpp)
+          game/system/orientation_system.cpp
+          game/system/combat_resolve_system.cpp)
 
 target_link_libraries(
   MonsterWar
