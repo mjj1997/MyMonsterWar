@@ -56,6 +56,15 @@ void AnimationSystem::update(float deltaTime)
             animationComponent.m_currentTime -= currentFrame.m_duration;
             ++animationComponent.m_currentFrameIndex;
 
+            // 检查是否需要触发关键帧事件
+            if (currentAnimation.m_events.contains(animationComponent.m_currentFrameIndex)) {
+                // 发送关键帧事件
+                m_dispatcher.enqueue(engine::utils::AnimationKeyframeEvent{
+                    entity,
+                    currentAnimation.m_events.at(animationComponent.m_currentFrameIndex),
+                    animationComponent.m_currentAnimationId });
+            }
+
             // 处理动画播放完成
             if (animationComponent.m_currentFrameIndex >= currentAnimation.m_frames.size()) {
                 if (currentAnimation.m_isLoop) {

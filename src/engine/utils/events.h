@@ -41,4 +41,17 @@ struct FinishAnimationEvent // 完成动画播放事件
     entt::id_type m_animationId{ entt::null }; // 动画 ID
 };
 
+struct AnimationKeyframeEvent // 动画关键帧事件
+{
+    entt::entity m_entity{ entt::null };       // 目标实体
+    entt::id_type m_eventId{ entt::null };     // 事件 ID
+    entt::id_type m_animationId{ entt::null }; // 动画 ID
+};
+
+struct PlaySoundEvent // 播放音效事件
+{
+    entt::entity m_entity{ entt::null };   // 目标实体（可以为空，即播放全局音效）
+    entt::id_type m_soundId{ entt::null }; // 音效 ID
+};
+
 } // namespace engine::utils

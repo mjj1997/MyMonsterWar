@@ -6,9 +6,11 @@
 #include "../factory/blueprint_manager.h"
 #include "../factory/entity_factory.h"
 #include "../loader/entity_builder_mw.h"
+#include "../system/animation_keyframe_event_system.h"
 #include "../system/animation_state_system.h"
 #include "../system/attack_starter_system.h"
 #include "../system/block_system.h"
+#include "../system/combat_resolve_system.h"
 #include "../system/follow_path_system.h"
 #include "../system/orientation_system.h"
 #include "../system/remove_dead_system.h"
@@ -23,6 +25,7 @@
 #include "../../engine/input/input_manager.h"
 #include "../../engine/loader/level_loader.h"
 #include "../../engine/system/animation_system.h"
+#include "../../engine/system/audio_system.h"
 #include "../../engine/system/movement_system.h"
 #include "../../engine/system/render_system.h"
 #include "../../engine/system/y_sort_system.h"
@@ -44,6 +47,7 @@ GameScene::GameScene(engine::core::Context& context)
     m_renderSystem = std::make_unique<engine::system::RenderSystem>();
     m_animationSystem = std::make_unique<engine::system::AnimationSystem>(m_registry, dispatcher);
     m_ySortSystem = std::make_unique<engine::system::YSortSystem>();
+    m_audioSystem = std::make_unique<engine::system::AudioSystem>(m_registry, m_context);
 
     m_followPathSystem = std::make_unique<game::system::FollowPathSystem>();
     m_removeDeadSystem = std::make_unique<game::system::RemoveDeadSystem>();
@@ -54,6 +58,10 @@ GameScene::GameScene(engine::core::Context& context)
     m_animationStateSystem = std::make_unique<game::system::AnimationStateSystem>(m_registry,
                                                                                   dispatcher);
     m_orientationSystem = std::make_unique<game::system::OrientationSystem>();
+    m_animationKeyframeEventSystem
+        = std::make_unique<game::system::AnimationKeyframeEventSystem>(m_registry, dispatcher);
+    m_combatResolveSystem = std::make_unique<game::system::CombatResolveSystem>(m_registry,
+                                                                                dispatcher);
 
     spdlog::info("GameScene 构造完成");
 }

@@ -36,10 +36,14 @@ public:
     /**
      * @brief 构造函数
      * @param frames 动画帧列表。
+     * @param events 动画关键帧事件，默认为空。
      * @param isLoop 动画是否应该循环播放。
      */
-    explicit Animation(std::vector<AnimationFrame> frames, bool isLoop = true)
+    explicit Animation(std::vector<AnimationFrame> frames,
+                       std::unordered_map<int, entt::id_type> events = {},
+                       bool isLoop = true)
         : m_frames{ std::move(frames) }
+        , m_events{ std::move(events) }
         , m_isLoop{ isLoop }
     {
         // 计算总时长
@@ -49,8 +53,10 @@ public:
     }
 
     std::vector<AnimationFrame> m_frames; ///< @brief 动画帧列表
-    float m_totalDuration{ 0.0F };        ///< @brief 动画的总持续时间（毫秒）
-    bool m_isLoop{ true };                ///< @brief 动画是否循环播放，默认值为 true
+    ///< @brief 动画关键帧事件，键为关键帧索引，值为事件 ID
+    std::unordered_map<int, entt::id_type> m_events;
+    float m_totalDuration{ 0.0F }; ///< @brief 动画的总持续时间（毫秒）
+    bool m_isLoop{ true };         ///< @brief 动画是否循环播放，默认值为 true
 };
 
 /**

@@ -41,6 +41,8 @@ struct AnimationBlueprint
     float m_durationPerFrame{ 0.0F };
     int m_row{ 0 };
     std::vector<int> m_frameIndices; ///< @brief 动画帧索引数组
+    ///< @brief 动画关键帧事件，键为关键帧索引，值为事件 ID
+    std::unordered_map<int, entt::id_type> m_events;
 };
 
 /// @brief 声音蓝图, 用于创建音频组件

@@ -45,6 +45,8 @@ private:
     std::unique_ptr<engine::system::RenderSystem> m_renderSystem;
     std::unique_ptr<engine::system::AnimationSystem> m_animationSystem;
     std::unique_ptr<engine::system::YSortSystem> m_ySortSystem;
+    std::unique_ptr<engine::system::AudioSystem> m_audioSystem;
+
     std::unique_ptr<game::system::FollowPathSystem> m_followPathSystem;
     std::unique_ptr<game::system::RemoveDeadSystem> m_removeDeadSystem;
     std::unique_ptr<game::system::BlockSystem> m_blockSystem;
@@ -53,6 +55,8 @@ private:
     std::unique_ptr<game::system::AttackStarterSystem> m_attackStarterSystem;
     std::unique_ptr<game::system::AnimationStateSystem> m_animationStateSystem;
     std::unique_ptr<game::system::OrientationSystem> m_orientationSystem;
+    std::unique_ptr<game::system::AnimationKeyframeEventSystem> m_animationKeyframeEventSystem;
+    std::unique_ptr<game::system::CombatResolveSystem> m_combatResolveSystem;
 
     std::unordered_map<int, game::data::PathNode> m_pathNodes; // 路径节点ID -> 路径节点
     std::vector<int> m_startpointIds;                          // 起点ID列表
