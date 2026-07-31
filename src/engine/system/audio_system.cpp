@@ -2,8 +2,10 @@
 #include "../audio/audio_player.h"
 #include "../component/audio_component.h"
 #include "../core/context.h"
+#include "../utils/events.h"
 
 #include <entt/entity/registry.hpp>
+#include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
 
 namespace engine::system {
@@ -11,9 +13,16 @@ namespace engine::system {
 AudioSystem::AudioSystem(entt::registry& registry, engine::core::Context& context)
     : m_registry{ registry }
     , m_context{ context }
-{}
+{
+    auto& dispatcher = m_context.dispatcher();
+    dispatcher.sink<engine::utils::PlaySoundEvent>().connect<&AudioSystem::playSound>(this);
+}
 
-AudioSystem::~AudioSystem() {}
+AudioSystem::~AudioSystem()
+{
+    auto& dispatcher = m_context.dispatcher();
+    dispatcher.disconnect(this);
+}
 
 void AudioSystem::playSound(const engine::utils::PlaySoundEvent& event)
 {
