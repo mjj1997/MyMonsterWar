@@ -60,7 +60,8 @@ void AnimationKeyframeEventSystem::handleHitEvent(const engine::utils::Animation
                 m_dispatcher.enqueue(game::defs::AttackEvent{
                     event.m_entity, targetComponent->m_entity, statsComponent.m_atk });
             }
-            // TODO: 播放“hit”音效
+            // 发送播放“hit”音效事件
+            m_dispatcher.enqueue(engine::utils::PlaySoundEvent{ event.m_entity, "hit"_hs });
         }
         return;
     }
