@@ -10,5 +10,7 @@ class TimerSystem;
 class AttackStarterSystem;
 class AnimationStateSystem;
 class OrientationSystem;
+class AnimationKeyframeEventSystem;
+class CombatResolveSystem;
 
 } // namespace game::system
