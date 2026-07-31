@@ -17,6 +17,13 @@ public:
     ~CombatResolveSystem();
 
 private:
+    /* --- 辅助函数 --- */
+    /**
+     * @brief 计算有效伤害（计算公式可修改）
+     * 当前计算公式：攻击力 - 防御力，最小伤害为攻击力的 10%
+     */
+    float calculateEffectiveDamage(float attackerAtk, float targetDef);
+
     entt::registry& m_registry;
     entt::dispatcher& m_dispatcher;
 };
