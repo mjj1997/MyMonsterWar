@@ -7,6 +7,7 @@
 #include "../defs/tags.h"
 
 #include <entt/entity/registry.hpp>
+#include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
 
 #include <utility>
@@ -16,9 +17,16 @@ namespace game::system {
 CombatResolveSystem::CombatResolveSystem(entt::registry& registry, entt::dispatcher& dispatcher)
     : m_registry{ registry }
     , m_dispatcher{ dispatcher }
-{}
+{
+    m_dispatcher.sink<game::defs::AttackEvent>().connect<&CombatResolveSystem::handleAttackEvent>(
+        this);
+    m_dispatcher.sink<game::defs::HealEvent>().connect<&CombatResolveSystem::handleHealEvent>(this);
+}
 
-CombatResolveSystem::~CombatResolveSystem() {}
+CombatResolveSystem::~CombatResolveSystem()
+{
+    m_dispatcher.disconnect(this);
+}
 
 void CombatResolveSystem::handleAttackEvent(const game::defs::AttackEvent& event)
 {
