@@ -6,6 +6,10 @@ namespace engine::core {
 class Context;
 }
 
+namespace engine::utils {
+struct PlaySoundEvent;
+}
+
 namespace engine::system {
 
 /**
@@ -19,6 +23,10 @@ public:
     ~AudioSystem();
 
 private:
+    /* --- 回调函数 --- */
+    /// @brief 播放音效事件的处理函数
+    void playSound(const engine::utils::PlaySoundEvent& event);
+
     entt::registry& m_registry;
     engine::core::Context& m_context;
 };
