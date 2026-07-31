@@ -90,6 +90,35 @@ void CombatResolveSystem::handleAttackEvent(const game::defs::AttackEvent& event
     }
 }
 
+void CombatResolveSystem::handleHealEvent(const game::defs::HealEvent& event)
+{
+    // 如果目标无效，直接返回
+    if (!m_registry.valid(event.m_target)) {
+        return;
+    }
+
+    // 如果目标不是玩家，直接返回
+    if (!m_registry.all_of<game::component::PlayerComponent>(event.m_target)) {
+        return;
+    }
+
+    // 根据治疗量，让目标回血
+    auto& targetStats = m_registry.get<game::component::StatsComponent>(event.m_target);
+    targetStats.m_hp += event.m_amount;
+    spdlog::info("治疗者 ID: {}, 治疗目标 ID: {}, 治疗量: {}",
+                 entt::to_integral(event.m_healer),
+                 entt::to_integral(event.m_target),
+                 event.m_amount);
+
+    // 如果治疗后目标满血，移除受伤标签
+    if (targetStats.m_hp >= targetStats.m_maxHp) {
+        targetStats.m_hp = targetStats.m_maxHp;
+        m_registry.remove<game::defs::InjuredTag>(event.m_target);
+    }
+
+    // TODO: 添加治疗特效
+}
+
 /* --- 辅助函数 --- */
 float CombatResolveSystem::calculateEffectiveDamage(float attackerAtk, float targetDef)
 {

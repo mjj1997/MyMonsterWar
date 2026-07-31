@@ -21,6 +21,8 @@ public:
 private:
     /* --- 回调函数 --- */
     void handleAttackEvent(const game::defs::AttackEvent& event);
+    void handleHealEvent(const game::defs::HealEvent& event);
+
     /* --- 辅助函数 --- */
     /**
      * @brief 计算有效伤害（计算公式可修改）
