@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../defs/events.h"
+
 #include <entt/entity/fwd.hpp>
 #include <entt/signal/fwd.hpp>
 
@@ -17,6 +19,8 @@ public:
     ~CombatResolveSystem();
 
 private:
+    /* --- 回调函数 --- */
+    void handleAttackEvent(const game::defs::AttackEvent& event);
     /* --- 辅助函数 --- */
     /**
      * @brief 计算有效伤害（计算公式可修改）
