@@ -80,6 +80,7 @@ struct DisplayInfoBlueprint
 struct EnemyClassBlueprint
 {
     entt::id_type m_classId{ entt::null };
+    entt::id_type m_projectileId{ entt::null };
     std::string m_className;
     StatsBlueprint m_stats{};
     EnemyBlueprint m_enemy{};
@@ -93,6 +94,7 @@ struct EnemyClassBlueprint
 struct PlayerClassBlueprint
 {
     entt::id_type m_classId{ entt::null };
+    entt::id_type m_projectileId{ entt::null };
     std::string m_className;
     StatsBlueprint m_stats{};
     PlayerBlueprint m_player{};
