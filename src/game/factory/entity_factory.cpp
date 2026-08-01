@@ -3,6 +3,7 @@
 #include "../component/class_name_component.h"
 #include "../component/enemy_component.h"
 #include "../component/player_component.h"
+#include "../component/projectile_component.h"
 #include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
 #include "../defs/tags.h"
@@ -47,6 +48,8 @@ entt::entity EntityFactory::createEnemyUnit(
     addStatsComponent(entity, blueprint.m_stats, level, rarity);
     // 添加敌人组件
     addEnemyComponent(entity, blueprint.m_enemy, targetPathNodeId);
+    // 添加投射物 ID 组件
+    addProjectileIdComponent(entity, blueprint.m_projectileId);
     // 补充其它必要组件
     m_registry.emplace<game::component::ClassNameComponent>(entity,
                                                             classId,
@@ -79,11 +82,48 @@ entt::entity EntityFactory::createPlayerUnit(entt::id_type classId,
     addStatsComponent(entity, blueprint.m_stats, level, rarity);
     // 添加玩家组件
     addPlayerComponent(entity, blueprint.m_player, rarity);
+    // 添加投射物 ID 组件
+    addProjectileIdComponent(entity, blueprint.m_projectileId);
     // 补充其它必要组件
     m_registry.emplace<game::component::ClassNameComponent>(entity,
                                                             classId,
                                                             blueprint.m_displayInfo.m_name);
     m_registry.emplace<engine::component::RenderComponent>(entity); // 默认添加到主图层
+
+    // TODO: 未来可添加其它组件
+
+    return entity;
+}
+
+entt::entity EntityFactory::createProjectile(entt::id_type id,
+                                             glm::vec2 startPosition,
+                                             glm::vec2 targetPosition,
+                                             entt::entity target,
+                                             float damage)
+{
+    auto entity = m_registry.create();
+    const auto& blueprint = m_blueprintManager.getProjectileBlueprint(id);
+
+    /* --- 添加组件 --- */
+    // 添加变换组件
+    addTransformComponent(entity, startPosition);
+    // 添加精灵组件
+    addSpriteComponent(entity, blueprint.m_sprite);
+    // 添加音频组件
+    addAudioComponent(entity, blueprint.m_sounds);
+    // 添加投射物组件
+    m_registry.emplace<game::component::ProjectileComponent>(entity,
+                                                             target,
+                                                             damage,
+                                                             startPosition,
+                                                             targetPosition,
+                                                             startPosition,
+                                                             blueprint.m_arcHeight,
+                                                             blueprint.m_totalFlightTime,
+                                                             0.0F);
+    // 添加渲染组件(让投射物位于主图层+1，即可以遮住角色)
+    m_registry.emplace<engine::component::RenderComponent>(
+        entity, engine::component::RenderComponent::MAIN_LAYER_INDEX + 1);
 
     // TODO: 未来可添加其它组件
 
@@ -213,6 +253,15 @@ void EntityFactory::addPlayerComponent(entt::entity entity,
     }
 
     // TODO: 未来可以处理玩家职业类型为 PlayerType::Mixed 的情况
+}
+
+void EntityFactory::addProjectileIdComponent(entt::entity entity, entt::id_type id)
+{
+    if (id == entt::null) {
+        return;
+    }
+
+    m_registry.emplace<game::component::ProjectileIdComponent>(entity, id);
 }
 
 } // namespace game::factory
