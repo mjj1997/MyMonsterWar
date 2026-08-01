@@ -27,6 +27,8 @@ bool BlueprintManager::loadEnemyClassBlueprints(std::string_view enemyJsonPath)
     try {
         for (const auto& [enemyClassName, enemyClassDataJson] : json.items()) {
             const entt::id_type classId{ entt::hashed_string(enemyClassName.c_str()) };
+            const entt::id_type projectileId{ BlueprintManager::parseProjectileId(
+                enemyClassDataJson) };
             // 解析 Stats
             auto stats = BlueprintManager::parseStats(enemyClassDataJson);
             // 解析 Enemy
@@ -43,6 +45,7 @@ bool BlueprintManager::loadEnemyClassBlueprints(std::string_view enemyJsonPath)
             m_enemyClassBlueprints.emplace(classId,
                                            data::EnemyClassBlueprint{
                                                .m_classId = classId,
+                                               .m_projectileId = projectileId,
                                                .m_className = enemyClassName,
                                                .m_stats = stats,
                                                .m_enemy = enemy,
@@ -69,6 +72,8 @@ bool BlueprintManager::loadPlayerClassBlueprints(std::string_view playerJsonPath
     try {
         for (const auto& [playerClassName, playerClassDataJson] : json.items()) {
             const entt::id_type classId{ entt::hashed_string(playerClassName.c_str()) };
+            const entt::id_type projectileId{ BlueprintManager::parseProjectileId(
+                playerClassDataJson) };
             // 解析 Stats
             auto stats = BlueprintManager::parseStats(playerClassDataJson);
             // 解析 Player
@@ -85,6 +90,7 @@ bool BlueprintManager::loadPlayerClassBlueprints(std::string_view playerJsonPath
             m_playerClassBlueprints.emplace(classId,
                                             data::PlayerClassBlueprint{
                                                 .m_classId = classId,
+                                                .m_projectileId = projectileId,
                                                 .m_className = playerClassName,
                                                 .m_stats = stats,
                                                 .m_player = player,
