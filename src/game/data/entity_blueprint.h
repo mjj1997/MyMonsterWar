@@ -102,4 +102,15 @@ struct PlayerClassBlueprint
     std::unordered_map<entt::id_type, AnimationBlueprint> m_animations;
 };
 
+/// @brief 投射物蓝图, 用于创建投射物组件
+struct ProjectileBlueprint
+{
+    entt::id_type m_id{ entt::null };
+    std::string m_name;
+    float m_arcHeight{};
+    float m_totalFlightTime{};
+    SoundsBlueprint m_sounds{};
+    SpriteBlueprint m_sprite{};
+}
+
 } // namespace game::data
