@@ -3,6 +3,10 @@
 #include <entt/entity/fwd.hpp>
 #include <entt/signal/fwd.hpp>
 
+namespace game::defs {
+struct EmitProjectileEvent;
+}
+
 namespace game::system {
 
 /**
@@ -17,6 +21,10 @@ public:
     ~ProjectileSystem();
 
 private:
+    /* --- 回调函数 --- */
+    /// @brief 处理发射投射物事件的函数
+    void handleEmitProjectileEvent(const game::defs::EmitProjectileEvent& event);
+
     entt::registry& m_registry;
     entt::dispatcher& m_dispatcher;
 };
