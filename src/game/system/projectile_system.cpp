@@ -1,5 +1,6 @@
 #include "projectile_system.h"
 #include "../defs/events.h"
+#include "../factory/entity_factory.h"
 
 #include <spdlog/spdlog.h>
 
@@ -19,7 +20,12 @@ void ProjectileSystem::handleEmitProjectileEvent(const game::defs::EmitProjectil
 {
     spdlog::info("发射投射物: {}", event.m_id);
 
-    // TODO: 创建投射物实体
+    // 创建投射物实体
+    m_entityFactory.createProjectile(event.m_id,
+                                     event.m_startPosition,
+                                     event.m_targetPosition,
+                                     event.m_target,
+                                     event.m_damage);
 }
 
 } // namespace game::system
