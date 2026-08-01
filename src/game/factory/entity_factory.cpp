@@ -3,6 +3,7 @@
 #include "../component/class_name_component.h"
 #include "../component/enemy_component.h"
 #include "../component/player_component.h"
+#include "../component/projectile_component.h"
 #include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
 #include "../defs/tags.h"
@@ -106,7 +107,16 @@ entt::entity EntityFactory::createProjectile(entt::id_type id,
     addSpriteComponent(entity, blueprint.m_sprite);
     // 添加音频组件
     addAudioComponent(entity, blueprint.m_sounds);
-    // TODO: 添加投射物组件
+    // 添加投射物组件
+    m_registry.emplace<game::component::ProjectileComponent>(entity,
+                                                             target,
+                                                             damage,
+                                                             startPosition,
+                                                             targetPosition,
+                                                             startPosition,
+                                                             blueprint.m_arcHeight,
+                                                             blueprint.m_totalFlightTime,
+                                                             0.0F);
     // 添加渲染组件(让投射物位于主图层+1，即可以遮住角色)
     m_registry.emplace<engine::component::RenderComponent>(
         entity, engine::component::RenderComponent::MAIN_LAYER_INDEX + 1);
