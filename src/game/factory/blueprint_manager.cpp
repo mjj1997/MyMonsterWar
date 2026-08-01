@@ -279,4 +279,12 @@ data::PlayerBlueprint BlueprintManager::parsePlayer(const nlohmann::json& json)
     return player;
 }
 
+entt::id_type BlueprintManager::parseProjectileId(const nlohmann::json& json)
+{
+    if (json.contains("projectile")) {
+        return entt::hashed_string(json.at("projectile").get<std::string>().c_str());
+    }
+    return entt::null;
+}
+
 } // namespace game::factory
