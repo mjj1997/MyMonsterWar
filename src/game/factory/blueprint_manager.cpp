@@ -100,6 +100,40 @@ bool BlueprintManager::loadPlayerClassBlueprints(std::string_view playerJsonPath
     return true;
 }
 
+bool BlueprintManager::loadProjectileBlueprints(std::string_view projectileJsonPath)
+{
+    auto path = std::filesystem::path{ projectileJsonPath };
+    std::ifstream file{ path };
+    nlohmann::json json;
+    file >> json;
+
+    // --- 解析蓝图 ---
+    try {
+        for (const auto& [projectileName, projectileDataJson] : json.items()) {
+            const entt::id_type id{ entt::hashed_string(projectileName.c_str()) };
+            float arcHeight{ projectileDataJson.at("arc_height").get<float>() };
+            float totalFlightTime{ projectileDataJson.at("total_flight_time").get<float>() };
+            // 解析 Sounds
+            auto sounds = parseSounds(projectileDataJson);
+            // 解析 Sprite
+            auto sprite = BlueprintManager::parseSprite(projectileDataJson);
+            // 解析完毕，组合蓝图并插入容器
+            m_projectileBlueprints.emplace(id,
+                                           data::ProjectileBlueprint{
+                                               .m_id = id,
+                                               .m_name = projectileName,
+                                               .m_arcHeight = arcHeight,
+                                               .m_totalFlightTime = totalFlightTime,
+                                               .m_sounds = std::move(sounds),
+                                               .m_sprite = std::move(sprite) });
+        }
+    } catch (const std::exception& e) {
+        spdlog::error("加载玩家类型蓝图数据时出错: {}", e.what());
+        return false;
+    }
+    return true;
+}
+
 const data::EnemyClassBlueprint& BlueprintManager::getEnemyClassBlueprint(entt::id_type id) const
 {
     if (m_enemyClassBlueprints.contains(id)) {
@@ -118,6 +152,16 @@ const data::PlayerClassBlueprint& BlueprintManager::getPlayerClassBlueprint(entt
 
     spdlog::error("未找到对应 ID 的玩家类型蓝图: {}", id);
     return m_playerClassBlueprints.begin()->second;
+}
+
+const data::ProjectileBlueprint& BlueprintManager::getProjectileBlueprint(entt::id_type id) const
+{
+    if (m_projectileBlueprints.contains(id)) {
+        return m_projectileBlueprints.at(id);
+    }
+
+    spdlog::error("未找到对应 ID 的投射物蓝图: {}", id);
+    return m_projectileBlueprints.begin()->second;
 }
 
 data::StatsBlueprint BlueprintManager::parseStats(const nlohmann::json& json)
