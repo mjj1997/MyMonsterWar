@@ -38,6 +38,11 @@ public:
                                   glm::vec2 position,
                                   int level = 1,
                                   int rarity = 1);
+    entt::entity createProjectile(entt::id_type id,
+                                  glm::vec2 startPosition,
+                                  glm::vec2 targetPosition,
+                                  entt::entity target,
+                                  float damage);
     // TODO: 未来添加其他实体的创建函数
 
 private:

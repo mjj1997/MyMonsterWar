@@ -90,6 +90,32 @@ entt::entity EntityFactory::createPlayerUnit(entt::id_type classId,
     return entity;
 }
 
+entt::entity EntityFactory::createProjectile(entt::id_type id,
+                                             glm::vec2 startPosition,
+                                             glm::vec2 targetPosition,
+                                             entt::entity target,
+                                             float damage)
+{
+    auto entity = m_registry.create();
+    const auto& blueprint = m_blueprintManager.getProjectileBlueprint(id);
+
+    /* --- 添加组件 --- */
+    // 添加变换组件
+    addTransformComponent(entity, startPosition);
+    // 添加精灵组件
+    addSpriteComponent(entity, blueprint.m_sprite);
+    // 添加音频组件
+    addAudioComponent(entity, blueprint.m_sounds);
+    // TODO: 添加投射物组件
+    // 添加渲染组件(让投射物位于主图层+1，即可以遮住角色)
+    m_registry.emplace<engine::component::RenderComponent>(
+        entity, engine::component::RenderComponent::MAIN_LAYER_INDEX + 1);
+
+    // TODO: 未来可添加其它组件
+
+    return entity;
+}
+
 void EntityFactory::addTransformComponent(entt::entity entity,
                                           glm::vec2 position,
                                           glm::vec2 scale,
