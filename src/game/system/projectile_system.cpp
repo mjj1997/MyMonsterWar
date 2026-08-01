@@ -5,9 +5,12 @@
 
 namespace game::system {
 
-ProjectileSystem::ProjectileSystem(entt::registry& registry, entt::dispatcher& dispatcher)
+ProjectileSystem::ProjectileSystem(entt::registry& registry,
+                                   entt::dispatcher& dispatcher,
+                                   game::factory::EntityFactory& entityFactory)
     : m_registry{ registry }
     , m_dispatcher{ dispatcher }
+    , m_entityFactory{ entityFactory }
 {}
 
 ProjectileSystem::~ProjectileSystem() {}

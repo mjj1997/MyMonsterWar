@@ -7,6 +7,10 @@ namespace game::defs {
 struct EmitProjectileEvent;
 }
 
+namespace game::factory {
+class EntityFactory;
+}
+
 namespace game::system {
 
 /**
@@ -17,7 +21,9 @@ namespace game::system {
 class ProjectileSystem
 {
 public:
-    ProjectileSystem(entt::registry& registry, entt::dispatcher& dispatcher);
+    ProjectileSystem(entt::registry& registry,
+                     entt::dispatcher& dispatcher,
+                     game::factory::EntityFactory& entityFactory);
     ~ProjectileSystem();
 
 private:
@@ -27,6 +33,8 @@ private:
 
     entt::registry& m_registry;
     entt::dispatcher& m_dispatcher;
+    ///< @brief 需要传入实体工厂引用，负责创建投射物实体
+    game::factory::EntityFactory& m_entityFactory;
 };
 
 } // namespace game::system
