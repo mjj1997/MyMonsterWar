@@ -251,4 +251,13 @@ void EntityFactory::addPlayerComponent(entt::entity entity,
     // TODO: 未来可以处理玩家职业类型为 PlayerType::Mixed 的情况
 }
 
+void EntityFactory::addProjectileIdComponent(entt::entity entity, entt::id_type id)
+{
+    if (id == entt::null) {
+        return;
+    }
+
+    m_registry.emplace<game::component::ProjectileIdComponent>(entity, id);
+}
+
 } // namespace game::factory

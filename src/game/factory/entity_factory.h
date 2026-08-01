@@ -68,6 +68,7 @@ private:
                            const data::EnemyBlueprint& enemy,
                            int targetPathNodeId);
     void addPlayerComponent(entt::entity entity, const data::PlayerBlueprint& player, int rarity);
+    void addProjectileIdComponent(entt::entity entity, entt::id_type id);
     // TODO: 未来添加其他组件创建函数
 
     entt::registry& m_registry;
