@@ -49,7 +49,8 @@ target_sources(
           game/system/orientation_system.cpp
           game/system/animation_keyframe_event_system.cpp
           game/system/combat_resolve_system.cpp
-          engine/system/audio_system.cpp)
+          engine/system/audio_system.cpp
+          game/system/projectile_system.cpp)
 
 target_link_libraries(
   MonsterWar
