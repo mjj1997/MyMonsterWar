@@ -48,6 +48,8 @@ entt::entity EntityFactory::createEnemyUnit(
     addStatsComponent(entity, blueprint.m_stats, level, rarity);
     // 添加敌人组件
     addEnemyComponent(entity, blueprint.m_enemy, targetPathNodeId);
+    // 添加投射物 ID 组件
+    addProjectileIdComponent(entity, blueprint.m_projectileId);
     // 补充其它必要组件
     m_registry.emplace<game::component::ClassNameComponent>(entity,
                                                             classId,
@@ -80,6 +82,8 @@ entt::entity EntityFactory::createPlayerUnit(entt::id_type classId,
     addStatsComponent(entity, blueprint.m_stats, level, rarity);
     // 添加玩家组件
     addPlayerComponent(entity, blueprint.m_player, rarity);
+    // 添加投射物 ID 组件
+    addProjectileIdComponent(entity, blueprint.m_projectileId);
     // 补充其它必要组件
     m_registry.emplace<game::component::ClassNameComponent>(entity,
                                                             classId,
