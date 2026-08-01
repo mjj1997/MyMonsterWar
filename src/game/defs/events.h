@@ -23,4 +23,14 @@ struct HealEvent
     float m_amount{};                    ///< @brief 治疗量
 };
 
+/// @brief 发射投射物事件
+struct EmitProjectileEvent
+{
+    entt::id_type m_id{ entt::null };    ///< @brief 投射物 ID
+    entt::entity m_target{ entt::null }; ///< @brief 目标
+    glm::vec2 m_startPosition{};         ///< @brief 起始位置
+    glm::vec2 m_targetPosition{};        ///< @brief 目标位置
+    float m_damage{};                    ///< @brief 伤害
+};
+
 } // namespace game::defs
