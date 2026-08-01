@@ -20,4 +20,12 @@ struct ProjectileComponent
     float m_currentFlightTime{};         ///< @brief 当前飞行时间
 };
 
+/**
+ *  @brief 投射物 ID 组件, 附加在远程攻击角色上
+ */
+struct ProjectileIdComponent
+{
+    entt::id_type m_projectileId{ entt::null }; ///< @brief 投射物 ID
+};
+
 } // namespace game::component
