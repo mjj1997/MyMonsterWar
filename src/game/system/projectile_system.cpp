@@ -2,6 +2,7 @@
 #include "../defs/events.h"
 #include "../factory/entity_factory.h"
 
+#include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
 
 namespace game::system {
@@ -12,9 +13,15 @@ ProjectileSystem::ProjectileSystem(entt::registry& registry,
     : m_registry{ registry }
     , m_dispatcher{ dispatcher }
     , m_entityFactory{ entityFactory }
-{}
+{
+    m_dispatcher.sink<game::defs::EmitProjectileEvent>()
+        .connect<&ProjectileSystem::handleEmitProjectileEvent>(this);
+}
 
-ProjectileSystem::~ProjectileSystem() {}
+ProjectileSystem::~ProjectileSystem()
+{
+    m_dispatcher.disconnect(this);
+}
 
 void ProjectileSystem::handleEmitProjectileEvent(const game::defs::EmitProjectileEvent& event)
 {
