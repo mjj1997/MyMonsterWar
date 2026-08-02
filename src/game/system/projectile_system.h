@@ -26,6 +26,8 @@ public:
                      game::factory::EntityFactory& entityFactory);
     ~ProjectileSystem();
 
+    void update(float deltaTime);
+
 private:
     /* --- 回调函数 --- */
     /// @brief 处理发射投射物事件的函数
