@@ -113,6 +113,6 @@ struct ProjectileBlueprint
     float m_totalFlightTime{};
     SoundsBlueprint m_sounds{};
     SpriteBlueprint m_sprite{};
-}
+};
 
 } // namespace game::data
