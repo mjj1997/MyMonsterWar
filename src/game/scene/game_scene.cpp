@@ -13,6 +13,7 @@
 #include "../system/combat_resolve_system.h"
 #include "../system/follow_path_system.h"
 #include "../system/orientation_system.h"
+#include "../system/projectile_system.h"
 #include "../system/remove_dead_system.h"
 #include "../system/set_target_system.h"
 #include "../system/timer_system.h"
@@ -84,6 +85,7 @@ void GameScene::update(float deltaTime)
     // 朝向系统要放到阻挡、设置目标、路径跟随系统之后
     m_orientationSystem->update(m_registry);
     m_attackStarterSystem->update(m_registry, dispatcher);
+    m_projectileSystem->update(deltaTime);
     m_movementSystem->update(m_registry, deltaTime);
     m_ySortSystem->update(m_registry); // 调用顺序要放到移动系统之后
     m_animationSystem->update(deltaTime);
@@ -192,6 +194,9 @@ bool GameScene::initSystems()
         = std::make_unique<game::system::AnimationKeyframeEventSystem>(m_registry, dispatcher);
     m_combatResolveSystem = std::make_unique<game::system::CombatResolveSystem>(m_registry,
                                                                                 dispatcher);
+    m_projectileSystem = std::make_unique<game::system::ProjectileSystem>(m_registry,
+                                                                          dispatcher,
+                                                                          *m_entityFactory);
 
     spdlog::info("系统初始化完成");
     return true;
