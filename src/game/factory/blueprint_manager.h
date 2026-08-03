@@ -20,6 +20,7 @@ struct DisplayInfoBlueprint;
 struct AnimationBlueprint;
 struct PlayerClassBlueprint;
 struct PlayerBlueprint;
+struct ProjectileBlueprint;
 } // namespace game::data
 
 namespace game::factory {
