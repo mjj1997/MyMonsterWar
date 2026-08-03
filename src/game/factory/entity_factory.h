@@ -38,6 +38,11 @@ public:
                                   glm::vec2 position,
                                   int level = 1,
                                   int rarity = 1);
+    entt::entity createProjectile(entt::id_type id,
+                                  glm::vec2 startPosition,
+                                  glm::vec2 targetPosition,
+                                  entt::entity target,
+                                  float damage);
     // TODO: 未来添加其他实体的创建函数
 
 private:
@@ -63,6 +68,7 @@ private:
                            const data::EnemyBlueprint& enemy,
                            int targetPathNodeId);
     void addPlayerComponent(entt::entity entity, const data::PlayerBlueprint& player, int rarity);
+    void addProjectileIdComponent(entt::entity entity, entt::id_type id);
     // TODO: 未来添加其他组件创建函数
 
     entt::registry& m_registry;

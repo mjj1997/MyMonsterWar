@@ -30,13 +30,9 @@ CombatResolveSystem::~CombatResolveSystem()
 
 void CombatResolveSystem::handleAttackEvent(const game::defs::AttackEvent& event)
 {
-    // 如果目标无效，直接返回
-    if (!m_registry.valid(event.m_target)) {
-        return;
-    }
-
-    // 如果目标已经死亡，直接返回
-    if (m_registry.all_of<game::defs::DeadTag>(event.m_target)) {
+    // 如果目标无效或目标已经被标记为死亡，直接返回
+    if (!m_registry.valid(event.m_target)
+        || m_registry.all_of<game::defs::DeadTag>(event.m_target)) {
         return;
     }
 
@@ -54,7 +50,7 @@ void CombatResolveSystem::handleAttackEvent(const game::defs::AttackEvent& event
 
         if (targetStats.m_hp <= 0) { // 玩家死亡情况
             targetStats.m_hp = 0;
-            m_registry.emplace<game::defs::DeadTag>(event.m_target);
+            m_registry.emplace_or_replace<game::defs::DeadTag>(event.m_target);
             spdlog::info("玩家 ID: {} 死亡", entt::to_integral(event.m_target));
             // NOTE: 可添加死亡特效, 更新统计信息等
         } else if (targetStats.m_hp < targetStats.m_maxHp) { // 玩家受伤情况
@@ -73,7 +69,7 @@ void CombatResolveSystem::handleAttackEvent(const game::defs::AttackEvent& event
 
         if (targetStats.m_hp <= 0) { // 敌人死亡情况
             targetStats.m_hp = 0;
-            m_registry.emplace<game::defs::DeadTag>(event.m_target);
+            m_registry.emplace_or_replace<game::defs::DeadTag>(event.m_target);
             spdlog::info("敌人 ID: {} 死亡", entt::to_integral(event.m_target));
             // TODO: 添加死亡特效
             // TODO: 更新统计信息

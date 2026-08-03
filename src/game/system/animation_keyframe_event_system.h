@@ -24,6 +24,8 @@ private:
     /* 根据不同的事件 ID，拆分出的处理函数 */
     /// @brief 处理击中事件的函数
     void handleHitEvent(const engine::utils::AnimationKeyframeEvent& event);
+    /// @brief 处理发射事件的函数
+    void handleEmitEvent(const engine::utils::AnimationKeyframeEvent& event);
 
     entt::registry& m_registry;
     entt::dispatcher& m_dispatcher;
