@@ -40,29 +40,6 @@ namespace game::scene {
 GameScene::GameScene(engine::core::Context& context)
     : SceneBase{ "GameScene", context }
 {
-    auto& dispatcher = m_context.dispatcher();
-
-    // 初始化系统
-    m_movementSystem = std::make_unique<engine::system::MovementSystem>();
-    m_renderSystem = std::make_unique<engine::system::RenderSystem>();
-    m_animationSystem = std::make_unique<engine::system::AnimationSystem>(m_registry, dispatcher);
-    m_ySortSystem = std::make_unique<engine::system::YSortSystem>();
-    m_audioSystem = std::make_unique<engine::system::AudioSystem>(m_registry, m_context);
-
-    m_followPathSystem = std::make_unique<game::system::FollowPathSystem>();
-    m_removeDeadSystem = std::make_unique<game::system::RemoveDeadSystem>();
-    m_blockSystem = std::make_unique<game::system::BlockSystem>();
-    m_setTargetSystem = std::make_unique<game::system::SetTargetSystem>();
-    m_timerSystem = std::make_unique<game::system::TimerSystem>();
-    m_attackStarterSystem = std::make_unique<game::system::AttackStarterSystem>();
-    m_animationStateSystem = std::make_unique<game::system::AnimationStateSystem>(m_registry,
-                                                                                  dispatcher);
-    m_orientationSystem = std::make_unique<game::system::OrientationSystem>();
-    m_animationKeyframeEventSystem
-        = std::make_unique<game::system::AnimationKeyframeEventSystem>(m_registry, dispatcher);
-    m_combatResolveSystem = std::make_unique<game::system::CombatResolveSystem>(m_registry,
-                                                                                dispatcher);
-
     spdlog::info("GameScene 构造完成");
 }
 
@@ -188,6 +165,35 @@ bool GameScene::initEntityFactory()
     m_entityFactory = std::make_unique<game::factory::EntityFactory>(m_registry,
                                                                      *m_blueprintManager);
     spdlog::info("实体工厂初始化完成");
+    return true;
+}
+
+bool GameScene::initSystems()
+{
+    auto& dispatcher = m_context.dispatcher();
+
+    // 初始化系统
+    m_movementSystem = std::make_unique<engine::system::MovementSystem>();
+    m_renderSystem = std::make_unique<engine::system::RenderSystem>();
+    m_animationSystem = std::make_unique<engine::system::AnimationSystem>(m_registry, dispatcher);
+    m_ySortSystem = std::make_unique<engine::system::YSortSystem>();
+    m_audioSystem = std::make_unique<engine::system::AudioSystem>(m_registry, m_context);
+
+    m_followPathSystem = std::make_unique<game::system::FollowPathSystem>();
+    m_removeDeadSystem = std::make_unique<game::system::RemoveDeadSystem>();
+    m_blockSystem = std::make_unique<game::system::BlockSystem>();
+    m_setTargetSystem = std::make_unique<game::system::SetTargetSystem>();
+    m_timerSystem = std::make_unique<game::system::TimerSystem>();
+    m_attackStarterSystem = std::make_unique<game::system::AttackStarterSystem>();
+    m_animationStateSystem = std::make_unique<game::system::AnimationStateSystem>(m_registry,
+                                                                                  dispatcher);
+    m_orientationSystem = std::make_unique<game::system::OrientationSystem>();
+    m_animationKeyframeEventSystem
+        = std::make_unique<game::system::AnimationKeyframeEventSystem>(m_registry, dispatcher);
+    m_combatResolveSystem = std::make_unique<game::system::CombatResolveSystem>(m_registry,
+                                                                                dispatcher);
+
+    spdlog::info("系统初始化完成");
     return true;
 }
 
