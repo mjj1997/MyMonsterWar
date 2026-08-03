@@ -41,6 +41,8 @@ void AnimationKeyframeEventSystem::handleKeyframeEvent(
     // 根据不同的事件 ID，调用不同的处理函数
     if (event.m_eventId == "hit"_hs) {
         handleHitEvent(event);
+    } else if (event.m_eventId == "emit"_hs) {
+        handleEmitEvent(event);
     }
     // TODO: 其他事件 ID 的处理函数
 }
