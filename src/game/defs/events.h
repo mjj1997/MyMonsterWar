@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entt/entity/entity.hpp>
+#include <glm/vec2.hpp>
 
 namespace game::defs {
 
