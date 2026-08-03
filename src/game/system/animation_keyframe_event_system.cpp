@@ -2,10 +2,13 @@
 #include "../component/blocked_by_component.h"
 #include "../component/enemy_component.h"
 #include "../component/player_component.h"
+#include "../component/projectile_component.h"
 #include "../component/stats_component.h"
 #include "../component/target_component.h"
 #include "../defs/events.h"
 #include "../defs/tags.h"
+
+#include "../../engine/component/transform_component.h"
 
 #include <entt/entity/registry.hpp>
 #include <entt/signal/dispatcher.hpp>
@@ -38,6 +41,8 @@ void AnimationKeyframeEventSystem::handleKeyframeEvent(
     // 根据不同的事件 ID，调用不同的处理函数
     if (event.m_eventId == "hit"_hs) {
         handleHitEvent(event);
+    } else if (event.m_eventId == "emit"_hs) {
+        handleEmitEvent(event);
     }
     // TODO: 其他事件 ID 的处理函数
 }
@@ -82,6 +87,43 @@ void AnimationKeyframeEventSystem::handleHitEvent(const engine::utils::Animation
         // NOTE: 敌人击中事件不播放音效，未来可按需添加
         return;
     }
+}
+
+void AnimationKeyframeEventSystem::handleEmitEvent(const engine::utils::AnimationKeyframeEvent& event)
+{
+    /* 发射事件：从角色身上找到拥有的投射物 ID，并执行发射投射物事件 */
+    // 确认角色实体有效
+    if (!m_registry.valid(event.m_entity)) {
+        return;
+    }
+
+    // 确认角色的目标组件依然存在，且目标组件指向的实体也有效
+    auto target = m_registry.try_get<game::component::TargetComponent>(event.m_entity);
+    if (target == nullptr || !m_registry.valid(target->m_entity)) {
+        return;
+    }
+
+    // 获取角色的变换组件、属性组件、投射物 ID 组件
+    const auto [transform,
+                stats,
+                projectileId] = m_registry.get<engine::component::TransformComponent,
+                                               game::component::StatsComponent,
+                                               game::component::ProjectileIdComponent>(
+        event.m_entity);
+    // 获取目标实体的变换组件
+    const auto targetTransform = m_registry.get<engine::component::TransformComponent>(
+        target->m_entity);
+
+    // 发送发射投射物事件
+    m_dispatcher.enqueue(
+        game::defs::EmitProjectileEvent{ .m_id = projectileId.m_projectileId,
+                                         .m_target = target->m_entity,
+                                         .m_startPosition = transform.m_position,
+                                         .m_targetPosition = targetTransform.m_position,
+                                         .m_damage = stats.m_atk });
+
+    // 发送播放“emit”音效事件
+    m_dispatcher.enqueue(engine::utils::PlaySoundEvent{ event.m_entity, "emit"_hs });
 }
 
 } // namespace game::system
