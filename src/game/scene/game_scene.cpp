@@ -63,6 +63,10 @@ void GameScene::init()
         spdlog::error("初始化实体工厂失败");
         return;
     }
+    if (!initSystems()) { // 需要在可能的依赖模块（如实体工厂）初始化完成后再调用
+        spdlog::error("初始化系统失败");
+        return;
+    }
     createTestEnemy();
 
     SceneBase::init();
@@ -158,7 +162,8 @@ bool GameScene::initEntityFactory()
         m_blueprintManager = std::make_shared<game::factory::BlueprintManager>(
             m_context.resourceManager());
         if (!m_blueprintManager->loadEnemyClassBlueprints("assets/data/enemy_data.json")
-            || !m_blueprintManager->loadPlayerClassBlueprints("assets/data/player_data.json")) {
+            || !m_blueprintManager->loadPlayerClassBlueprints("assets/data/player_data.json")
+            || !m_blueprintManager->loadProjectileBlueprints("assets/data/projectile_data.json")) {
             spdlog::error("加载蓝图失败");
             return false;
         }
