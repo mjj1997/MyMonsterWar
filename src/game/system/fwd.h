@@ -13,5 +13,7 @@ class OrientationSystem;
 class AnimationKeyframeEventSystem;
 class CombatResolveSystem;
 class ProjectileSystem;
+class HealthBarSystem;
+class EffectSystem;
 
 } // namespace game::system
