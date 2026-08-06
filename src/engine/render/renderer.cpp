@@ -72,6 +72,49 @@ void Renderer::drawSprite(const Camera& camera,
     }
 }
 
+void Renderer::drawFilledRect(const Camera& camera,
+                              glm::vec2 position,
+                              glm::vec2 size,
+                              engine::utils::FColor color)
+{
+    // 应用相机变换
+    auto screenPosition = camera.worldToScreen(position);
+    // 创建目标矩形
+    SDL_FRect destRect{ screenPosition.x, screenPosition.y, size.x, size.y };
+    // 设置颜色并绘制
+    setDrawColorFloat(color.r, color.g, color.b, color.a);
+    if (!SDL_RenderFillRect(m_sdlRenderer, &destRect)) {
+        spdlog::error("绘制填充矩形失败：{}", SDL_GetError());
+    }
+    // 恢复默认颜色
+    setDrawColorFloat(0.0F, 0.0F, 0.0F, 1.0F);
+}
+
+void Renderer::drawRect(const Camera& camera,
+                        glm::vec2 position,
+                        glm::vec2 size,
+                        engine::utils::FColor color,
+                        const int thickness)
+{
+    // 应用相机变换
+    auto screenPosition = camera.worldToScreen(position);
+    // 创建目标矩形
+    SDL_FRect destRect{ screenPosition.x, screenPosition.y, size.x, size.y };
+    // 设置颜色并绘制
+    setDrawColorFloat(color.r, color.g, color.b, color.a);
+    for (int i{ 0 }; i < thickness; ++i) {
+        if (!SDL_RenderRect(m_sdlRenderer, &destRect)) {
+            spdlog::error("绘制矩形边框失败：{}", SDL_GetError());
+        }
+        destRect.x += 1;
+        destRect.y += 1;
+        destRect.w -= 2;
+        destRect.h -= 2;
+    }
+    // 恢复默认颜色
+    setDrawColorFloat(0.0F, 0.0F, 0.0F, 1.0F);
+}
+
 void Renderer::drawUiImage(const Image& image,
                            const glm::vec2& position,
                            const std::optional<glm::vec2>& size)
