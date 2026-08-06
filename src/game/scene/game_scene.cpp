@@ -12,6 +12,7 @@
 #include "../system/block_system.h"
 #include "../system/combat_resolve_system.h"
 #include "../system/follow_path_system.h"
+#include "../system/health_bar_system.h"
 #include "../system/orientation_system.h"
 #include "../system/projectile_system.h"
 #include "../system/remove_dead_system.h"
@@ -99,7 +100,12 @@ void GameScene::update(float deltaTime)
 
 void GameScene::render()
 {
+    auto& renderer = m_context.renderer();
+    auto& camera = m_context.camera();
+
+    // 注意渲染顺序，保证血量条遮盖角色
     m_renderSystem->update(m_registry, m_context.renderer(), m_context.camera());
+    m_healthBarSystem->update(m_registry, renderer, camera);
 
     SceneBase::render();
 }
@@ -202,6 +208,7 @@ bool GameScene::initSystems()
     m_projectileSystem = std::make_unique<game::system::ProjectileSystem>(m_registry,
                                                                           dispatcher,
                                                                           *m_entityFactory);
+    m_healthBarSystem = std::make_unique<game::system::HealthBarSystem>();
 
     spdlog::info("系统初始化完成");
     return true;
