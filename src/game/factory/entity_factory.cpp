@@ -55,6 +55,7 @@ entt::entity EntityFactory::createEnemyUnit(
                                                             classId,
                                                             blueprint.m_displayInfo.m_name);
     m_registry.emplace<engine::component::RenderComponent>(entity); // 默认添加到主图层
+    m_registry.emplace<game::defs::HasHealthBarTag>(entity);
 
     // TODO: 未来可添加其它组件
 
@@ -89,6 +90,7 @@ entt::entity EntityFactory::createPlayerUnit(entt::id_type classId,
                                                             classId,
                                                             blueprint.m_displayInfo.m_name);
     m_registry.emplace<engine::component::RenderComponent>(entity); // 默认添加到主图层
+    m_registry.emplace<game::defs::HasHealthBarTag>(entity);
 
     // TODO: 未来可添加其它组件
 
