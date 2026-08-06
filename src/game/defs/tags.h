@@ -30,4 +30,7 @@ struct AttackReadyTag // 攻击就绪标签，用于标记实体可以进行攻�
 struct ActionLockedTag // 动作锁定标签，让角色播放完当前动画再进行下一步动作（硬直）
 {};
 
+struct HasHealthBarTag // 血量条标签，用于标记实体有血量条
+{};
+
 } // namespace game::defs
