@@ -132,6 +132,31 @@ entt::entity EntityFactory::createProjectile(entt::id_type id,
     return entity;
 }
 
+entt::entity EntityFactory::createEnemyDeadEffect(entt::id_type classId,
+                                                  glm::vec2 position,
+                                                  const bool isFlipped)
+{
+    auto entity = m_registry.create();
+    const auto& blueprint = m_blueprintManager.getEnemyClassBlueprint(classId);
+
+    /* --- 添加组件 --- */
+    // 添加变换组件
+    addTransformComponent(entity, position);
+    // 添加精灵组件
+    addSpriteComponent(entity, blueprint.m_sprite, isFlipped);
+    // 添加动画组件(死亡动画名称为“damage”)
+    addAnimationComponent(entity,
+                          blueprint.m_animations.at("damage"_hs),
+                          blueprint.m_sprite,
+                          "damage"_hs);
+
+    // 补充其他必要组件
+    m_registry.emplace<engine::component::RenderComponent>(entity);
+    m_registry.emplace<game::defs::OneShotRemovalTag>(entity);
+
+    return entity;
+}
+
 void EntityFactory::addTransformComponent(entt::entity entity,
                                           glm::vec2 position,
                                           glm::vec2 scale,
