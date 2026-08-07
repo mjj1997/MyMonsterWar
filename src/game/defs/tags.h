@@ -33,4 +33,7 @@ struct ActionLockedTag // 动作锁定标签，让角色播放完当前动画再
 struct HasHealthBarTag // 血量条标签，用于标记实体有血量条
 {};
 
+struct OneShotRemovalTag /// 一次性移除标签，用于标记实体一次性移除（如死亡特效）
+{};
+
 } // namespace game::defs
