@@ -11,6 +11,7 @@
 #include "../system/attack_starter_system.h"
 #include "../system/block_system.h"
 #include "../system/combat_resolve_system.h"
+#include "../system/effect_system.h"
 #include "../system/follow_path_system.h"
 #include "../system/health_bar_system.h"
 #include "../system/orientation_system.h"
@@ -209,6 +210,9 @@ bool GameScene::initSystems()
                                                                           dispatcher,
                                                                           *m_entityFactory);
     m_healthBarSystem = std::make_unique<game::system::HealthBarSystem>();
+    m_effectSystem = std::make_unique<game::system::EffectSystem>(m_registry,
+                                                                  dispatcher,
+                                                                  *m_entityFactory);
 
     spdlog::info("系统初始化完成");
     return true;
