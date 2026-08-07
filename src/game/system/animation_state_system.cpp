@@ -60,6 +60,12 @@ void AnimationStateSystem::finishAnimation(const engine::utils::FinishAnimationE
         spdlog::info("玩家 ID: {} 行动动画结束，返回 idle 动画", entt::to_integral(event.m_entity));
         return;
     }
+
+    /* --- 如果是一次性动画实体（例如死亡特效），则添加死亡标签，等待移除 --- */
+    if (m_registry.all_of<game::defs::OneShotRemovalTag>(event.m_entity)) {
+        m_registry.emplace_or_replace<game::defs::DeadTag>(event.m_entity);
+        return;
+    }
 }
 
 } // namespace game::system

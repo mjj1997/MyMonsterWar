@@ -132,6 +132,31 @@ entt::entity EntityFactory::createProjectile(entt::id_type id,
     return entity;
 }
 
+entt::entity EntityFactory::createEnemyDeadEffect(entt::id_type classId,
+                                                  glm::vec2 position,
+                                                  const bool isFlipped)
+{
+    auto entity = m_registry.create();
+    const auto& blueprint = m_blueprintManager.getEnemyClassBlueprint(classId);
+
+    /* --- 添加组件 --- */
+    // 添加变换组件
+    addTransformComponent(entity, position);
+    // 添加精灵组件
+    addSpriteComponent(entity, blueprint.m_sprite, isFlipped);
+    // 添加动画组件(死亡动画名称为“damage”)
+    addAnimationComponent(entity,
+                          blueprint.m_animations.at("damage"_hs),
+                          blueprint.m_sprite,
+                          "damage"_hs);
+
+    // 补充其他必要组件
+    m_registry.emplace<engine::component::RenderComponent>(entity);
+    m_registry.emplace<game::defs::OneShotRemovalTag>(entity);
+
+    return entity;
+}
+
 void EntityFactory::addTransformComponent(entt::entity entity,
                                           glm::vec2 position,
                                           glm::vec2 scale,
@@ -188,6 +213,36 @@ void EntityFactory::addAnimationComponent(
     m_registry.emplace<engine::component::AnimationComponent>(entity,
                                                               std::move(animations),
                                                               defaultAnimationId);
+}
+
+void EntityFactory::addAnimationComponent(entt::entity entity,
+                                          const data::AnimationBlueprint& animationBlueprint,
+                                          const data::SpriteBlueprint& spriteBlueprint,
+                                          entt::id_type animationId,
+                                          bool isLoop)
+{
+    // 创建动画帧容器
+    std::vector<engine::component::AnimationFrame> frames;
+    // 依次读取蓝图中的每一个帧索引
+    for (const auto& frameIndex : animationBlueprint.m_frameIndices) {
+        engine::utils::Rect sourceRect{ spriteBlueprint.m_sourceRect };
+        // 通过索引计算每一帧的源矩形位置
+        sourceRect.position.x += frameIndex * sourceRect.size.x;
+        sourceRect.position.y += animationBlueprint.m_row * sourceRect.size.y;
+        // 创建动画帧并填充到容器中
+        frames.emplace_back(sourceRect, animationBlueprint.m_durationPerFrame);
+    }
+
+    // 创建动画map容器
+    std::unordered_map<entt::id_type, engine::component::Animation> animations;
+    // 使用填充好的动画帧容器创建动画, 并填充到动画 map 容器中（只有一个动画）
+    engine::component::Animation animation{ std::move(frames), animationBlueprint.m_events, isLoop };
+    animations.emplace(animationId, animation);
+
+    // 使用动画 map 容器创建动画组件
+    m_registry.emplace<engine::component::AnimationComponent>(entity,
+                                                              std::move(animations),
+                                                              animationId);
 }
 
 void EntityFactory::addAudioComponent(entt::entity entity, const data::SoundsBlueprint& sounds)

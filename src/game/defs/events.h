@@ -34,4 +34,12 @@ struct EmitProjectileEvent
     float m_damage{};                    ///< @brief 伤害
 };
 
+/// @brief 敌人死亡特效事件
+struct EnemyDeadEffectEvent
+{
+    entt::id_type m_classId{ entt::null }; ///< @brief 敌人类型 ID
+    glm::vec2 m_position{};                ///< @brief 位置
+    bool m_isFlipped{ false };             ///< @brief 是否翻转
+};
+
 } // namespace game::defs
