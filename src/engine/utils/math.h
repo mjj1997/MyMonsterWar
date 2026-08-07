@@ -31,6 +31,17 @@ struct Rect
  */
 struct FColor
 {
+    // -- 创建一些预设颜色，方便使用 ---
+    static constexpr FColor red() noexcept { return { 1.0F, 0.0F, 0.0F, 1.0F }; }
+    static constexpr FColor green() noexcept { return { 0.0F, 1.0F, 0.0F, 1.0F }; }
+    static constexpr FColor blue() noexcept { return { 0.0F, 0.0F, 1.0F, 1.0F }; }
+    static constexpr FColor white() noexcept { return { 1.0F, 1.0F, 1.0F, 1.0F }; }
+    static constexpr FColor black() noexcept { return { 0.0F, 0.0F, 0.0F, 1.0F }; }
+    static constexpr FColor purple() noexcept { return { 1.0F, 0.0F, 1.0F, 1.0F }; }
+    static constexpr FColor orange() noexcept { return { 1.0F, 0.65F, 0.0F, 1.0F }; }
+    static constexpr FColor grey() noexcept { return { 0.5F, 0.5F, 0.5F, 1.0F }; }
+    static constexpr FColor yellow() noexcept { return { 1.0F, 1.0F, 0.0F, 1.0F }; }
+
     float r{};
     float g{};
     float b{};

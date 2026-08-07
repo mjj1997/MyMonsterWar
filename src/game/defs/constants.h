@@ -1,9 +1,14 @@
 #pragma once
 
+#include <glm/vec2.hpp>
+
 namespace game::defs {
 
 constexpr float BLOCK_RADIUS{ 40.0F }; // 阻挡判断半径
 constexpr float UNIT_RADIUS{ 20.0F };  // 角色自身半径（相当于碰撞盒，用于计算攻击范围）
+
+constexpr glm::vec2 HEALTH_BAR_SIZE{ 48.0F, 8.0F }; // 血量条尺寸
+constexpr float HEALTH_BAR_OFFSET_Y{ 8.0F };        // 血量条垂直偏移量
 
 /// @brief 玩家类型枚举
 enum class PlayerType {

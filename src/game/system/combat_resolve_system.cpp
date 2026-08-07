@@ -1,10 +1,14 @@
 #include "combat_resolve_system.h"
 #include "../component/blocked_by_component.h"
 #include "../component/blocker_component.h"
+#include "../component/class_name_component.h"
 #include "../component/enemy_component.h"
 #include "../component/player_component.h"
 #include "../component/stats_component.h"
 #include "../defs/tags.h"
+
+#include "../../engine/component/sprite_component.h"
+#include "../../engine/component/transform_component.h"
 
 #include <entt/entity/registry.hpp>
 #include <entt/signal/dispatcher.hpp>
@@ -71,7 +75,17 @@ void CombatResolveSystem::handleAttackEvent(const game::defs::AttackEvent& event
             targetStats.m_hp = 0;
             m_registry.emplace_or_replace<game::defs::DeadTag>(event.m_target);
             spdlog::info("敌人 ID: {} 死亡", entt::to_integral(event.m_target));
-            // TODO: 添加死亡特效
+
+            // 发送死亡特效事件，需要先获取敌人类型 Id、位置和是否翻转
+            const auto& [className,
+                         transform,
+                         sprite] = m_registry.get<game::component::ClassNameComponent,
+                                                  engine::component::TransformComponent,
+                                                  engine::component::SpriteComponent>(
+                event.m_target);
+            m_dispatcher.enqueue(game::defs::EnemyDeadEffectEvent{
+                className.m_classId, transform.m_position, sprite.m_sprite.m_isFlipped });
+
             // TODO: 更新统计信息
 
             // 如果敌人死亡时处于被阻挡状态，减少阻挡者的阻挡计数

@@ -62,6 +62,32 @@ public:
                     const float rotation = 0.0F);
 
     /**
+     * @brief 绘制填充矩形
+     * 
+     * @param position 矩形左上角位置
+     * @param size 矩形大小
+     * @param color 填充颜色
+     */
+    void drawFilledRect(const Camera& camera,
+                        glm::vec2 position,
+                        glm::vec2 size,
+                        engine::utils::FColor color);
+
+    /**
+     * @brief 绘制矩形边框
+     * 
+     * @param position 矩形左上角位置
+     * @param size 矩形大小
+     * @param color 边框颜色
+     * @param thickness 边框厚度
+     */
+    void drawRect(const Camera& camera,
+                  glm::vec2 position,
+                  glm::vec2 size,
+                  engine::utils::FColor color,
+                  const int thickness = 1);
+
+    /**
      * @brief 在屏幕坐标中直接渲染一个用于 UI 的 Image 对象。
      *
      * @param image 包含纹理ID、源矩形和翻转状态的 Image 对象。
