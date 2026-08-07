@@ -54,11 +54,20 @@ private:
     void addSpriteComponent(entt::entity entity,
                             const data::SpriteBlueprint& sprite,
                             bool isFlipped = false);
+
+    ///< @brief 添加动画组件（包含多个动画）
     void addAnimationComponent(
         entt::entity entity,
         const std::unordered_map<entt::id_type, data::AnimationBlueprint>& animationBlueprints,
         const data::SpriteBlueprint& spriteBlueprint,
         entt::id_type defaultAnimationId);
+    ///< @brief 添加动画组件（只包含一个动画），用于创建特效
+    void addAnimationComponent(entt::entity entity,
+                               const data::AnimationBlueprint& animationBlueprint,
+                               const data::SpriteBlueprint& spriteBlueprint,
+                               entt::id_type animationId,
+                               bool isLoop = false);
+
     void addAudioComponent(entt::entity entity, const data::SoundsBlueprint& sounds);
     void addStatsComponent(entt::entity entity,
                            const data::StatsBlueprint& stats,
