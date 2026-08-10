@@ -41,6 +41,7 @@ private:
     void onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event);
 
     // 测试函数
+    void testSessionData();
     void createTestEnemy();
     bool createTestPlayerMelee();
     bool createTestPlayerRanged();

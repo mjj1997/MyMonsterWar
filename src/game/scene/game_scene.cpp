@@ -239,6 +239,21 @@ void GameScene::onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event)
     // TODO: 处理敌人到达基地的逻辑
 }
 
+void GameScene::testSessionData()
+{
+    spdlog::info("--- 测试会话数据 ---");
+    spdlog::info("当前关卡号: {}", m_level);
+    spdlog::info("当前得分: {}", m_sessionData->score());
+    spdlog::info("是否通关: {}", m_sessionData->isLevelClear());
+    for (const auto& playerUnit : m_sessionData->playerUnits()) {
+        spdlog::info("玩家角色名: {}, 职业: {}, 等级: {}, 稀有度: {}",
+                     playerUnit.second.m_name,
+                     playerUnit.second.m_className,
+                     playerUnit.second.m_lv,
+                     playerUnit.second.m_rarity);
+    }
+}
+
 void GameScene::createTestEnemy()
 {
     // 每个起点创建一批敌人
