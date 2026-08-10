@@ -26,7 +26,8 @@ bool UiConfig::loadFromFile(std::string_view path)
         loadIcon(json.at("icon"));
         // 加载肖像
         loadPortrait(json.at("portrait"));
-        // TODO： 加载肖像框
+        // 加载肖像框
+        loadPortraitFrame(json.at("portrait_frame"));
         // TODO： 加载布局
     } catch (const std::exception& e) {
         spdlog::error("载入 UI 配置文件失败: {}", e.what());
@@ -95,6 +96,22 @@ void UiConfig::loadPortrait(const nlohmann::json& json)
         engine::render::Image portrait{ texturePath, srcRect, false };
 
         m_portraits.emplace(id, portrait);
+    }
+}
+
+void UiConfig::loadPortraitFrame(const nlohmann::json& json)
+{
+    for (const auto& [key, value] : json.items()) {
+        int rank{ value.at("rank").get<int>() };
+
+        std::string texturePath{ value.at("sprite_sheet").get<std::string>() };
+        engine::utils::Rect srcRect{ value.at("x").get<float>(),
+                                     value.at("y").get<float>(),
+                                     value.at("width").get<float>(),
+                                     value.at("height").get<float>() };
+        engine::render::Image portraitFrame{ texturePath, srcRect, false };
+
+        m_portraitFrames.emplace(rank, portraitFrame);
     }
 }
 

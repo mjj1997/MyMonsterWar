@@ -42,6 +42,7 @@ private:
     // --- 分步骤的数据加载函数 ---
     void loadIcon(const nlohmann::json& json);
     void loadPortrait(const nlohmann::json& json);
+    void loadPortraitFrame(const nlohmann::json& json);
 
     /// @brief 储存职业类型的图标（职业类型ID:图标）
     std::unordered_map<entt::id_type, engine::render::Image> m_icons;
