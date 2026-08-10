@@ -28,7 +28,8 @@ bool UiConfig::loadFromFile(std::string_view path)
         loadPortrait(json.at("portrait"));
         // 加载肖像框
         loadPortraitFrame(json.at("portrait_frame"));
-        // TODO： 加载布局
+        // 加载布局
+        loadLayout(json.at("layout"));
     } catch (const std::exception& e) {
         spdlog::error("载入 UI 配置文件失败: {}", e.what());
         return false;
@@ -113,6 +114,23 @@ void UiConfig::loadPortraitFrame(const nlohmann::json& json)
 
         m_portraitFrames.emplace(rank, portraitFrame);
     }
+}
+
+void UiConfig::loadLayout(const nlohmann::json& json)
+{
+    auto playerUnitPanelData = json.at("player_unit_panel");
+
+    m_playerUnitPanelPadding = playerUnitPanelData.at("padding").get<float>();
+    m_playerUnitPanelFrameSize = glm::vec2{
+        playerUnitPanelData.at("frame_size").at("width").get<float>(),
+        playerUnitPanelData.at("frame_size").at("height").get<float>()
+    };
+    m_playerUnitPanelFontSize = playerUnitPanelData.at("font_size").get<int>();
+    m_playerUnitPanelFontPath = playerUnitPanelData.at("font_path").get<std::string>();
+    m_playerUnitPanelFontOffset = glm::vec2{
+        playerUnitPanelData.at("font_offset").at("x").get<float>(),
+        playerUnitPanelData.at("font_offset").at("y").get<float>()
+    };
 }
 
 } // namespace game::data
