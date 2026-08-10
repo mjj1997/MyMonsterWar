@@ -1,5 +1,6 @@
 #include "ui_config.h"
 
+#include <entt/core/hashed_string.hpp>
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
@@ -21,7 +22,8 @@ bool UiConfig::loadFromFile(std::string_view path)
     file >> json;
 
     try {
-        // TODO： 加载图标
+        // 加载图标
+        loadIcon(json.at("icon"));
         // TODO： 加载肖像
         // TODO： 加载肖像框
         // TODO： 加载布局
@@ -60,6 +62,22 @@ engine::render::Image& UiConfig::portraitFrame(int rarity)
     } else {
         spdlog::error("未找到稀有度: {} 的肖像框", rarity);
         return m_portraitFrames.begin()->second;
+    }
+}
+
+void UiConfig::loadIcon(const nlohmann::json& json)
+{
+    for (const auto& [key, value] : json.items()) {
+        entt::id_type id{ entt::hashed_string(key.c_str()) };
+
+        std::string texturePath{ value.at("sprite_sheet").get<std::string>() };
+        engine::utils::Rect srcRect{ value.at("x").get<float>(),
+                                     value.at("y").get<float>(),
+                                     value.at("width").get<float>(),
+                                     value.at("height").get<float>() };
+        engine::render::Image icon{ texturePath, srcRect, false };
+
+        m_icons.emplace(id, icon);
     }
 }
 

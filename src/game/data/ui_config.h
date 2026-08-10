@@ -4,6 +4,7 @@
 
 #include <entt/entity/fwd.hpp>
 #include <glm/vec2.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 #include <string_view>
 #include <unordered_map>
@@ -38,6 +39,9 @@ public:
     }
 
 private:
+    // --- 分步骤的数据加载函数 ---
+    void loadIcon(const nlohmann::json& json);
+
     /// @brief 储存职业类型的图标（职业类型ID:图标）
     std::unordered_map<entt::id_type, engine::render::Image> m_icons;
     /// @brief 储存角色肖像（角色名ID:肖像）
