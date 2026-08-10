@@ -34,6 +34,8 @@ public:
     SessionData() = default;
     ~SessionData() = default;
 
+    ///< @brief 加载默认数据
+    bool loadDefaultData(std::string_view path = "assets/data/default_session_data.json");
     ///< @brief 清空所有数据
     void clear();
 
