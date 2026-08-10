@@ -1,8 +1,37 @@
 #include "ui_config.h"
 
+#include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
+#include <filesystem>
+#include <fstream>
+
 namespace game::data {
+
+bool UiConfig::loadFromFile(std::string_view path)
+{
+    std::filesystem::path filePath{ path };
+    std::ifstream file{ filePath };
+    if (!file.is_open()) {
+        spdlog::error("无法打开 UI 配置文件: {}", path);
+        return false;
+    }
+
+    nlohmann::json json;
+    file >> json;
+
+    try {
+        // TODO： 加载图标
+        // TODO： 加载肖像
+        // TODO： 加载肖像框
+        // TODO： 加载布局
+    } catch (const std::exception& e) {
+        spdlog::error("载入 UI 配置文件失败: {}", e.what());
+        return false;
+    }
+
+    return true;
+}
 
 engine::render::Image& UiConfig::icon(entt::id_type id)
 {

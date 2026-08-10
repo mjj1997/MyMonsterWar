@@ -5,6 +5,7 @@
 #include <entt/entity/fwd.hpp>
 #include <glm/vec2.hpp>
 
+#include <string_view>
 #include <unordered_map>
 
 namespace game::data {
@@ -19,6 +20,9 @@ class UiConfig
 public:
     UiConfig() = default;
     ~UiConfig() = default;
+
+    ///< @brief 从 JSON 配置文件加载数据
+    [[nodiscard]] bool loadFromFile(std::string_view path = "assets/data/ui_config.json");
 
     // --- Getters ---
     [[nodiscard]] engine::render::Image& icon(entt::id_type id);
