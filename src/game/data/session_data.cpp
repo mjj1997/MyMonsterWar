@@ -5,6 +5,14 @@
 
 namespace game::data {
 
+void SessionData::clear()
+{
+    m_playerUnits.clear();
+    m_level = 1;
+    m_score = 0;
+    m_isLevelClear = false;
+}
+
 void SessionData::addPlayerUnit(std::string_view name,
                                 std::string_view className,
                                 int lv,

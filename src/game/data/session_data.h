@@ -34,6 +34,9 @@ public:
     SessionData() = default;
     ~SessionData() = default;
 
+    ///< @brief 清空所有数据
+    void clear();
+
     // --- getters & setters ---
 
     [[nodiscard]] std::unordered_map<entt::id_type, PlayerUnitData>& playerUnits()
