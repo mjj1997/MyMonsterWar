@@ -3,6 +3,7 @@
 #include <entt/entity/entity.hpp>
 
 #include <string>
+#include <string_view>
 #include <unordered_map>
 
 namespace game::data {
@@ -39,6 +40,14 @@ public:
     {
         return m_playerUnits;
     }
+    ///< @brief 添加玩家角色
+    void addPlayerUnit(std::string_view name, std::string_view className, int lv, int rarity);
+    ///< @brief 删除玩家角色
+    void removePlayerUnit(entt::id_type nameId);
+    ///< @brief 增加玩家角色等级
+    void increasePlayerUnitLv(entt::id_type nameId, int lv = 1);
+    ///< @brief 增加玩家角色稀有度
+    void increasePlayerUnitRarity(entt::id_type nameId, int rarity = 1);
     ///< @brief 清空玩家角色列表
     void clearPlayerUnits();
 
