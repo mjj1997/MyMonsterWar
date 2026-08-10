@@ -1,6 +1,26 @@
 #pragma once
 
+#include <entt/entity/entity.hpp>
+
+#include <string>
+#include <unordered_map>
+
 namespace game::data {
+
+/**
+ * @brief 玩家角色数据
+ * 
+ * 包含玩家角色名称、职业、等级、稀有度。
+ */
+struct PlayerUnitData
+{
+    entt::id_type m_nameId{ entt::null };
+    entt::id_type m_classId{ entt::null };
+    std::string m_name;
+    std::string m_className;
+    int m_lv{ 1 };
+    int m_rarity{ 1 };
+};
 
 /**
  * @brief 场景间（例如通关时）传递的跨关卡数据
@@ -10,7 +30,17 @@ namespace game::data {
 class SessionData
 {
 public:
+    SessionData() = default;
+    ~SessionData() = default;
+
     // --- getters & setters ---
+
+    [[nodiscard]] std::unordered_map<entt::id_type, PlayerUnitData>& playerUnits()
+    {
+        return m_playerUnits;
+    }
+    ///< @brief 清空玩家角色列表
+    void clearPlayerUnits();
 
     [[nodiscard]] int level() const { return m_level; }
     ///< @brief 增加关卡号(进入下一关)
@@ -25,6 +55,9 @@ public:
     void setLevelClear(bool clear) { m_isLevelClear = clear; }
 
 private:
+    /// @brief 储存玩家拥有的角色 (角色名ID:玩家角色数据)
+    std::unordered_map<entt::id_type, PlayerUnitData> m_playerUnits;
+
     int m_level{ 1 };             ///< @brief 当前关卡号
     int m_score{ 0 };             ///< @brief 积分
     bool m_isLevelClear{ false }; ///< @brief 是否通关
