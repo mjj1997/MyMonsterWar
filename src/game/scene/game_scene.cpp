@@ -51,6 +51,10 @@ GameScene::~GameScene() = default;
 
 void GameScene::init()
 {
+    if (!initSessionData()) {
+        spdlog::error("初始化会话数据失败");
+        return;
+    }
     if (!loadLevel()) {
         return;
     }
@@ -70,6 +74,8 @@ void GameScene::init()
         spdlog::error("初始化系统失败");
         return;
     }
+
+    testSessionData();
     createTestEnemy();
 
     SceneBase::init();
