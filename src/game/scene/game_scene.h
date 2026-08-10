@@ -30,6 +30,7 @@ public:
     void clean() override;
 
 private:
+    [[nodiscard]] bool initSessionData();
     [[nodiscard]] bool loadLevel();
     [[nodiscard]] bool initEventConnections();
     [[nodiscard]] bool initInputConnections();

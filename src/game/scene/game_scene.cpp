@@ -2,6 +2,7 @@
 #include "../component/player_component.h"
 #include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
+#include "../data/session_data.h"
 #include "../defs/tags.h"
 #include "../factory/blueprint_manager.h"
 #include "../factory/entity_factory.h"
@@ -125,6 +126,20 @@ void GameScene::clean()
     inputManager.actionSink("pause"_hs).disconnect<&GameScene::clearAllPlayers>(this);
 
     SceneBase::clean();
+}
+
+bool GameScene::initSessionData()
+{
+    if (m_sessionData == nullptr) {
+        m_sessionData = std::make_shared<game::data::SessionData>();
+        if (!m_sessionData->loadDefaultData()) {
+            spdlog::error("初始化会话数据失败");
+            return false;
+        }
+    }
+
+    m_level = m_sessionData->level();
+    return true;
 }
 
 bool GameScene::loadLevel()
