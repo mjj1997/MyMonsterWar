@@ -12,6 +12,10 @@ class EntityFactory;
 class BlueprintManager;
 } // namespace game::factory
 
+namespace game::data {
+class SessionData;
+}
+
 namespace game::scene {
 
 class GameScene final : public engine::scene::SceneBase
@@ -68,6 +72,10 @@ private:
     std::unique_ptr<game::factory::EntityFactory> m_entityFactory; // 实体工厂, 负责创建和管理实体
     /* 管理数据的实例很可能同时被多个场景使用,因此使用共享指针 */
     std::shared_ptr<game::factory::BlueprintManager> m_blueprintManager; // 蓝图管理器, 负责管理蓝图数据
+    std::shared_ptr<game::data::SessionData> m_sessionData; // 会话数据, 负责管理跨关卡传递的数据
+
+    // --- 跨场景数据 ---
+    int m_level{ 1 }; // 当前关卡号
 };
 
 } // namespace game::scene
