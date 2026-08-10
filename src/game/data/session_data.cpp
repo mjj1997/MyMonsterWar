@@ -57,6 +57,50 @@ bool SessionData::loadDefaultData(std::string_view path)
     return true;
 }
 
+bool SessionData::loadFromFile(std::string_view path)
+{
+    return loadDefaultData(path);
+}
+
+bool SessionData::saveToFile(std::string_view path)
+{
+    std::filesystem::path filePath{ path };
+
+    // 确保父目录存在, 如果不存在则创建
+    std::filesystem::path parentPath{ filePath.parent_path() };
+    if (!parentPath.empty() && !std::filesystem::exists(parentPath)) {
+        try {
+            std::filesystem::create_directories(parentPath);
+        } catch (const std::exception& e) {
+            spdlog::error("无法创建目录 {}: {}", parentPath.string(), e.what());
+            return false;
+        }
+    }
+
+    std::ofstream file{ filePath };
+    if (!file.is_open()) {
+        spdlog::error("无法打开存档文件: {}", path);
+        return false;
+    }
+
+    nlohmann::json json;
+    // 关卡基本信息：当前关卡、积分、是否通关
+    json.at("level") = m_level;
+    json.at("score") = m_score;
+    json.at("is_level_clear") = m_isLevelClear;
+    // 玩家角色数据：玩家角色名Id、职业Id、角色名、职业名、等级、稀有度
+    for (const auto& [id, data] : m_playerUnits) {
+        std::string name{ data.m_name };
+        json.at("player_unit").at(name).at("class") = data.m_className;
+        json.at("player_unit").at(name).at("lv") = data.m_lv;
+        json.at("player_unit").at(name).at("rarity") = data.m_rarity;
+    }
+
+    file << json.dump(4);
+    spdlog::info("存档文件已保存: {}", path);
+    return true;
+}
+
 void SessionData::clear()
 {
     m_playerUnits.clear();

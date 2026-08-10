@@ -36,6 +36,11 @@ public:
 
     ///< @brief 加载默认数据
     bool loadDefaultData(std::string_view path = "assets/data/default_session_data.json");
+    ///< @brief 加载文件数据(读档)
+    bool loadFromFile(std::string_view path);
+    ///< @brief 保存文件数据(存档)
+    bool saveToFile(std::string_view path);
+
     ///< @brief 清空所有数据
     void clear();
 
