@@ -9,26 +9,6 @@ UiElementBase::UiElementBase(glm::vec2 localPosition, glm::vec2 size)
     , m_size{ size }
 {}
 
-bool UiElementBase::handleInput(engine::core::Context& context)
-{
-    // 如果元素不可见，直接返回 false
-    if (!m_isVisible) {
-        return false;
-    }
-
-    // 遍历子元素，处理输入
-    for (auto& child : m_children) {
-        if (child && !child->shouldRemove()) {
-            if (child->handleInput(context)) {
-                return true;
-            }
-        }
-    }
-
-    // 如果没有子元素处理输入，说明事件没有被处理，返回 false
-    return false;
-}
-
 void UiElementBase::update(float deltaTime, engine::core::Context& context)
 {
     // 如果元素不可见，直接返回 false

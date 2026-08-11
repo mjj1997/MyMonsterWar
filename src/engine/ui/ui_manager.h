@@ -38,8 +38,6 @@ public:
     [[nodiscard]] bool init(const glm::vec2& windowSize);
 
     // --- 核心循环方法 ---
-    ///< @brief 处理输入事件，如果事件被处理则返回true。
-    bool handleInput(engine::core::Context& context);
     void update(float deltaTime, engine::core::Context& context);
     void render(engine::core::Context& context);
 

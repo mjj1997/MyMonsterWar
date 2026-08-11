@@ -20,18 +20,6 @@ bool UiManager::init(const glm::vec2& windowSize)
     return true;
 }
 
-bool UiManager::handleInput(engine::core::Context& context)
-{
-    if (m_rootElement && m_rootElement->isVisible()) {
-        // 从根元素开始向下分发事件
-        if (m_rootElement->handleInput(context)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 void UiManager::update(float deltaTime, engine::core::Context& context)
 {
     if (m_rootElement && m_rootElement->isVisible()) {
