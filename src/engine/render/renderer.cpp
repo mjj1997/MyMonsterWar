@@ -119,7 +119,7 @@ void Renderer::drawUiImage(const Image& image,
                            const glm::vec2& position,
                            const std::optional<glm::vec2>& size)
 {
-    SDL_Texture* texture{ m_resourceManager->getTexture(image.textureId()) };
+    SDL_Texture* texture{ m_resourceManager->getTexture(image.textureId(), image.texturePath()) };
     if (texture == nullptr) {
         spdlog::error("无法为 ID {} 获取纹理。", image.textureId());
         return;
