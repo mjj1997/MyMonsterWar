@@ -134,7 +134,7 @@ void BasicEntityBuilder::buildSprite()
 
     // 添加精灵组件时，确保纹理加载
     auto& resourceManager = m_context.resourceManager();
-    resourceManager.loadTexture(m_tileInfo->m_sprite.m_textureId,
+    resourceManager.loadTexture(m_tileInfo->m_sprite.m_texturePathId,
                                 m_tileInfo->m_sprite.m_texturePath);
     m_registry.emplace<engine::component::SpriteComponent>(m_entityId, m_tileInfo->m_sprite);
 }

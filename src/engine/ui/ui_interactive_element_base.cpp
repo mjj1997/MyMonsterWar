@@ -54,7 +54,7 @@ void UiInteractiveElementBase::addImage(entt::id_type nameId, engine::render::Im
 {
     // 可交互 UI 元素必须有一个 size 用于交互检测，因此如果参数列表中没有指定，则用图片大小作为 size
     if (m_size.x == 0.0F && m_size.y == 0.0F) {
-        m_size = m_context.resourceManager().getTextureSize(image.textureId());
+        m_size = m_context.resourceManager().getTextureSize(image.texturePathId());
     }
 
     // 添加图片

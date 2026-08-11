@@ -208,14 +208,14 @@ data::SpriteBlueprint BlueprintManager::parseSprite(const nlohmann::json& json)
     auto width = json.at("width").get<float>();
     auto height = json.at("height").get<float>();
     auto texturePath = json.at("sprite_sheet").get<std::string>();
-    entt::id_type textureId{ entt::hashed_string(texturePath.c_str()) };
+    entt::id_type texturePathId{ entt::hashed_string(texturePath.c_str()) };
 
     /**
      * 可选部分: 源矩形的起点默认值为 (0, 0); 渲染目标大小默认值为 (width, height);
      * 如果指定, 则起点为 (x, y); 渲染目标大小为 (size_x, size_y);
      */
     data::SpriteBlueprint sprite{
-        .m_textureId = textureId,
+        .m_texturePathId = texturePathId,
         .m_texturePath = texturePath,
         .m_sourceRect = engine::utils::Rect{ glm::vec2{ json.value("x", 0), json.value("y", 0) },
                                              glm::vec2{ width, height } },

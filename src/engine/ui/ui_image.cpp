@@ -14,23 +14,23 @@ UiImage::UiImage(std::string_view texturePath,
     : UiElementBase{ localPosition, size }
     , m_image{ texturePath, sourceRect, isFlipped }
 {
-    if (m_image.textureId() == entt::null) {
-        spdlog::warn("创建了一个空纹理 ID 的 UiImage 元素。");
+    if (m_image.texturePathId() == entt::null) {
+        spdlog::warn("创建了一个空纹理路径 ID 的 UiImage 元素。");
     }
 
     spdlog::trace("UiImage 构造成功。");
 }
 
-UiImage::UiImage(entt::id_type textureId,
+UiImage::UiImage(entt::id_type texturePathId,
                  glm::vec2 localPosition,
                  glm::vec2 size,
                  std::optional<engine::utils::Rect> sourceRect,
                  bool isFlipped)
     : UiElementBase{ localPosition, size }
-    , m_image{ textureId, sourceRect, isFlipped }
+    , m_image{ texturePathId, sourceRect, isFlipped }
 {
-    if (m_image.textureId() == entt::null) {
-        spdlog::warn("创建了一个空纹理 ID 的 UiImage 元素。");
+    if (m_image.texturePathId() == entt::null) {
+        spdlog::warn("创建了一个空纹理路径 ID 的 UiImage 元素。");
     }
 
     spdlog::trace("UiImage 构造成功。");
@@ -40,8 +40,8 @@ UiImage::UiImage(const engine::render::Image& image, glm::vec2 localPosition, gl
     : UiElementBase{ localPosition, size }
     , m_image{ image }
 {
-    if (m_image.textureId() == entt::null) {
-        spdlog::warn("创建了一个空纹理 ID 的 UiImage 元素。");
+    if (m_image.texturePathId() == entt::null) {
+        spdlog::warn("创建了一个空纹理路径 ID 的 UiImage 元素。");
     }
 
     spdlog::trace("UiImage 构造成功。");
@@ -49,8 +49,8 @@ UiImage::UiImage(const engine::render::Image& image, glm::vec2 localPosition, gl
 
 void UiImage::render(engine::core::Context& context)
 {
-    if (!m_isVisible || m_image.textureId() == entt::null) {
-        return; // 如果不可见或纹理 ID 为空，不绘制
+    if (!m_isVisible || m_image.texturePathId() == entt::null) {
+        return; // 如果不可见或纹理路径 ID 为空，不绘制
     }
 
     // 渲染自身
