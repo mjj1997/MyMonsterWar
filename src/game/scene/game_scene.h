@@ -14,7 +14,8 @@ class BlueprintManager;
 
 namespace game::data {
 class SessionData;
-}
+class UiConfig;
+} // namespace game::data
 
 namespace game::scene {
 
@@ -75,6 +76,7 @@ private:
     /* 管理数据的实例很可能同时被多个场景使用,因此使用共享指针 */
     std::shared_ptr<game::factory::BlueprintManager> m_blueprintManager; // 蓝图管理器, 负责管理蓝图数据
     std::shared_ptr<game::data::SessionData> m_sessionData; // 会话数据, 负责管理跨关卡传递的数据
+    std::shared_ptr<game::data::UiConfig> m_uiConfig;       // UI 配置数据，负责管理 UI 数据
 
     // --- 跨场景数据 ---
     int m_level{ 1 }; // 当前关卡号
