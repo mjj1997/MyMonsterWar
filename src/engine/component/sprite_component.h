@@ -47,8 +47,8 @@ struct Sprite
         , m_isFlipped{ isFlipped }
     {}
 
-    entt::id_type m_textureId{ entt::null }; ///< @brief 纹理ID
-    std::string m_texturePath;               ///< @brief 纹理路径
+    entt::id_type m_texturePathId{ entt::null }; ///< @brief 纹理路径 ID
+    std::string m_texturePath;                   ///< @brief 纹理路径
     ///< @brief 源矩形(为了保证效率，不再使用std::optional，构造时必须提供)
     engine::utils::Rect m_sourceRect;
     bool m_isFlipped{ false }; ///< @brief 是否翻转

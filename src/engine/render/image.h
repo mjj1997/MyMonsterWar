@@ -15,7 +15,7 @@ namespace engine::render {
 /**
  * @brief 表示要绘制的 UI 图片的数据。（只针对 UI，与游戏中 Sprite 隔离）
  *
- * @note 包含纹理标识符、要绘制的纹理部分（源矩形）以及翻转状态。
+ * @note 包含纹理路径、纹理路径标识符、要绘制的纹理部分（源矩形）以及翻转状态。
  * @note 位置、缩放和旋转由外部（例如 UiImage）标识。
  * @note 渲染工作由 Renderer 类完成。（传入 Image 作为参数）
  */
@@ -97,8 +97,8 @@ public:
 private:
     ///< @brief 纹理资源的文件路径
     std::string m_texturePath;
-    ///< @brief 纹理资源的标识符 (entt::null是推荐的初始化方式，表示无效的ID)
-    entt::id_type m_textureId{ entt::null };
+    ///< @brief 纹理资源路径的标识符 (entt::null是推荐的初始化方式，表示无效的ID)
+    entt::id_type m_texturePathId{ entt::null };
     ///< @brief 可选：要绘制的纹理部分
     std::optional<engine::utils::Rect> m_sourceRect{ std::nullopt };
     bool m_isFlipped{ false }; ///< @brief 是否水平翻转
