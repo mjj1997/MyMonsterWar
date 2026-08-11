@@ -27,7 +27,7 @@ struct StatsBlueprint
 /// @brief 精灵蓝图, 用于创建精灵组件
 struct SpriteBlueprint
 {
-    entt::id_type m_textureId{ entt::null };
+    entt::id_type m_texturePathId{ entt::null };
     std::string m_texturePath;
     engine::utils::Rect m_sourceRect{};
     glm::vec2 m_size{ 0.0F };

@@ -35,9 +35,10 @@ void Renderer::drawSprite(const Camera& camera,
                           glm::vec2 size,
                           float rotation)
 {
-    SDL_Texture* texture{ m_resourceManager->getTexture(sprite.m_textureId, sprite.m_texturePath) };
+    SDL_Texture* texture{ m_resourceManager->getTexture(sprite.m_texturePathId,
+                                                        sprite.m_texturePath) };
     if (texture == nullptr) {
-        spdlog::error("无法为 ID {} 获取纹理。", sprite.m_textureId);
+        spdlog::error("无法为 ID {} 获取纹理。", sprite.m_texturePathId);
         return;
     }
 
@@ -51,7 +52,7 @@ void Renderer::drawSprite(const Camera& camera,
 
     // 视口裁剪：如果精灵超出视口，则不绘制
     if (!Renderer::isRectInViewport(camera, destRect)) {
-        // spdlog::info("精灵超出视口范围, ID: {}", sprite.textureId());
+        // spdlog::info("精灵超出视口范围, ID: {}", sprite.texturePathId());
         return;
     }
 
@@ -68,7 +69,7 @@ void Renderer::drawSprite(const Camera& camera,
                                   rotation,
                                   nullptr,
                                   sprite.m_isFlipped ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE)) {
-        spdlog::error("渲染旋转纹理失败(ID: {}): {}", sprite.m_textureId, SDL_GetError());
+        spdlog::error("渲染旋转纹理失败(ID: {}): {}", sprite.m_texturePathId, SDL_GetError());
     }
 }
 
