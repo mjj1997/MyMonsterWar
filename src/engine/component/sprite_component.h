@@ -31,18 +31,18 @@ struct Sprite
         , m_sourceRect{ sourceRect }
         , m_isFlipped{ isFlipped }
     {
-        m_textureId = entt::hashed_string(m_texturePath.c_str());
+        m_texturePathId = entt::hashed_string(m_texturePath.c_str());
     }
 
     /**
-     * @brief 构造函数 (通过纹理 ID 构造)
-     * @param textureId 纹理 ID
+     * @brief 构造函数 (通过纹理路径 ID 构造)
+     * @param texturePathId 纹理路径 ID
      * @param sourceRect 源矩形
      * @param isFlipped 是否翻转，默认 false
      * @note 用此方法，需确保对应 ID 的纹理已经加载到 ResourceManager 中，因此不需要再提供纹理路径。
      */
-    Sprite(entt::id_type textureId, engine::utils::Rect sourceRect, bool isFlipped = false)
-        : m_textureId{ textureId }
+    Sprite(entt::id_type texturePathId, engine::utils::Rect sourceRect, bool isFlipped = false)
+        : m_texturePathId{ texturePathId }
         , m_sourceRect{ sourceRect }
         , m_isFlipped{ isFlipped }
     {}

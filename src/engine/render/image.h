@@ -38,46 +38,46 @@ public:
                    std::optional<engine::utils::Rect> sourceRect = std::nullopt,
                    bool isFlipped = false)
         : m_texturePath{ texturePath.data() }
-        , m_textureId{ entt::hashed_string(texturePath.data()).value() }
+        , m_texturePathId{ entt::hashed_string(texturePath.data()).value() }
         , m_sourceRect{ std::move(sourceRect) }
         , m_isFlipped{ isFlipped }
     {}
 
     /**
-     * @brief 构造一个图片（通过纹理ID构造）
+     * @brief 构造一个图片（通过纹理路径ID构造）
      *
-     * @param textureId 纹理资源的标识符。不应为空。
+     * @param texturePathId 纹理资源路径的标识符。不应为空。
      * @param sourceRect 可选的源矩形，定义要使用的纹理部分。如果为 std::nullopt，则使用整个纹理。
      * @param isFlipped 是否水平翻转
      * @note 用此方法，需确保对应ID的纹理已经加载到 ResourceManager 中，因此不需要再提供纹理路径。
      */
-    explicit Image(entt::id_type textureId,
+    explicit Image(entt::id_type texturePathId,
                    std::optional<engine::utils::Rect> sourceRect = std::nullopt,
                    bool isFlipped = false)
-        : m_textureId{ textureId }
+        : m_texturePathId{ texturePathId }
         , m_sourceRect{ std::move(sourceRect) }
         , m_isFlipped{ isFlipped }
     {}
 
     // --- getters and setters ---
-    std::string_view texturePath() const { return m_texturePath; } ///< @brief 获取纹理路径
-    entt::id_type textureId() const { return m_textureId; }        ///< @brief 获取纹理 ID
+    std::string_view texturePath() const { return m_texturePath; }  ///< @brief 获取纹理路径
+    entt::id_type texturePathId() const { return m_texturePathId; } ///< @brief 获取纹理路径 ID
     ///< @brief 获取源矩形 (如果使用整个纹理则为 std::nullopt)
     const std::optional<engine::utils::Rect>& sourceRect() const { return m_sourceRect; }
     bool isFlipped() const { return m_isFlipped; } ///< @brief 获取是否水平翻转
 
     /**
-     * @brief 设置纹理路径同时更新纹理ID
+     * @brief 设置纹理路径同时更新纹理路径ID
      * @param texturePath 纹理资源的文件路径。不应为空。
      */
     void setTexture(std::string_view texturePath)
     {
         m_texturePath = texturePath.data();
-        m_textureId = entt::hashed_string(texturePath.data()).value();
+        m_texturePathId = entt::hashed_string(texturePath.data()).value();
     }
 
-    ///< @brief 设置纹理ID (需确保已载入)
-    void setTextureId(entt::id_type textureId) { m_textureId = textureId; }
+    ///< @brief 设置纹理路径ID (需确保已载入)
+    void setTexturePathId(entt::id_type texturePathId) { m_texturePathId = texturePathId; }
 
     /**
      * @brief 设置源矩形 (如果使用整个纹理则为 std::nullopt)
