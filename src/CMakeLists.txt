@@ -53,7 +53,8 @@ target_sources(
           game/system/projectile_system.cpp
           game/system/health_bar_system.cpp
           game/system/effect_system.cpp
-          game/data/session_data.cpp)
+          game/data/session_data.cpp
+          game/data/ui_config.cpp)
 
 target_link_libraries(
   MonsterWar
