@@ -120,15 +120,16 @@ void Renderer::drawUiImage(const Image& image,
                            const glm::vec2& position,
                            const std::optional<glm::vec2>& size)
 {
-    SDL_Texture* texture{ m_resourceManager->getTexture(image.textureId(), image.texturePath()) };
+    SDL_Texture* texture{ m_resourceManager->getTexture(image.texturePathId(),
+                                                        image.texturePath()) };
     if (texture == nullptr) {
-        spdlog::error("无法为 ID {} 获取纹理。", image.textureId());
+        spdlog::error("无法为 ID {} 获取纹理。", image.texturePathId());
         return;
     }
 
     auto srcRect = getImageSrcRect(image);
     if (!srcRect.has_value()) {
-        spdlog::error("无法获取 Image 对象的源矩形, ID: {}", image.textureId());
+        spdlog::error("无法获取 Image 对象的源矩形, ID: {}", image.texturePathId());
         return;
     }
 
@@ -153,7 +154,7 @@ void Renderer::drawUiImage(const Image& image,
                                   0.0,
                                   nullptr,
                                   image.isFlipped() ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE)) {
-        spdlog::error("渲染 UI Image 失败 (ID: {}): {}", image.textureId(), SDL_GetError());
+        spdlog::error("渲染 UI Image 失败 (ID: {}): {}", image.texturePathId(), SDL_GetError());
     }
 }
 
@@ -204,9 +205,9 @@ void Renderer::setDrawColorFloat(float red, float green, float blue, float alpha
 
 std::optional<SDL_FRect> Renderer::getImageSrcRect(const Image& image)
 {
-    SDL_Texture* texture{ m_resourceManager->getTexture(image.textureId()) };
+    SDL_Texture* texture{ m_resourceManager->getTexture(image.texturePathId()) };
     if (texture == nullptr) {
-        spdlog::error("无法为 ID {} 获取纹理。", image.textureId());
+        spdlog::error("无法为 ID {} 获取纹理。", image.texturePathId());
         return std::nullopt;
     }
 
@@ -214,7 +215,7 @@ std::optional<SDL_FRect> Renderer::getImageSrcRect(const Image& image)
     if (srcRect.has_value()) {
         if (srcRect.value().size.x <= 0 || srcRect.value().size.y <= 0) {
             spdlog::error("源矩形尺寸无效, ID: {}, path: {}",
-                          image.textureId(),
+                          image.texturePathId(),
                           image.texturePath());
             return std::nullopt;
         }
@@ -226,7 +227,7 @@ std::optional<SDL_FRect> Renderer::getImageSrcRect(const Image& image)
         SDL_FRect defaultRect{ .x = 0.0F, .y = 0.0F, .w = 0.0F, .h = 0.0F };
         if (!SDL_GetTextureSize(texture, &defaultRect.w, &defaultRect.h)) {
             spdlog::error("无法获取纹理尺寸, ID: {}, path: {}",
-                          image.textureId(),
+                          image.texturePathId(),
                           image.texturePath());
             return std::nullopt;
         }
