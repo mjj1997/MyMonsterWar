@@ -32,6 +32,7 @@ public:
 
 private:
     [[nodiscard]] bool initSessionData();
+    [[nodiscard]] bool initUiConfig();
     [[nodiscard]] bool loadLevel();
     [[nodiscard]] bool initEventConnections();
     [[nodiscard]] bool initInputConnections();

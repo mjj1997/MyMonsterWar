@@ -3,6 +3,7 @@
 #include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
 #include "../data/session_data.h"
+#include "../data/ui_config.h"
 #include "../defs/tags.h"
 #include "../factory/blueprint_manager.h"
 #include "../factory/entity_factory.h"
@@ -145,6 +146,19 @@ bool GameScene::initSessionData()
     }
 
     m_level = m_sessionData->level();
+    return true;
+}
+
+bool GameScene::initUiConfig()
+{
+    if (m_uiConfig == nullptr) {
+        m_uiConfig = std::make_shared<game::data::UiConfig>();
+        if (!m_uiConfig->loadFromFile("assets/data/ui_config.json")) {
+            spdlog::error("加载 UI 配置数据失败");
+            return false;
+        }
+    }
+
     return true;
 }
 
