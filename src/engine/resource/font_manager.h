@@ -11,7 +11,7 @@
 
 namespace engine::resource {
 
-// 定义字体键类型（路径 + 大小）
+// 定义字体键类型（字体路径 ID + 字体点大小）
 using FontKey = std::pair<entt::id_type, int>;
 
 // FontKey 的自定义哈希函数（std::pair<entt::id_type, int>），用于 std::unordered_map
@@ -30,7 +30,7 @@ struct FontKeyHash
 /**
  * @brief 管理 SDL_ttf 字体资源（TTF_Font）。
  *
- * 提供字体的加载和缓存功能，通过文件路径和点大小来标识。
+ * 提供字体的加载和缓存功能，通过字体路径和点大小来标识。
  * 构造失败会抛出异常。仅供 ResourceManager 内部使用。
  */
 class FontManager final
@@ -54,54 +54,54 @@ public:
 
 private: // 仅供 ResourceManager 访问的方法
     /**
-     * @brief 从文件路径加载指定点大小的字体
-     * @param id 字体的唯一标识符, 通过 entt::hashed_string 生成
-     * @param pointSize 字体的点大小
-     * @param filePath 字体文件的路径
+     * @brief 从字体路径 ID 加载指定点大小的字体
+     * @param fontPathId 字体路径的唯一标识符, 通过 entt::hashed_string 生成
+     * @param fontSize 字体的点大小
+     * @param fontPath 字体路径
      * @return 加载的字体的指针
      * @note 如果字体已经加载，则返回已加载字体的指针
      * @note 如果字体未加载，则从文件路径加载字体，并返回加载的字体的指针
      */
-    TTF_Font* loadFont(entt::id_type id, int pointSize, std::string_view filePath);
+    TTF_Font* loadFont(entt::id_type fontPathId, int fontSize, std::string_view fontPath);
 
     /**
-     * @brief 从字符串哈希值加载指定点大小的字体
-     * @param hs entt::hashed_string 类型
-     * @param pointSize 字体的点大小
+     * @brief 从字体路径的哈希字符串形式加载指定点大小的字体
+     * @param hashedFontPath entt::hashed_string 类型
+     * @param fontSize 字体的点大小
      * @return 加载的字体的指针
      * @note 如果字体已经加载，则返回已加载字体的指针
      * @note 如果字体未加载，则从哈希字符串对应的文件路径加载字体，并返回加载的字体的指针
      */
-    TTF_Font* loadFont(entt::hashed_string hs, int pointSize);
+    TTF_Font* loadFont(entt::hashed_string hashedFontPath, int fontSize);
 
     /**
      * @brief 从文件路径获取字体
-     * @param id 字体的唯一标识符, 通过 entt::hashed_string 生成
-     * @param pointSize 字体的点大小
-     * @param filePath 字体文件的路径
+     * @param fontPathId 字体路径的唯一标识符, 通过 entt::hashed_string 生成
+     * @param fontSize 字体的点大小
+     * @param fontPath 字体路径
      * @return 加载的字体的指针
      * @note 如果字体已经加载，则返回已加载字体的指针
-     * @note 如果字体未加载，且提供了 filePath ，则尝试从文件路径加载字体，并返回加载的字体的指针
-     * @note 如果字体未加载，且没有提供 filePath，则返回 nullptr
+     * @note 如果字体未加载，且提供了 fontPath ，则尝试从文件路径加载字体，并返回加载的字体的指针
+     * @note 如果字体未加载，且没有提供 fontPath，则返回 nullptr
      */
-    TTF_Font* getFont(entt::id_type id, int pointSize, std::string_view filePath = "");
+    TTF_Font* getFont(entt::id_type fontPathId, int fontSize, std::string_view fontPath = "");
 
     /**
-     * @brief 从字符串哈希值获取字体
-     * @param hs entt::hashed_string 类型
-     * @param pointSize 字体的点大小
+     * @brief 从字体路径的哈希字符串形式获取字体
+     * @param hashedFontPath entt::hashed_string 类型
+     * @param fontSize 字体的点大小
      * @return 加载的字体的指针
      * @note 如果字体已经加载，则返回已加载字体的指针
      * @note 如果字体未加载，则从哈希字符串对应的文件路径加载字体，并返回加载的字体的指针
      */
-    TTF_Font* getFont(entt::hashed_string hs, int pointSize);
+    TTF_Font* getFont(entt::hashed_string hashedFontPath, int fontSize);
 
     /**
-     * @brief 卸载特定字体（通过路径哈希值和大小标识）
-     * @param id 字体的唯一标识符, 通过 entt::hashed_string 生成
-     * @param pointSize 字体的点大小
+     * @brief 卸载特定字体（通过字体路径 ID 和点大小标识）
+     * @param fontPathId 字体路径的唯一标识符, 通过 entt::hashed_string 生成
+     * @param fontSize 字体的点大小
      */
-    void unloadFont(entt::id_type id, int pointSize);
+    void unloadFont(entt::id_type fontPathId, int fontSize);
 
     /**
      * @brief 清空所有缓存的字体

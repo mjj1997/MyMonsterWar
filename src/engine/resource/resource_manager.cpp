@@ -177,29 +177,31 @@ MIX_Mixer* ResourceManager::mixer() const
 }
 
 // --- 字体接口实现 ---
-TTF_Font* ResourceManager::loadFont(entt::id_type id, int pointSize, std::string_view filePath)
+TTF_Font* ResourceManager::loadFont(entt::id_type fontPathId,
+                                    int fontSize,
+                                    std::string_view fontPath)
 {
-    return m_fontManager->loadFont(id, pointSize, filePath);
+    return m_fontManager->loadFont(fontPathId, fontSize, fontPath);
 }
 
-TTF_Font* ResourceManager::loadFont(entt::hashed_string hs, int pointSize)
+TTF_Font* ResourceManager::loadFont(entt::hashed_string hs, int fontSize)
 {
-    return m_fontManager->loadFont(hs, pointSize);
+    return m_fontManager->loadFont(hs, fontSize);
 }
 
-TTF_Font* ResourceManager::getFont(entt::id_type id, int pointSize, std::string_view filePath)
+TTF_Font* ResourceManager::getFont(entt::id_type fontPathId, int fontSize, std::string_view fontPath)
 {
-    return m_fontManager->getFont(id, pointSize, filePath);
+    return m_fontManager->getFont(fontPathId, fontSize, fontPath);
 }
 
-TTF_Font* ResourceManager::getFont(entt::hashed_string hs, int pointSize)
+TTF_Font* ResourceManager::getFont(entt::hashed_string hs, int fontSize)
 {
-    return m_fontManager->getFont(hs, pointSize);
+    return m_fontManager->getFont(hs, fontSize);
 }
 
-void ResourceManager::unloadFont(entt::id_type id, int pointSize)
+void ResourceManager::unloadFont(entt::id_type fontPathId, int fontSize)
 {
-    m_fontManager->unloadFont(id, pointSize);
+    m_fontManager->unloadFont(fontPathId, fontSize);
 }
 
 void ResourceManager::clearFonts()

@@ -97,16 +97,16 @@ public:
     MIX_Mixer* mixer() const; ///< @brief 获取 SDL_mixer 混音器指针
 
     // -- Fonts --
-    ///< @brief 载入字体资源(通过id + 文件路径)
-    TTF_Font* loadFont(entt::id_type id, int pointSize, std::string_view filePath);
-    ///< @brief 载入字体资源(通过字符串哈希值)
-    TTF_Font* loadFont(entt::hashed_string hs, int pointSize);
-    ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载(通过id + 文件路径)
-    TTF_Font* getFont(entt::id_type id, int pointSize, std::string_view filePath = "");
-    ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载(通过字符串哈希值)
-    TTF_Font* getFont(entt::hashed_string hs, int pointSize);
+    ///< @brief 载入字体资源(通过字体路径 ID + 字体路径)
+    TTF_Font* loadFont(entt::id_type fontPathId, int fontSize, std::string_view fontPath);
+    ///< @brief 载入字体资源(通过字体路径的哈希字符串形式)
+    TTF_Font* loadFont(entt::hashed_string hashedFontPath, int fontSize);
+    ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载(通过字体路径 ID + 字体路径)
+    TTF_Font* getFont(entt::id_type fontPathId, int fontSize, std::string_view fontPath = "");
+    ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载(通过字体路径的哈希字符串形式)
+    TTF_Font* getFont(entt::hashed_string hashedFontPath, int fontSize);
     ///< @brief 卸载指定的字体资源
-    void unloadFont(entt::id_type id, int pointSize);
+    void unloadFont(entt::id_type fontPathId, int fontSize);
     ///< @brief 清空所有字体资源
     void clearFonts();
 
