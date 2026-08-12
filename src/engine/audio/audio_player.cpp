@@ -30,55 +30,57 @@ AudioPlayer::~AudioPlayer()
     }
 }
 
-int AudioPlayer::playSound(entt::id_type soundId)
+int AudioPlayer::playSound(entt::id_type soundPathId)
 {
-    MIX_Audio* sound{ m_resourceManager->getSound(soundId) };
+    MIX_Audio* sound{ m_resourceManager->getSound(soundPathId) };
     if (sound == nullptr) {
-        spdlog::error("AudioPlayer: 无法获取音效 ID: {}。", soundId);
+        spdlog::error("AudioPlayer: 无法获取音效 ID: {}。", soundPathId);
         return -1;
     }
 
     if (!MIX_PlayAudio(m_mixer, sound)) {
-        spdlog::error("AudioPlayer: 无法播放音效 ID: {}: {}。", soundId, SDL_GetError());
+        spdlog::error("AudioPlayer: 无法播放音效 ID: {}: {}。", soundPathId, SDL_GetError());
         return -1;
     }
 
-    spdlog::trace("AudioPlayer: 播放音效 ID: {}。", soundId);
+    spdlog::trace("AudioPlayer: 播放音效 ID: {}。", soundPathId);
     return 0;
 }
 
-int AudioPlayer::playSound(entt::hashed_string hashedPath)
+int AudioPlayer::playSound(entt::hashed_string hashedSoundPath)
 {
-    MIX_Audio* sound{ m_resourceManager->getSound(hashedPath) };
+    MIX_Audio* sound{ m_resourceManager->getSound(hashedSoundPath) };
     if (sound == nullptr) {
         spdlog::error("AudioPlayer: 无法获取音效 ID: {}, path: {}。",
-                      hashedPath.value(),
-                      hashedPath.data());
+                      hashedSoundPath.value(),
+                      hashedSoundPath.data());
         return -1;
     }
 
     if (!MIX_PlayAudio(m_mixer, sound)) {
         spdlog::error("AudioPlayer: 无法播放音效 ID: {}, path: {}: {}。",
-                      hashedPath.value(),
-                      hashedPath.data(),
+                      hashedSoundPath.value(),
+                      hashedSoundPath.data(),
                       SDL_GetError());
         return -1;
     }
 
-    spdlog::trace("AudioPlayer: 播放音效 ID: {}, path: {}。", hashedPath.value(), hashedPath.data());
+    spdlog::trace("AudioPlayer: 播放音效 ID: {}, path: {}。",
+                  hashedSoundPath.value(),
+                  hashedSoundPath.data());
     return 0;
 }
 
-bool AudioPlayer::playMusic(entt::id_type musicId, int loops, int fadeInTime)
+bool AudioPlayer::playMusic(entt::id_type musicPathId, int loops, int fadeInTime)
 {
-    if (musicId == m_currentMusicId) {
+    if (musicPathId == m_currentMusicPathId) {
         return true; // 如果当前音乐已经在播放，则不重复播放
     }
-    m_currentMusicId = musicId;
+    m_currentMusicPathId = musicPathId;
 
-    MIX_Audio* music{ m_resourceManager->getMusic(musicId) }; // 通过 ResourceManager 获取资源
+    MIX_Audio* music{ m_resourceManager->getMusic(musicPathId) }; // 通过 ResourceManager 获取资源
     if (music == nullptr) {
-        spdlog::error("AudioPlayer: 无法获取音乐 ID: {}。", musicId);
+        spdlog::error("AudioPlayer: 无法获取音乐 ID: {}。", musicPathId);
         return false;
     }
 
@@ -97,26 +99,27 @@ bool AudioPlayer::playMusic(entt::id_type musicId, int loops, int fadeInTime)
     SDL_DestroyProperties(props);
 
     if (!result) {
-        spdlog::error("AudioPlayer: 无法播放音乐 ID: {}: {}。", musicId, SDL_GetError());
+        spdlog::error("AudioPlayer: 无法播放音乐 ID: {}: {}。", musicPathId, SDL_GetError());
     } else {
-        spdlog::trace("AudioPlayer: 播放音乐 ID: {}。", musicId);
+        spdlog::trace("AudioPlayer: 播放音乐 ID: {}。", musicPathId);
     }
 
     return result;
 }
 
-bool AudioPlayer::playMusic(entt::hashed_string hashedPath, int loops, int fadeInTime)
+bool AudioPlayer::playMusic(entt::hashed_string hashedMusicPath, int loops, int fadeInTime)
 {
-    if (hashedPath.value() == m_currentMusicId) {
+    if (hashedMusicPath.value() == m_currentMusicPathId) {
         return true; // 如果当前音乐已经在播放，则不重复播放
     }
-    m_currentMusicId = hashedPath.value();
+    m_currentMusicPathId = hashedMusicPath.value();
 
-    MIX_Audio* music{ m_resourceManager->getMusic(hashedPath) }; // 通过 ResourceManager 获取资源
+    MIX_Audio* music{ m_resourceManager->getMusic(
+        hashedMusicPath) }; // 通过 ResourceManager 获取资源
     if (music == nullptr) {
         spdlog::error("AudioPlayer: 无法获取音乐 ID: {}, path: {}。",
-                      hashedPath.value(),
-                      hashedPath.data());
+                      hashedMusicPath.value(),
+                      hashedMusicPath.data());
         return false;
     }
 
@@ -136,13 +139,13 @@ bool AudioPlayer::playMusic(entt::hashed_string hashedPath, int loops, int fadeI
 
     if (!result) {
         spdlog::error("AudioPlayer: 无法播放音乐 ID: {}, path:{}: {}。",
-                      hashedPath.value(),
-                      hashedPath.data(),
+                      hashedMusicPath.value(),
+                      hashedMusicPath.data(),
                       SDL_GetError());
     } else {
         spdlog::trace("AudioPlayer: 播放音乐 ID: {}, path:{}。",
-                      hashedPath.value(),
-                      hashedPath.data());
+                      hashedMusicPath.value(),
+                      hashedMusicPath.data());
     }
 
     return result;
@@ -153,7 +156,7 @@ void AudioPlayer::stopMusic(int fadeOutTime)
     const Sint64 fadeFrames{ (fadeOutTime > 0) ? MIX_TrackMSToFrames(m_musicTrack, fadeOutTime)
                                                : 0 };
     MIX_StopTrack(m_musicTrack, fadeFrames);
-    m_currentMusicId = entt::null;
+    m_currentMusicPathId = entt::null;
     spdlog::trace("AudioPlayer: 停止音乐。");
 }
 

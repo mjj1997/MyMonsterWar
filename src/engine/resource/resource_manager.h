@@ -67,30 +67,30 @@ public:
     void clearTextures();
 
     // -- Sound Effects --
-    ///< @brief 载入音效资源(通过id + 文件路径)
-    MIX_Audio* loadSound(entt::id_type id, std::string_view filePath);
-    ///< @brief 载入音效资源(通过字符串哈希值)
-    MIX_Audio* loadSound(entt::hashed_string hs);
-    ///< @brief 尝试获取已加载音效的指针，如果未加载则尝试加载(通过id + 文件路径)
-    MIX_Audio* getSound(entt::id_type id, std::string_view filePath = "");
-    ///< @brief 尝试获取已加载音效的指针，如果未加载则尝试加载(通过字符串哈希值)
-    MIX_Audio* getSound(entt::hashed_string hs);
+    ///< @brief 载入音效资源(通过音效路径 ID + 音效路径)
+    MIX_Audio* loadSound(entt::id_type soundPathId, std::string_view soundPath);
+    ///< @brief 载入音效资源(通过音效路径的哈希字符串形式)
+    MIX_Audio* loadSound(entt::hashed_string hashedSoundPath);
+    ///< @brief 尝试获取已加载音效的指针，如果未加载则尝试加载(通过音效路径 ID + 音效路径)
+    MIX_Audio* getSound(entt::id_type soundPathId, std::string_view soundPath = "");
+    ///< @brief 尝试获取已加载音效的指针，如果未加载则尝试加载(通过音效路径的哈希字符串形式)
+    MIX_Audio* getSound(entt::hashed_string hashedSoundPath);
     ///< @brief 卸载指定的音效资源
-    void unloadSound(entt::id_type id);
+    void unloadSound(entt::id_type soundPathId);
     ///< @brief 清空所有音效资源
     void clearSounds();
 
     // -- Music --
-    ///< @brief 载入音乐资源(通过id + 文件路径)
-    MIX_Audio* loadMusic(entt::id_type id, std::string_view filePath);
-    ///< @brief 载入音乐资源(通过字符串哈希值)
-    MIX_Audio* loadMusic(entt::hashed_string hs);
-    ///< @brief 尝试获取已加载音乐的指针，如果未加载则尝试加载(通过id + 文件路径)
-    MIX_Audio* getMusic(entt::id_type id, std::string_view filePath = "");
-    ///< @brief 尝试获取已加载音乐的指针，如果未加载则尝试加载(通过字符串哈希值)
-    MIX_Audio* getMusic(entt::hashed_string hs);
+    ///< @brief 载入音乐资源(通过音乐路径 ID + 音乐路径)
+    MIX_Audio* loadMusic(entt::id_type musicPathId, std::string_view musicPath);
+    ///< @brief 载入音乐资源(通过音乐路径的哈希字符串形式)
+    MIX_Audio* loadMusic(entt::hashed_string hashedMusicPath);
+    ///< @brief 尝试获取已加载音乐的指针，如果未加载则尝试加载(通过音乐路径 ID + 音乐路径)
+    MIX_Audio* getMusic(entt::id_type musicPathId, std::string_view musicPath = "");
+    ///< @brief 尝试获取已加载音乐的指针，如果未加载则尝试加载(通过音乐路径的哈希字符串形式)
+    MIX_Audio* getMusic(entt::hashed_string hashedMusicPath);
     ///< @brief 卸载指定的音乐资源
-    void unloadMusic(entt::id_type id);
+    void unloadMusic(entt::id_type musicPathId);
     ///< @brief 清空所有音乐资源
     void clearMusics();
     // - Mixer -

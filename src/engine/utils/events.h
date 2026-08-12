@@ -50,8 +50,8 @@ struct AnimationKeyframeEvent // 动画关键帧事件
 
 struct PlaySoundEvent // 播放音效事件
 {
-    entt::entity m_entity{ entt::null };   // 目标实体（可以为空，即播放全局音效）
-    entt::id_type m_soundId{ entt::null }; // 音效 ID
+    entt::entity m_entity{ entt::null };       // 目标实体（可以为空，即播放全局音效）
+    entt::id_type m_soundPathId{ entt::null }; // 音效路径 ID
 };
 
 } // namespace engine::utils
