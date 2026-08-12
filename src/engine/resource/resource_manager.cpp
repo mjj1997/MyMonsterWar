@@ -70,39 +70,39 @@ void ResourceManager::loadResources(std::string_view filePath)
 }
 
 // --- 纹理接口实现 ---
-SDL_Texture* ResourceManager::loadTexture(entt::id_type id, std::string_view filePath)
+SDL_Texture* ResourceManager::loadTexture(entt::id_type teturePathId, std::string_view teturePath)
 {
-    return m_textureManager->loadTexture(id, filePath);
+    return m_textureManager->loadTexture(teturePathId, teturePath);
 }
 
-SDL_Texture* ResourceManager::loadTexture(entt::hashed_string hs)
+SDL_Texture* ResourceManager::loadTexture(entt::hashed_string hashedTeturePath)
 {
-    return m_textureManager->loadTexture(hs);
+    return m_textureManager->loadTexture(hashedTeturePath);
 }
 
-SDL_Texture* ResourceManager::getTexture(entt::id_type id, std::string_view filePath)
+SDL_Texture* ResourceManager::getTexture(entt::id_type teturePathId, std::string_view teturePath)
 {
-    return m_textureManager->getTexture(id, filePath);
+    return m_textureManager->getTexture(teturePathId, teturePath);
 }
 
-SDL_Texture* ResourceManager::getTexture(entt::hashed_string hs)
+SDL_Texture* ResourceManager::getTexture(entt::hashed_string hashedTeturePath)
 {
-    return m_textureManager->getTexture(hs);
+    return m_textureManager->getTexture(hashedTeturePath);
 }
 
-void ResourceManager::unloadTexture(entt::id_type id)
+void ResourceManager::unloadTexture(entt::id_type teturePathId)
 {
-    m_textureManager->unloadTexture(id);
+    m_textureManager->unloadTexture(teturePathId);
 }
 
-glm::vec2 ResourceManager::getTextureSize(entt::id_type id, std::string_view filePath)
+glm::vec2 ResourceManager::getTextureSize(entt::id_type teturePathId, std::string_view teturePath)
 {
-    return m_textureManager->getTextureSize(id, filePath);
+    return m_textureManager->getTextureSize(teturePathId, teturePath);
 }
 
-glm::vec2 ResourceManager::getTextureSize(entt::hashed_string hs)
+glm::vec2 ResourceManager::getTextureSize(entt::hashed_string hashedTeturePath)
 {
-    return m_textureManager->getTextureSize(hs);
+    return m_textureManager->getTextureSize(hashedTeturePath);
 }
 
 void ResourceManager::clearTextures()

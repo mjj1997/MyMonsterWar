@@ -36,66 +36,66 @@ public:
 
 private: // 仅供 ResourceManager 访问的方法
     /**
-     * @brief 从文件路径加载纹理
-     * @param id 纹理的唯一标识符, 通过 entt::hashed_string 生成
-     * @param filePath 纹理文件的路径
+     * @brief 从纹理路径 ID 加载纹理
+     * @param texturePathId 纹理路径的唯一标识符, 通过 entt::hashed_string 生成
+     * @param texturePath 纹理路径
      * @return 加载的纹理的指针
      * @note 如果纹理已经加载，则返回已加载的纹理的指针
      * @note 如果纹理未加载，则从文件路径加载纹理，并返回加载的纹理的指针
      */
-    SDL_Texture* loadTexture(entt::id_type id, std::string_view filePath);
+    SDL_Texture* loadTexture(entt::id_type texturePathId, std::string_view texturePath);
 
     /**
-     * @brief 从字符串哈希值加载纹理
-     * @param hs entt::hashed_string 类型
+     * @brief 从纹理路径的哈希字符串形式加载纹理
+     * @param hashedTexturePath entt::hashed_string 类型
      * @return 加载的纹理的指针
      * @note 如果纹理已经加载，则返回已加载的纹理的指针
      * @note 如果纹理未加载，则从哈希字符串对应的文件路径加载纹理，并返回加载的纹理的指针
      */
-    SDL_Texture* loadTexture(entt::hashed_string hs);
+    SDL_Texture* loadTexture(entt::hashed_string hashedTexturePath);
 
     /**
-     * @brief 获取纹理
-     * @param id 纹理的唯一标识符, 通过 entt::hashed_string 生成
-     * @param filePath 纹理文件的路径
+     * @brief 从纹理路径 ID 获取纹理
+     * @param texturePathId 纹理路径的唯一标识符, 通过 entt::hashed_string 生成
+     * @param texturePath 纹理路径
      * @return 加载的纹理的指针
      * @note 如果纹理已经加载，则返回已加载的纹理的指针
-     * @note 如果纹理未加载，且提供了 filePath，则尝试从文件路径加载纹理，并返回加载的纹理的指针
-     * @note 如果纹理未加载，且没有提供 filePath，则返回 nullptr
+     * @note 如果纹理未加载，且提供了 texturePath，则尝试从文件路径加载纹理，并返回加载的纹理的指针
+     * @note 如果纹理未加载，且没有提供 texturePath，则返回 nullptr
      */
-    SDL_Texture* getTexture(entt::id_type id, std::string_view filePath = "");
+    SDL_Texture* getTexture(entt::id_type texturePathId, std::string_view texturePath = "");
 
     /**
-     * @brief 从字符串哈希值获取纹理
-     * @param hs entt::hashed_string 类型
+     * @brief 从纹理路径的哈希字符串形式获取纹理
+     * @param hashedTexturePath entt::hashed_string 类型
      * @return 加载的纹理的指针
      * @note 如果纹理已经加载，则返回已加载的纹理的指针
      * @note 如果纹理未加载，则从哈希字符串对应的文件路径加载纹理，并返回加载的纹理的指针
      */
-    SDL_Texture* getTexture(entt::hashed_string hs);
+    SDL_Texture* getTexture(entt::hashed_string hashedTexturePath);
 
     /**
-     * @brief 获取纹理的尺寸
-     * @param id 纹理的唯一标识符, 通过 entt::hashed_string 生成
-     * @param filePath 纹理文件的路径
+     * @brief 从纹理路径 ID 获取纹理的尺寸
+     * @param texturePathId 纹理路径的唯一标识符, 通过 entt::hashed_string 生成
+     * @param texturePath 纹理路径
      * @return 纹理的尺寸
-     * @note 如果纹理未加载，且提供了 filePath，则尝试从文件路径加载纹理，并返回加载的纹理的尺寸
+     * @note 如果纹理未加载，且提供了 texturePath，则尝试从文件路径加载纹理，并返回加载的纹理的尺寸
      */
-    glm::vec2 getTextureSize(entt::id_type id, std::string_view filePath = "");
+    glm::vec2 getTextureSize(entt::id_type texturePathId, std::string_view texturePath = "");
 
     /**
-     * @brief 从字符串哈希值获取纹理的尺寸
-     * @param hs entt::hashed_string类型
+     * @brief 从纹理路径的哈希字符串形式获取纹理的尺寸
+     * @param hashedTexturePath entt::hashed_string 类型
      * @return 纹理的尺寸
      * @note 如果纹理未加载，则返回 glm::vec2(0.0f)
      */
-    glm::vec2 getTextureSize(entt::hashed_string hs);
+    glm::vec2 getTextureSize(entt::hashed_string hashedTexturePath);
 
     /**
      * @brief 卸载纹理
-     * @param id 纹理的唯一标识符, 通过 entt::hashed_string 生成
+     * @param texturePathId 纹理的唯一标识符, 通过 entt::hashed_string 生成
      */
-    void unloadTexture(entt::id_type id);
+    void unloadTexture(entt::id_type texturePathId);
 
     /**
      * @brief 清空所有纹理资源
@@ -113,7 +113,7 @@ private: // 仅供 ResourceManager 访问的方法
         }
     };
 
-    // 存储文件路径和指向管理纹理的 unique_ptr 的映射。
+    // 纹理存储 (纹理路径 ID -> SDL_Texture)
     std::unordered_map<entt::id_type, std::unique_ptr<SDL_Texture, SDLTextureDeletor>> m_textures;
 
     SDL_Renderer* m_sdlRenderer{ nullptr }; // 指向主渲染器的非拥有指针

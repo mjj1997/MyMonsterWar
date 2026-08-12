@@ -19,18 +19,18 @@ TextureManager::TextureManager(SDL_Renderer* sdlRenderer)
     spdlog::trace("TextureManager 构造成功。");
 }
 
-SDL_Texture* TextureManager::loadTexture(entt::id_type id, std::string_view filePath)
+SDL_Texture* TextureManager::loadTexture(entt::id_type texturePathId, std::string_view texturePath)
 {
     // 检查是否已加载该纹理
-    auto iter = m_textures.find(id);
+    auto iter = m_textures.find(texturePathId);
     if (iter != m_textures.end()) {
         return iter->second.get();
     }
 
     // 如果未加载，则尝试加载纹理
-    SDL_Texture* texture = IMG_LoadTexture(m_sdlRenderer, filePath.data());
+    SDL_Texture* texture = IMG_LoadTexture(m_sdlRenderer, texturePath.data());
     if (texture == nullptr) {
-        spdlog::error("加载纹理失败：'{}': {}", filePath, SDL_GetError());
+        spdlog::error("加载纹理失败：'{}': {}", texturePath, SDL_GetError());
         return nullptr;
     }
 
@@ -40,71 +40,71 @@ SDL_Texture* TextureManager::loadTexture(entt::id_type id, std::string_view file
     }
 
     // 使用带有自定义删除器的 unique_ptr 存储加载的纹理
-    m_textures.emplace(id, std::unique_ptr<SDL_Texture, SDLTextureDeletor>{ texture });
-    spdlog::debug("成功加载并缓存纹理：{}", filePath);
+    m_textures.emplace(texturePathId, std::unique_ptr<SDL_Texture, SDLTextureDeletor>{ texture });
+    spdlog::debug("成功加载并缓存纹理：{}", texturePath);
 
     return texture;
 }
 
-SDL_Texture* TextureManager::loadTexture(entt::hashed_string hs)
+SDL_Texture* TextureManager::loadTexture(entt::hashed_string hashedTexturePath)
 {
-    return loadTexture(hs.value(), hs.data());
+    return loadTexture(hashedTexturePath.value(), hashedTexturePath.data());
 }
 
-SDL_Texture* TextureManager::getTexture(entt::id_type id, std::string_view filePath)
+SDL_Texture* TextureManager::getTexture(entt::id_type texturePathId, std::string_view texturePath)
 {
     // 查找现有纹理
-    auto iter = m_textures.find(id);
+    auto iter = m_textures.find(texturePathId);
     if (iter != m_textures.end()) {
         return iter->second.get();
     }
 
     // 如果未找到纹理，尝试加载纹理
-    if (filePath.empty()) {
-        spdlog::error("纹理 '{}' 未找到缓存，且未提供文件路径，返回 nullptr。", id);
+    if (texturePath.empty()) {
+        spdlog::error("纹理 '{}' 未找到缓存，且未提供文件路径，返回 nullptr。", texturePathId);
         return nullptr;
     }
 
-    spdlog::info("纹理 '{}' 未找到缓存，尝试加载。", filePath);
-    return loadTexture(id, filePath);
+    spdlog::info("纹理 '{}' 未找到缓存，尝试加载。", texturePath);
+    return loadTexture(texturePathId, texturePath);
 }
 
-SDL_Texture* TextureManager::getTexture(entt::hashed_string hs)
+SDL_Texture* TextureManager::getTexture(entt::hashed_string hashedTexturePath)
 {
-    return getTexture(hs.value(), hs.data());
+    return getTexture(hashedTexturePath.value(), hashedTexturePath.data());
 }
 
-glm::vec2 TextureManager::getTextureSize(entt::id_type id, std::string_view filePath)
+glm::vec2 TextureManager::getTextureSize(entt::id_type texturePathId, std::string_view texturePath)
 {
     // 获取纹理
-    SDL_Texture* texture{ getTexture(id, filePath) };
+    SDL_Texture* texture{ getTexture(texturePathId, texturePath) };
     if (texture == nullptr) {
-        spdlog::error("无法获取纹理：{}", filePath);
+        spdlog::error("无法获取纹理：{}", texturePath);
         return glm::vec2(0.0F);
     }
 
     // 获取纹理尺寸
     glm::vec2 size;
     if (!SDL_GetTextureSize(texture, &size.x, &size.y)) {
-        spdlog::error("无法查询纹理尺寸：{}", filePath);
+        spdlog::error("无法查询纹理尺寸：{}", texturePath);
         return glm::vec2(0.0F);
     }
     return size;
 }
 
-glm::vec2 TextureManager::getTextureSize(entt::hashed_string hs)
+glm::vec2 TextureManager::getTextureSize(entt::hashed_string hashedTexturePath)
 {
-    return getTextureSize(hs.value(), hs.data());
+    return getTextureSize(hashedTexturePath.value(), hashedTexturePath.data());
 }
 
-void TextureManager::unloadTexture(entt::id_type id)
+void TextureManager::unloadTexture(entt::id_type texturePathId)
 {
-    auto iter = m_textures.find(id);
+    auto iter = m_textures.find(texturePathId);
     if (iter != m_textures.end()) {
         m_textures.erase(iter); // unique_ptr 通过自定义删除器自动释放纹理
-        spdlog::debug("成功卸载纹理：id = {}", id);
+        spdlog::debug("成功卸载纹理：texturePathId = {}", texturePathId);
     } else {
-        spdlog::warn("尝试卸载不存在的纹理：id = {}", id);
+        spdlog::warn("尝试卸载不存在的纹理：texturePathId = {}", texturePathId);
     }
 }
 
