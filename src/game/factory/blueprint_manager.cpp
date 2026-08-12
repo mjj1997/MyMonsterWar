@@ -194,10 +194,10 @@ data::SoundsBlueprint BlueprintManager::parseSounds(const nlohmann::json& json)
         for (const auto& [soundKey, soundValue] : json.at("sounds").items()) {
             // 先把 soundValue 看成是音效路径并通过资源管理器加载
             auto soundPath = soundValue.get<std::string>();
-            entt::id_type soundId{ entt::hashed_string(soundPath.c_str()) };
-            m_resourceManager.loadSound(soundId, soundPath);
-            // 将音效键值对转换为音效 ID 并插入到声音蓝图中
-            sounds.m_sounds.emplace(entt::hashed_string(soundKey.c_str()), soundId);
+            entt::id_type soundPathId{ entt::hashed_string(soundPath.c_str()) };
+            m_resourceManager.loadSound(soundPathId, soundPath);
+            // 将 soundKey 转换为音效名称 ID 并和音效路径 ID 一同插入到声音蓝图中
+            sounds.m_sounds.emplace(entt::hashed_string(soundKey.c_str()), soundPathId);
         }
     }
     return sounds;
