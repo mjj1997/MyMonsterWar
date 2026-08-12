@@ -45,7 +45,7 @@ public:
 
     // --- Setters & Getters ---
     std::string_view text() const { return m_text; }
-    entt::id_type fontId() const { return m_fontId; }
+    entt::id_type fontPathId() const { return m_fontPathId; }
     int fontSize() const { return m_fontSize; }
     const engine::utils::FColor& textColor() const { return m_textColor; }
 
@@ -58,10 +58,10 @@ private:
     ///< @brief 需要文本渲染器，用于获取和更新文本尺寸
     engine::render::TextRenderer& m_textRenderer;
 
-    std::string m_text;     ///< @brief 文本内容
-    std::string m_fontPath; ///< @brief 字体路径
-    entt::id_type m_fontId; ///< @brief 字体 ID
-    int m_fontSize;         ///< @brief 字体大小
+    std::string m_text;         ///< @brief 文本内容
+    std::string m_fontPath;     ///< @brief 字体路径
+    entt::id_type m_fontPathId; ///< @brief 字体路径 ID
+    int m_fontSize;             ///< @brief 字体大小
     engine::utils::FColor m_textColor{ 1.0F, 1.0F, 1.0F, 1.0F };
 
     /* 可添加其他内容，例如边框、底色等 */
