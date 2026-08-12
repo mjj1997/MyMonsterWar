@@ -111,29 +111,29 @@ void ResourceManager::clearTextures()
 }
 
 // --- 音频接口实现 ---
-MIX_Audio* ResourceManager::loadSound(entt::id_type id, std::string_view filePath)
+MIX_Audio* ResourceManager::loadSound(entt::id_type soundPathId, std::string_view soundPath)
 {
-    return m_audioManager->loadSound(id, filePath);
+    return m_audioManager->loadSound(soundPathId, soundPath);
 }
 
-MIX_Audio* ResourceManager::loadSound(entt::hashed_string hs)
+MIX_Audio* ResourceManager::loadSound(entt::hashed_string hashedSoundPath)
 {
-    return m_audioManager->loadSound(hs);
+    return m_audioManager->loadSound(hashedSoundPath);
 }
 
-MIX_Audio* ResourceManager::getSound(entt::id_type id, std::string_view filePath)
+MIX_Audio* ResourceManager::getSound(entt::id_type soundPathId, std::string_view soundPath)
 {
-    return m_audioManager->getSound(id, filePath);
+    return m_audioManager->getSound(soundPathId, soundPath);
 }
 
-MIX_Audio* ResourceManager::getSound(entt::hashed_string hs)
+MIX_Audio* ResourceManager::getSound(entt::hashed_string hashedSoundPath)
 {
-    return m_audioManager->getSound(hs);
+    return m_audioManager->getSound(hashedSoundPath);
 }
 
-void ResourceManager::unloadSound(entt::id_type id)
+void ResourceManager::unloadSound(entt::id_type soundPathId)
 {
-    m_audioManager->unloadSound(id);
+    m_audioManager->unloadSound(soundPathId);
 }
 
 void ResourceManager::clearSounds()
@@ -141,29 +141,29 @@ void ResourceManager::clearSounds()
     m_audioManager->clearSounds();
 }
 
-MIX_Audio* ResourceManager::loadMusic(entt::id_type id, std::string_view filePath)
+MIX_Audio* ResourceManager::loadMusic(entt::id_type musicPathId, std::string_view musicPath)
 {
-    return m_audioManager->loadMusic(id, filePath);
+    return m_audioManager->loadMusic(musicPathId, musicPath);
 }
 
-MIX_Audio* ResourceManager::loadMusic(entt::hashed_string hs)
+MIX_Audio* ResourceManager::loadMusic(entt::hashed_string hashedMusicPath)
 {
-    return m_audioManager->loadMusic(hs);
+    return m_audioManager->loadMusic(hashedMusicPath);
 }
 
-MIX_Audio* ResourceManager::getMusic(entt::id_type id, std::string_view filePath)
+MIX_Audio* ResourceManager::getMusic(entt::id_type musicPathId, std::string_view musicPath)
 {
-    return m_audioManager->getMusic(id, filePath);
+    return m_audioManager->getMusic(musicPathId, musicPath);
 }
 
-MIX_Audio* ResourceManager::getMusic(entt::hashed_string hs)
+MIX_Audio* ResourceManager::getMusic(entt::hashed_string hashedMusicPath)
 {
-    return m_audioManager->getMusic(hs);
+    return m_audioManager->getMusic(hashedMusicPath);
 }
 
-void ResourceManager::unloadMusic(entt::id_type id)
+void ResourceManager::unloadMusic(entt::id_type musicPathId)
 {
-    m_audioManager->unloadMusic(id);
+    m_audioManager->unloadMusic(musicPathId);
 }
 
 void ResourceManager::clearMusics()
