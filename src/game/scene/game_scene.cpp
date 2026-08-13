@@ -34,6 +34,7 @@
 #include "../../engine/system/movement_system.h"
 #include "../../engine/system/render_system.h"
 #include "../../engine/system/y_sort_system.h"
+#include "../../engine/ui/ui_panel.h"
 
 #include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
@@ -251,6 +252,22 @@ bool GameScene::initSystems()
 
     spdlog::info("系统初始化完成");
     return true;
+}
+
+void GameScene::arrangePlayerUnitPortraitUi(engine::ui::UiElementBase* anchorPanel,
+                                            glm::vec2 frameSize,
+                                            float padding)
+{
+    // 遍历锚定面板中的所有子元素，依次设置其位置
+    for (size_t i{ 0 }; i < anchorPanel->children().size(); ++i) {
+        auto& child = anchorPanel->children().at(i);
+        child->setLocalPosition(glm::vec2{ padding + i * (frameSize.x + padding), padding });
+    }
+
+    // 更新锚定面板的大小
+    anchorPanel->setSize(
+        glm::vec2{ padding + anchorPanel->children().size() * (frameSize.x + padding),
+                   frameSize.y + 2 * padding });
 }
 
 void GameScene::onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event)

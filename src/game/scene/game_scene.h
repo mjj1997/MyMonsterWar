@@ -7,6 +7,10 @@
 #include "../../engine/scene/scene_base.h"
 #include "../../engine/system/fwd.h"
 
+namespace engine::ui {
+class UiElementBase;
+}
+
 namespace game::factory {
 class EntityFactory;
 class BlueprintManager;
@@ -38,6 +42,11 @@ private:
     [[nodiscard]] bool initInputConnections();
     [[nodiscard]] bool initEntityFactory();
     [[nodiscard]] bool initSystems();
+
+    ///< @brief 排列位于画面下方的玩家单位肖像UI (肖像增/减时调用)
+    void arrangePlayerUnitPortraitUi(engine::ui::UiElementBase* anchorPanel,
+                                     glm::vec2 frameSize,
+                                     float padding);
 
     // 事件回调函数
     void onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event);
