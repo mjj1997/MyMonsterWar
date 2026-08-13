@@ -35,8 +35,22 @@ UiButton::UiButton(engine::core::Context& context,
 
 void UiButton::clicked()
 {
-    if (m_callback) {
-        m_callback();
+    if (m_clickedCallback) {
+        m_clickedCallback();
+    }
+}
+
+void UiButton::hoverEntered()
+{
+    if (m_hoverEnteredCallback) {
+        m_hoverEnteredCallback();
+    }
+}
+
+void UiButton::hoverLeft()
+{
+    if (m_hoverLeftCallback) {
+        m_hoverLeftCallback();
     }
 }
 

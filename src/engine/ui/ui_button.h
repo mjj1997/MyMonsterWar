@@ -36,7 +36,10 @@ public:
 
     ~UiButton() override = default;
 
-    void clicked() override; ///< @brief 重写基类方法，当按钮被点击时调用回调函数
+    /* --- 重写基类方法 ---*/
+    void clicked() override;
+    void hoverEntered() override;
+    void hoverLeft() override;
 
     /*  --- getters & setters --- */
     ///< @brief 设置点击回调函数
