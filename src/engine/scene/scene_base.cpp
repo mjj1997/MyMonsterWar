@@ -48,18 +48,6 @@ void SceneBase::render()
     m_uiManager->render(m_context);
 }
 
-void SceneBase::handleInput()
-{
-    if (!m_isInitialized) {
-        return;
-    }
-
-    // 处理 UI 管理器的输入
-    if (m_uiManager->handleInput(m_context)) {
-        return; // 如果 UI 管理器处理了输入，就直接返回。不需要继续让游戏对象处理输入
-    }
-}
-
 void SceneBase::clean()
 {
     if (!m_isInitialized) {

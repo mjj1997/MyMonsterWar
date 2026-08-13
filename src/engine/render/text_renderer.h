@@ -51,13 +51,13 @@ public:
      * @brief 绘制UI上的字符串。
      *        
      * @param text UTF-8 字符串内容。
-     * @param fontId 字体 ID。
-     * @param fontSize 字体大小。
+     * @param fontPathId 字体路径 ID。
+     * @param fontSize 字体点大小。
      * @param screenPosition 屏幕坐标。
      * @param color 文本颜色。(默认为白色)
      */
     void drawUiText(std::string_view text,
-                    entt::id_type fontId,
+                    entt::id_type fontPathId,
                     int fontSize,
                     const glm::vec2& screenPosition,
                     const engine::utils::FColor& color = { 1.0F, 1.0F, 1.0F, 1.0F });
@@ -67,14 +67,14 @@ public:
      *        
      * @param camera 相机
      * @param text UTF-8 字符串内容。
-     * @param fontId 字体 ID。
-     * @param fontSize 字体大小。
+     * @param fontPathId 字体路径 ID。
+     * @param fontSize 字体点大小。
      * @param worldPosition 世界坐标。
      * @param color 文本颜色。(默认为白色)
      */
     void drawText(const Camera& camera,
                   std::string_view text,
-                  entt::id_type fontId,
+                  entt::id_type fontPathId,
                   int fontSize,
                   const glm::vec2& worldPosition,
                   const engine::utils::FColor& color = { 1.0F, 1.0F, 1.0F, 1.0F });
@@ -83,13 +83,13 @@ public:
      * @brief 获取文本的尺寸。
      *
      * @param text 要测量的文本。
-     * @param fontId 字体 ID。
-     * @param fontSize 字体大小。
+     * @param fontPathId 字体路径 ID。
+     * @param fontSize 字体点大小。
      * @param fontPath 字体路径。
      * @return 文本的尺寸。
      */
     glm::vec2 getTextSize(std::string_view text,
-                          entt::id_type fontId,
+                          entt::id_type fontPathId,
                           int fontSize,
                           std::string_view fontPath = "");
 

@@ -60,15 +60,6 @@ void SceneManager::render()
     }
 }
 
-void SceneManager::handleInput() const
-{
-    // 只考虑栈顶（当前）场景
-    SceneBase* scene = currentScene();
-    if (scene != nullptr) {
-        scene->handleInput();
-    }
-}
-
 void SceneManager::clean()
 {
     spdlog::trace("正在关闭场景管理器并清理场景栈...");

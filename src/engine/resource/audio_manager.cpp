@@ -44,64 +44,64 @@ AudioManager::~AudioManager()
 }
 
 // --- 音效管理 ---
-MIX_Audio* AudioManager::loadSound(entt::id_type id, std::string_view filePath)
+MIX_Audio* AudioManager::loadSound(entt::id_type soundPathId, std::string_view soundPath)
 {
     // 首先检查缓存
-    auto iter = m_sounds.find(id);
+    auto iter = m_sounds.find(soundPathId);
     if (iter != m_sounds.end()) {
         return iter->second.get();
     }
 
     // 加载音效（predecode=true，预先解码为PCM，适合短音效）
-    spdlog::debug("加载音效: {}", filePath);
-    MIX_Audio* sound{ MIX_LoadAudio(m_mixer, filePath.data(), true) };
+    spdlog::debug("加载音效: {}", soundPath);
+    MIX_Audio* sound{ MIX_LoadAudio(m_mixer, soundPath.data(), true) };
     if (sound == nullptr) {
-        spdlog::error("加载音效失败: '{}': {}", filePath, SDL_GetError());
+        spdlog::error("加载音效失败: '{}': {}", soundPath, SDL_GetError());
         return nullptr;
     }
 
     // 使用unique_ptr存储在缓存中
-    m_sounds.emplace(id, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>{ sound });
-    spdlog::debug("成功加载并缓存音效: {}", filePath);
+    m_sounds.emplace(soundPathId, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>{ sound });
+    spdlog::debug("成功加载并缓存音效: {}", soundPath);
     return sound;
 }
 
-MIX_Audio* AudioManager::loadSound(entt::hashed_string hs)
+MIX_Audio* AudioManager::loadSound(entt::hashed_string hashedSoundPath)
 {
-    return loadSound(hs.value(), hs.data());
+    return loadSound(hashedSoundPath.value(), hashedSoundPath.data());
 }
 
-MIX_Audio* AudioManager::getSound(entt::id_type id, std::string_view filePath)
+MIX_Audio* AudioManager::getSound(entt::id_type soundPathId, std::string_view soundPath)
 {
     // 查找现有音效
-    auto iter = m_sounds.find(id);
+    auto iter = m_sounds.find(soundPathId);
     if (iter != m_sounds.end()) {
         return iter->second.get();
     }
 
     // 如果未找到音效，尝试加载音效
-    if (filePath.empty()) {
-        spdlog::error("音效 '{}' 未找到缓存，且未提供文件路径，返回 nullptr。", id);
+    if (soundPath.empty()) {
+        spdlog::error("音效 '{}' 未找到缓存，且未提供文件路径，返回 nullptr。", soundPathId);
         return nullptr;
     }
 
-    spdlog::info("音效 '{}' 未找到缓存，尝试加载。", filePath);
-    return loadSound(id, filePath);
+    spdlog::info("音效 '{}' 未找到缓存，尝试加载。", soundPath);
+    return loadSound(soundPathId, soundPath);
 }
 
-MIX_Audio* AudioManager::getSound(entt::hashed_string hs)
+MIX_Audio* AudioManager::getSound(entt::hashed_string hashedSoundPath)
 {
-    return getSound(hs.value(), hs.data());
+    return getSound(hashedSoundPath.value(), hashedSoundPath.data());
 }
 
-void AudioManager::unloadSound(entt::id_type id)
+void AudioManager::unloadSound(entt::id_type soundPathId)
 {
-    auto iter = m_sounds.find(id);
+    auto iter = m_sounds.find(soundPathId);
     if (iter != m_sounds.end()) {
-        spdlog::debug("成功卸载音效: id = {}", id);
+        spdlog::debug("成功卸载音效: soundPathId = {}", soundPathId);
         m_sounds.erase(iter); // unique_ptr 处理 MIX_DestroyAudio
     } else {
-        spdlog::warn("尝试卸载不存在的音效: id = {}", id);
+        spdlog::warn("尝试卸载不存在的音效: soundPathId = {}", soundPathId);
     }
 }
 
@@ -114,64 +114,64 @@ void AudioManager::clearSounds()
 }
 
 // --- 音乐管理 ---
-MIX_Audio* AudioManager::loadMusic(entt::id_type id, std::string_view filePath)
+MIX_Audio* AudioManager::loadMusic(entt::id_type musicPathId, std::string_view musicPath)
 {
     // 首先检查缓存
-    auto iter = m_musics.find(id);
+    auto iter = m_musics.find(musicPathId);
     if (iter != m_musics.end()) {
         return iter->second.get();
     }
 
     // 加载音乐（predecode=false，流式解码，适合长音乐）
-    spdlog::debug("加载音乐: {}", filePath);
-    MIX_Audio* music{ MIX_LoadAudio(m_mixer, filePath.data(), false) };
+    spdlog::debug("加载音乐: {}", musicPath);
+    MIX_Audio* music{ MIX_LoadAudio(m_mixer, musicPath.data(), false) };
     if (music == nullptr) {
-        spdlog::error("加载音乐失败: '{}': {}", filePath, SDL_GetError());
+        spdlog::error("加载音乐失败: '{}': {}", musicPath, SDL_GetError());
         return nullptr;
     }
 
     // 使用unique_ptr存储在缓存中
-    m_musics.emplace(id, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>{ music });
-    spdlog::debug("成功加载并缓存音乐: {}", filePath);
+    m_musics.emplace(musicPathId, std::unique_ptr<MIX_Audio, SDLMixAudioDeletor>{ music });
+    spdlog::debug("成功加载并缓存音乐: {}", musicPath);
     return music;
 }
 
-MIX_Audio* AudioManager::loadMusic(entt::hashed_string hs)
+MIX_Audio* AudioManager::loadMusic(entt::hashed_string hashedMusicPath)
 {
-    return loadMusic(hs.value(), hs.data());
+    return loadMusic(hashedMusicPath.value(), hashedMusicPath.data());
 }
 
-MIX_Audio* AudioManager::getMusic(entt::id_type id, std::string_view filePath)
+MIX_Audio* AudioManager::getMusic(entt::id_type musicPathId, std::string_view musicPath)
 {
     // 查找现有音乐
-    auto iter = m_musics.find(id);
+    auto iter = m_musics.find(musicPathId);
     if (iter != m_musics.end()) {
         return iter->second.get();
     }
 
     // 如果未找到音乐，尝试加载音乐
-    if (filePath.empty()) {
-        spdlog::error("音乐 '{}' 未找到缓存，且未提供文件路径，返回 nullptr。", id);
+    if (musicPath.empty()) {
+        spdlog::error("音乐 '{}' 未找到缓存，且未提供文件路径，返回 nullptr。", musicPathId);
         return nullptr;
     }
 
-    spdlog::info("音乐 '{}' 未找到缓存，尝试加载。", filePath);
-    return loadMusic(id, filePath);
+    spdlog::info("音乐 '{}' 未找到缓存，尝试加载。", musicPath);
+    return loadMusic(musicPathId, musicPath);
 }
 
-MIX_Audio* AudioManager::getMusic(entt::hashed_string hs)
+MIX_Audio* AudioManager::getMusic(entt::hashed_string hashedMusicPath)
 {
-    return getMusic(hs.value(), hs.data());
+    return getMusic(hashedMusicPath.value(), hashedMusicPath.data());
 }
 
-void AudioManager::unloadMusic(entt::id_type id)
+void AudioManager::unloadMusic(entt::id_type musicPathId)
 {
-    auto iter = m_musics.find(id);
+    auto iter = m_musics.find(musicPathId);
     if (iter != m_musics.end()) {
-        spdlog::debug("卸载音乐: id = {}", id);
+        spdlog::debug("卸载音乐: musicPathId = {}", musicPathId);
         m_musics.erase(iter); // unique_ptr 处理 MIX_DestroyAudio
     } else {
-        spdlog::warn("尝试卸载不存在的音乐: id = {}", id);
+        spdlog::warn("尝试卸载不存在的音乐: musicPathId = {}", musicPathId);
     }
 }
 

@@ -9,34 +9,48 @@ using namespace entt::literals;
 namespace engine::ui {
 
 UiButton::UiButton(engine::core::Context& context,
-                   std::string_view normalImagePath,
-                   std::string_view hoverImagePath,
-                   std::string_view pressedImagePath,
+                   engine::render::Image normalImage,
+                   engine::render::Image hoverImage,
+                   engine::render::Image pressedImage,
                    glm::vec2 localPosition,
                    glm::vec2 size,
-                   std::function<void()> callback)
+                   std::function<void()> clickedCallback,
+                   std::function<void()> hoverEnteredCallback,
+                   std::function<void()> hoverLeftCallback)
     : UiInteractiveElementBase{ context, localPosition, size }
-    , m_callback{ std::move(callback) }
+    , m_clickedCallback{ std::move(clickedCallback) }
+    , m_hoverEnteredCallback{ std::move(hoverEnteredCallback) }
+    , m_hoverLeftCallback{ std::move(hoverLeftCallback) }
 {
     // 添加各状态对应的图片
-    addImage("normal"_hs, engine::render::Image{ normalImagePath });
-    addImage("hover"_hs, engine::render::Image{ hoverImagePath });
-    addImage("pressed"_hs, engine::render::Image{ pressedImagePath });
+    addImage("normal"_hs, std::move(normalImage));
+    addImage("hover"_hs, std::move(hoverImage));
+    addImage("pressed"_hs, std::move(pressedImage));
 
     // 设置默认状态为"normal"
     setCurrentState(std::make_unique<engine::ui::state::UiNormalState>(this));
-
-    // 添加各状态对应的音效
-    addSound("hover"_hs, "assets/audio/button_hover.wav"_hs);
-    addSound("pressed"_hs, "assets/audio/button_click.wav"_hs);
 
     spdlog::trace("UiButton 构造完成");
 }
 
 void UiButton::clicked()
 {
-    if (m_callback) {
-        m_callback();
+    if (m_clickedCallback) {
+        m_clickedCallback();
+    }
+}
+
+void UiButton::hoverEntered()
+{
+    if (m_hoverEnteredCallback) {
+        m_hoverEnteredCallback();
+    }
+}
+
+void UiButton::hoverLeft()
+{
+    if (m_hoverLeftCallback) {
+        m_hoverLeftCallback();
     }
 }
 

@@ -194,10 +194,10 @@ data::SoundsBlueprint BlueprintManager::parseSounds(const nlohmann::json& json)
         for (const auto& [soundKey, soundValue] : json.at("sounds").items()) {
             // 先把 soundValue 看成是音效路径并通过资源管理器加载
             auto soundPath = soundValue.get<std::string>();
-            entt::id_type soundId{ entt::hashed_string(soundPath.c_str()) };
-            m_resourceManager.loadSound(soundId, soundPath);
-            // 将音效键值对转换为音效 ID 并插入到声音蓝图中
-            sounds.m_sounds.emplace(entt::hashed_string(soundKey.c_str()), soundId);
+            entt::id_type soundPathId{ entt::hashed_string(soundPath.c_str()) };
+            m_resourceManager.loadSound(soundPathId, soundPath);
+            // 将 soundKey 转换为音效名称 ID 并和音效路径 ID 一同插入到声音蓝图中
+            sounds.m_sounds.emplace(entt::hashed_string(soundKey.c_str()), soundPathId);
         }
     }
     return sounds;
@@ -208,14 +208,14 @@ data::SpriteBlueprint BlueprintManager::parseSprite(const nlohmann::json& json)
     auto width = json.at("width").get<float>();
     auto height = json.at("height").get<float>();
     auto texturePath = json.at("sprite_sheet").get<std::string>();
-    entt::id_type textureId{ entt::hashed_string(texturePath.c_str()) };
+    entt::id_type texturePathId{ entt::hashed_string(texturePath.c_str()) };
 
     /**
      * 可选部分: 源矩形的起点默认值为 (0, 0); 渲染目标大小默认值为 (width, height);
      * 如果指定, 则起点为 (x, y); 渲染目标大小为 (size_x, size_y);
      */
     data::SpriteBlueprint sprite{
-        .m_textureId = textureId,
+        .m_texturePathId = texturePathId,
         .m_texturePath = texturePath,
         .m_sourceRect = engine::utils::Rect{ glm::vec2{ json.value("x", 0), json.value("y", 0) },
                                              glm::vec2{ width, height } },

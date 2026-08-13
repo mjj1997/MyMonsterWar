@@ -6,6 +6,8 @@
 
 #include <spdlog/spdlog.h>
 
+using namespace entt::literals;
+
 namespace engine::ui {
 
 UiInteractiveElementBase::UiInteractiveElementBase(engine::core::Context& context,
@@ -17,22 +19,19 @@ UiInteractiveElementBase::UiInteractiveElementBase(engine::core::Context& contex
     spdlog::trace("UIInteractiveElementBase 构造完成");
 }
 
-bool UiInteractiveElementBase::handleInput(engine::core::Context& context)
+void UiInteractiveElementBase::update(float deltaTime, engine::core::Context& context)
 {
-    // 先让子 UI 元素处理输入（调用基类的 handleInput 方法）
-    if (UiElementBase::handleInput(context)) {
-        return true;
-    }
+    // 先更新子 UI 元素（调用基类的 update 方法）
+    UiElementBase::update(deltaTime, context);
 
-    // 子 UI 元素没有处理输入，再自身委托给状态处理输入
+    // 再更新自己（状态）
     if (m_currentState != nullptr && m_isInteractive) {
-        if (auto nextState = m_currentState->handleInput(context); nextState) {
-            setCurrentState(std::move(nextState));
-            return true;
+        if (m_nextState) {
+            setCurrentState(std::move(m_nextState));
+            m_nextState.reset();
         }
+        m_currentState->update(deltaTime, context);
     }
-
-    return false;
 }
 
 void UiInteractiveElementBase::render(engine::core::Context& context)
@@ -54,14 +53,14 @@ void UiInteractiveElementBase::addImage(entt::id_type nameId, engine::render::Im
 {
     // 可交互 UI 元素必须有一个 size 用于交互检测，因此如果参数列表中没有指定，则用图片大小作为 size
     if (m_size.x == 0.0F && m_size.y == 0.0F) {
-        m_size = m_context.resourceManager().getTextureSize(image.textureId());
+        m_size = m_context.resourceManager().getTextureSize(image.texturePathId());
     }
 
     // 添加图片
-    m_images.emplace(nameId, std::move(image));
+    m_images.insert_or_assign(nameId, std::move(image));
 }
 
-void UiInteractiveElementBase::setImage(entt::id_type nameId)
+void UiInteractiveElementBase::setCurrentImage(entt::id_type nameId)
 {
     if (auto iter = m_images.find(nameId); iter != m_images.end()) {
         m_currentImageId = nameId;
@@ -75,13 +74,34 @@ void UiInteractiveElementBase::addSound(entt::id_type nameId, entt::hashed_strin
     m_sounds.emplace(nameId, hashedPath.value());
 }
 
+void UiInteractiveElementBase::setClickSound(entt::id_type soundPathId, std::string_view soundPath)
+{
+    m_context.resourceManager().loadSound(soundPathId, soundPath);
+    m_sounds.emplace("ui_click"_hs, soundPathId);
+}
+
+void UiInteractiveElementBase::setHoverSound(entt::id_type soundPathId, std::string_view soundPath)
+{
+    m_context.resourceManager().loadSound(soundPathId, soundPath);
+    m_sounds.emplace("ui_hover"_hs, soundPathId);
+}
+
 void UiInteractiveElementBase::playSound(entt::id_type nameId)
 {
     if (auto iter = m_sounds.find(nameId); iter != m_sounds.end()) {
-        m_context.audioPlayer().playSound(iter->second);
-    } else {
-        spdlog::warn("Sound '{}' 未找到。", nameId);
+        if (m_context.audioPlayer().playSound(iter->second) == -1) {
+            spdlog::warn("Sound '{}' 未找到或无法播放", nameId);
+        }
+    } else { // 如果自定义的 m_sounds 中没有找到对应的音效，则使用默认音效
+        if (m_context.audioPlayer().playSound(nameId) == -1) {
+            spdlog::warn("Sound '{}' 未找到或无法播放", nameId);
+        }
     }
+}
+
+void UiInteractiveElementBase::setNextState(std::unique_ptr<engine::ui::state::UiStateBase> state)
+{
+    m_nextState = std::move(state);
 }
 
 void UiInteractiveElementBase::setCurrentState(std::unique_ptr<engine::ui::state::UiStateBase> state)

@@ -1,0 +1,20 @@
+{
+    "player_unit": {
+        "加尔隆": {"class": "warrior", "lv": 1, "rarity": 1},
+        "伊索尔德": {"class": "warrior", "lv": 2, "rarity": 1},
+        "布鲁南": {"class": "warrior", "lv": 2, "rarity": 2},
+        "莱拉娜": {"class": "archer", "lv": 1, "rarity": 1},
+        "凯伦": {"class": "archer", "lv": 2, "rarity": 1},
+        "芬恩": {"class": "archer", "lv": 1, "rarity": 2},
+        "西瑞娅": {"class": "archer", "lv": 2, "rarity": 2},
+        "罗兰": {"class": "lancer", "lv": 1, "rarity": 1},
+        "莫迪凯": {"class": "lancer", "lv": 2, "rarity": 1},
+        "伊格纳茨": {"class": "lancer", "lv": 2, "rarity": 2},
+        "摩根娜": {"class": "witch", "lv": 1, "rarity": 1},
+        "希尔维娅": {"class": "witch", "lv": 2, "rarity": 1},
+        "赫卡": {"class": "witch", "lv": 2, "rarity": 2}
+    },
+    "level": 1,
+    "score": 0,
+    "is_level_clear": false
+}

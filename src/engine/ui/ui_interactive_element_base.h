@@ -38,22 +38,35 @@ public:
     UiInteractiveElementBase& operator=(UiInteractiveElementBase&&) = delete;
 
     // --- 事件处理方法 ---
-    virtual void clicked() {} ///< @brief 如果有点击事件，则重写该方法
+    virtual void clicked() {}      ///< @brief 如果有点击事件，则重写该方法
+    virtual void hoverEntered() {} ///< @brief 如果有悬停进入事件，则重写该方法
+    virtual void hoverLeft() {}    ///< @brief 如果有悬停离开事件，则重写该方法
 
     // --- 核心方法 ---
-    bool handleInput(engine::core::Context& context) override;
+    void update(float deltaTime, engine::core::Context& context) override;
     void render(engine::core::Context& context) override;
 
-    ///< @brief 添加状态名称-图片对
+    ///< @brief 添加/替换状态名称-图片对
     void addImage(entt::id_type nameId, engine::render::Image image);
     ///< @brief 通过状态名称 ID，设置当前显示的图片
-    void setImage(entt::id_type nameId);
+    void setCurrentImage(entt::id_type nameId);
+
     ///< @brief 添加状态名称-音效对
     void addSound(entt::id_type nameId, entt::hashed_string hashedPath);
+    ///< @brief 设置点击音效
+    void setClickSound(entt::id_type soundPathId, std::string_view soundPath = "");
+    ///< @brief 设置悬停音效
+    void setHoverSound(entt::id_type soundPathId, std::string_view soundPath = "");
     ///< @brief 通过状态名称 ID，播放音效
     void playSound(entt::id_type nameId);
 
     // --- Getters and Setters ---
+    ///< @brief 获取上下文引用
+    engine::core::Context& context() const { return m_context; }
+
+    ///< @brief 设置下一个状态
+    void setNextState(std::unique_ptr<engine::ui::state::UiStateBase> state);
+
     ///< @brief 设置当前状态
     void setCurrentState(std::unique_ptr<engine::ui::state::UiStateBase> state);
     ///< @brief 获取当前状态
@@ -68,9 +81,10 @@ protected:
 
     ///< @brief 状态和图片的映射，key 为状态名称 ID，value 为图片
     std::unordered_map<entt::id_type, engine::render::Image> m_images;
-    ///< @brief 状态和音效的映射，key 为状态名称 ID，value 为音效文件 ID
+    ///< @brief 状态和音效的映射，key 为状态名称 ID，value 为音效路径 ID
     std::unordered_map<entt::id_type, entt::id_type> m_sounds;
 
+    std::unique_ptr<engine::ui::state::UiStateBase> m_nextState;    ///< @brief 下一个状态
     std::unique_ptr<engine::ui::state::UiStateBase> m_currentState; ///< @brief 当前状态
     entt::id_type m_currentImageId{ entt::null };                   ///< @brief 当前显示的图片 ID
     bool m_isInteractive{ true };                                   ///< @brief 是否可交互

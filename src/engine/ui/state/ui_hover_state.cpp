@@ -6,30 +6,52 @@
 #include "ui_pressed_state.h"
 
 #include <entt/core/hashed_string.hpp>
+#include <spdlog/spdlog.h>
 
 using namespace entt::literals;
 
 namespace engine::ui::state {
 
+UiHoverState::UiHoverState(engine::ui::UiInteractiveElementBase* owner)
+    : UiStateBase{ owner }
+{
+    m_owner->context()
+        .inputManager()
+        .actionSink("mouse_left"_hs)
+        .connect<&UiHoverState::onMousePressed>(this);
+}
+
+UiHoverState::~UiHoverState()
+{
+    m_owner->context()
+        .inputManager()
+        .actionSink("mouse_left"_hs)
+        .disconnect<&UiHoverState::onMousePressed>(this);
+}
+
 void UiHoverState::enter()
 {
     // 设置 UI 为悬停状态的图片
-    m_owner->setImage("hover"_hs);
+    m_owner->setCurrentImage("hover"_hs);
+    m_owner->hoverEntered();
+
+    spdlog::debug("切换到悬停状态");
 }
 
-std::unique_ptr<UiStateBase> UiHoverState::handleInput(engine::core::Context& context)
+void UiHoverState::update(float deltaTime, engine::core::Context& context)
 {
     const auto& inputManager = context.inputManager();
     const auto& mousePos = inputManager.logicalMousePosition();
     if (!m_owner->isPointInside(mousePos)) { // 如果鼠标不在 UI 元素内，切换到正常状态
-        return std::make_unique<UiNormalState>(m_owner);
+        m_owner->hoverLeft();
+        m_owner->setNextState(std::make_unique<UiNormalState>(m_owner));
     }
+}
 
-    if (inputManager.isActionPressed("mouse_left"_hs)) { // 如果鼠标点击了左键，切换到按下状态
-        return std::make_unique<UiPressedState>(m_owner);
-    }
-
-    return nullptr;
+bool UiHoverState::onMousePressed()
+{
+    m_owner->setNextState(std::make_unique<UiPressedState>(m_owner));
+    return true;
 }
 
 } // namespace engine::ui::state

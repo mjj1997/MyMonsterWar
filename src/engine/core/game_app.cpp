@@ -122,8 +122,6 @@ void GameApp::handleEvents()
 {
     // 处理并分发输入事件
     m_inputManager->update();
-
-    m_sceneManager->handleInput();
 }
 
 void GameApp::update(float deltaTime)

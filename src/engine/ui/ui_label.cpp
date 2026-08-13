@@ -16,12 +16,12 @@ UiLabel::UiLabel(engine::render::TextRenderer& textRenderer,
     , m_textRenderer{ textRenderer }
     , m_text{ text }
     , m_fontPath{ fontPath }
-    , m_fontId{ entt::hashed_string(fontPath.data()) }
+    , m_fontPathId{ entt::hashed_string(fontPath.data()) }
     , m_fontSize{ fontSize }
     , m_textColor{ textColor }
 {
     // 获取文本渲染尺寸 (函数内部会确保字体资源被加载)
-    m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize, m_fontPath);
+    m_size = m_textRenderer.getTextSize(m_text, m_fontPathId, m_fontSize, m_fontPath);
     spdlog::trace("UiLabel 构造完成");
 }
 
@@ -32,7 +32,7 @@ void UiLabel::render(engine::core::Context& context)
     }
 
     // 渲染自身
-    m_textRenderer.drawUiText(m_text, m_fontId, m_fontSize, screenPosition(), m_textColor);
+    m_textRenderer.drawUiText(m_text, m_fontPathId, m_fontSize, screenPosition(), m_textColor);
 
     // 渲染子元素（调用基类的 render 方法）
     UiElementBase::render(context);
@@ -41,20 +41,20 @@ void UiLabel::render(engine::core::Context& context)
 void UiLabel::setText(std::string_view text)
 {
     m_text = text;
-    m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize);
+    m_size = m_textRenderer.getTextSize(m_text, m_fontPathId, m_fontSize);
 }
 
 void UiLabel::setFontPath(std::string_view fontPath)
 {
     m_fontPath = fontPath;
-    m_fontId = entt::hashed_string(fontPath.data());
-    m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize, m_fontPath);
+    m_fontPathId = entt::hashed_string(fontPath.data());
+    m_size = m_textRenderer.getTextSize(m_text, m_fontPathId, m_fontSize, m_fontPath);
 }
 
 void UiLabel::setFontSize(int fontSize)
 {
     m_fontSize = fontSize;
-    m_size = m_textRenderer.getTextSize(m_text, m_fontId, m_fontSize, m_fontPath);
+    m_size = m_textRenderer.getTextSize(m_text, m_fontPathId, m_fontSize, m_fontPath);
 }
 
 void UiLabel::setTextColor(engine::utils::FColor textColor)

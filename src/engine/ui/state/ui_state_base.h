@@ -41,7 +41,7 @@ public:
 protected:
     // --- 核心方法 ---
     virtual void enter() = 0;
-    virtual std::unique_ptr<UiStateBase> handleInput(engine::core::Context& context) = 0;
+    virtual void update(float deltaTime, engine::core::Context& context) {};
 
     engine::ui::UiInteractiveElementBase* m_owner{ nullptr }; ///< @brief 指向状态拥有者
 };

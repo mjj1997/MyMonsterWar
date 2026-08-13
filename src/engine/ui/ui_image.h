@@ -32,16 +32,16 @@ public:
                      bool isFlipped = false);
 
     /**
-     * @brief 构造一个 UiImage 对象。（通过纹理 ID 构造）
+     * @brief 构造一个 UiImage 对象。（通过纹理路径 ID 构造）
      *
-     * @param textureId 要显示的纹理 ID
+     * @param texturePathId 要显示的纹理路径 ID
      * @param localPosition UiImage 的局部位置
      * @param size UiImage 的大小（如果为 {0.0F, 0.0F}，则使用纹理的原始尺寸）
      * @param sourceRect 可选：要绘制的纹理区域（如果未指定，则绘制整个纹理）
      * @param isFlipped 可选：图片是否应该水平翻转。
      * @note 用此方法，需确保对应 ID 的纹理已经加载到 ResourceManager 中，因此不需要再提供纹理路径。
      */
-    explicit UiImage(entt::id_type textureId,
+    explicit UiImage(entt::id_type texturePathId,
                      glm::vec2 localPosition = { 0.0F, 0.0F },
                      glm::vec2 size = { 0.0F, 0.0F },
                      std::optional<engine::utils::Rect> sourceRect = std::nullopt,
@@ -64,7 +64,7 @@ public:
     const engine::render::Image& image() const { return m_image; }
     void setImage(engine::render::Image image) { m_image = std::move(image); }
 
-    entt::id_type textureId() const { return m_image.textureId(); }
+    entt::id_type texturePathId() const { return m_image.texturePathId(); }
     void setTexture(std::string_view texturePath) { m_image.setTexture(texturePath); }
 
     const std::optional<engine::utils::Rect>& sourceRect() const { return m_image.sourceRect(); }
