@@ -41,7 +41,7 @@ public:
     virtual void clicked() {} ///< @brief 如果有点击事件，则重写该方法
 
     // --- 核心方法 ---
-    bool handleInput(engine::core::Context& context) override;
+    void update(float deltaTime, engine::core::Context& context) override;
     void render(engine::core::Context& context) override;
 
     ///< @brief 添加状态名称-图片对
@@ -71,6 +71,7 @@ protected:
     ///< @brief 状态和音效的映射，key 为状态名称 ID，value 为音效文件 ID
     std::unordered_map<entt::id_type, entt::id_type> m_sounds;
 
+    std::unique_ptr<engine::ui::state::UiStateBase> m_nextState;    ///< @brief 下一个状态
     std::unique_ptr<engine::ui::state::UiStateBase> m_currentState; ///< @brief 当前状态
     entt::id_type m_currentImageId{ entt::null };                   ///< @brief 当前显示的图片 ID
     bool m_isInteractive{ true };                                   ///< @brief 是否可交互

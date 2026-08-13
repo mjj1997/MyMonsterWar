@@ -17,22 +17,19 @@ UiInteractiveElementBase::UiInteractiveElementBase(engine::core::Context& contex
     spdlog::trace("UIInteractiveElementBase 构造完成");
 }
 
-bool UiInteractiveElementBase::handleInput(engine::core::Context& context)
+void UiInteractiveElementBase::update(float deltaTime, engine::core::Context& context)
 {
-    // 先让子 UI 元素处理输入（调用基类的 handleInput 方法）
-    if (UiElementBase::handleInput(context)) {
-        return true;
-    }
+    // 先更新子 UI 元素（调用基类的 update 方法）
+    UiElementBase::update(deltaTime, context);
 
-    // 子 UI 元素没有处理输入，再自身委托给状态处理输入
+    // 再更新自己（状态）
     if (m_currentState != nullptr && m_isInteractive) {
-        if (auto nextState = m_currentState->handleInput(context); nextState) {
-            setCurrentState(std::move(nextState));
-            return true;
+        if (m_nextState) {
+            setCurrentState(std::move(m_nextState));
+            m_nextState.reset();
         }
+        m_currentState->update(deltaTime, context);
     }
-
-    return false;
 }
 
 void UiInteractiveElementBase::render(engine::core::Context& context)
