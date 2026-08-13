@@ -6,6 +6,7 @@
 #include "ui_normal_state.h"
 
 #include <entt/core/hashed_string.hpp>
+#include <spdlog/spdlog.h>
 
 using namespace entt::literals;
 
@@ -31,9 +32,11 @@ UiPressedState::~UiPressedState()
 void UiPressedState::enter()
 {
     // 设置 UI 为按下状态的图片
-    m_owner->setImage("pressed"_hs);
+    m_owner->setCurrentImage("pressed"_hs);
     // 播放按下时的音效
-    m_owner->playSound("pressed"_hs);
+    m_owner->playSound("ui_click"_hs);
+
+    spdlog::debug("切换到按下状态");
 }
 
 void UiPressedState::onMouseReleased()
