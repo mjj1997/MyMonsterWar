@@ -20,7 +20,8 @@ public:
 
 private:
     void enter() override;
-    std::unique_ptr<UiStateBase> handleInput(engine::core::Context& context) override;
+
+    void onMouseReleased();
 };
 
 } // namespace engine::ui::state
