@@ -59,6 +59,8 @@ public:
     bool isVisible() const { return m_isVisible; }
     ///< @brief 检查元素是否需要移除
     bool shouldRemove() const { return m_shouldRemove; }
+    ///< @brief 获取元素的排序索引
+    int orderIndex() const { return m_orderIndex; }
     ///< @brief 获取父元素
     UiElementBase* parent() const { return m_parent; }
     ///< @brief 获取子元素列表
@@ -70,6 +72,8 @@ public:
     void setVisible(bool visible) { m_isVisible = visible; }   ///< @brief 设置元素的可见性
     ///< @brief 设置元素是否需要移除
     void setShouldRemove(bool shouldRemove) { m_shouldRemove = shouldRemove; }
+    ///< @brief 设置元素的排序索引
+    void setOrderIndex(int orderIndex) { m_orderIndex = orderIndex; }
     void setParent(UiElementBase* parent) { m_parent = parent; } ///< @brief 设置父元素
 
     // --- 辅助方法 ---
@@ -82,6 +86,7 @@ protected:
     glm::vec2 m_size;             ///< @brief 元素大小
     bool m_isVisible{ true };     ///< @brief 元素当前是否可见
     bool m_shouldRemove{ false }; ///< @brief 是否需要移除(延迟删除)
+    int m_orderIndex{ 0 };        ///< @brief 用于排序的索引
 
     UiElementBase* m_parent{ nullptr };                     ///< @brief 指向父元素的非拥有指针
     std::vector<std::unique_ptr<UiElementBase>> m_children; ///< @brief 子元素列表(容器)
