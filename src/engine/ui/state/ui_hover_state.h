@@ -21,6 +21,8 @@ public:
 private:
     void enter() override;
     void update(float deltaTime, engine::core::Context& context) override;
+
+    bool onMousePressed();
 };
 
 } // namespace engine::ui::state

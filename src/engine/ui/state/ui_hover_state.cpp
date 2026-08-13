@@ -25,7 +25,12 @@ void UiHoverState::update(float deltaTime, engine::core::Context& context)
         m_owner->hoverLeft();
         m_owner->setNextState(std::make_unique<UiNormalState>(m_owner));
     }
+}
 
+bool UiHoverState::onMousePressed()
+{
+    m_owner->setNextState(std::make_unique<UiPressedState>(m_owner));
+    return true;
 }
 
 } // namespace engine::ui::state
