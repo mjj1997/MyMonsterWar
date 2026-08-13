@@ -62,6 +62,10 @@ void GameScene::init()
         spdlog::error("初始化会话数据失败");
         return;
     }
+    if (!initUiConfig()) {
+        spdlog::error("初始化 UI 配置数据失败");
+        return;
+    }
     if (!loadLevel()) {
         return;
     }
@@ -84,6 +88,7 @@ void GameScene::init()
 
     testSessionData();
     createTestEnemy();
+    createPlayerUnitPortraitUi();
 
     SceneBase::init();
 }
