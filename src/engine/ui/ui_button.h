@@ -19,20 +19,24 @@ public:
     /**
      * @brief 构造函数
      * @param context 引擎上下文
-     * @param normalImagePath 正常状态的图片路径
-     * @param hoverImagePath 悬停状态的图片路径
-     * @param pressedImagePath 按下状态的图片路径
+     * @param normalImage 正常状态的图片
+     * @param hoverImage 悬停状态的图片
+     * @param pressedImage 按下状态的图片
      * @param localPosition 局部位置
      * @param size 大小
-     * @param callback 回调函数
+     * @param clickedCallback 点击回调函数
+     * @param hoverEnteredCallback 悬停进入回调函数
+     * @param hoverLeftCallback 悬停离开回调函数
      */
     UiButton(engine::core::Context& context,
-             std::string_view normalImagePath,
-             std::string_view hoverImagePath,
-             std::string_view pressedImagePath,
+             engine::render::Image normalImage,
+             engine::render::Image hoverImage,
+             engine::render::Image pressedImage,
              glm::vec2 localPosition = { 0.0F, 0.0F },
              glm::vec2 size = { 0.0F, 0.0F },
-             std::function<void()> callback = nullptr);
+             std::function<void()> clickedCallback = nullptr,
+             std::function<void()> hoverEnteredCallback = nullptr,
+             std::function<void()> hoverLeftCallback = nullptr);
 
     ~UiButton() override = default;
 
