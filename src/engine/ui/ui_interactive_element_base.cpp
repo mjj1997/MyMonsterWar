@@ -89,9 +89,13 @@ void UiInteractiveElementBase::setHoverSound(entt::id_type soundPathId, std::str
 void UiInteractiveElementBase::playSound(entt::id_type nameId)
 {
     if (auto iter = m_sounds.find(nameId); iter != m_sounds.end()) {
-        m_context.audioPlayer().playSound(iter->second);
-    } else {
-        spdlog::warn("Sound '{}' 未找到。", nameId);
+        if (m_context.audioPlayer().playSound(iter->second) == -1) {
+            spdlog::warn("Sound '{}' 未找到或无法播放", nameId);
+        }
+    } else { // 如果自定义的 m_sounds 中没有找到对应的音效，则使用默认音效
+        if (m_context.audioPlayer().playSound(nameId) == -1) {
+            spdlog::warn("Sound '{}' 未找到或无法播放", nameId);
+        }
     }
 }
 
