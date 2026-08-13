@@ -2,6 +2,8 @@
 
 #include "../utils/math.h"
 
+#include <entt/entity/entity.hpp>
+
 #include <memory>
 #include <vector>
 
@@ -43,12 +45,17 @@ public:
     virtual void render(engine::core::Context& context);
 
     // --- 层次结构管理 ---
-    ///< @brief 添加子元素
-    void addChild(std::unique_ptr<UiElementBase> child);
+    ///< @brief 添加子元素, 可指定子元素的排序索引（默认为 -1，不设置排序索引）
+    void addChild(std::unique_ptr<UiElementBase> child, int orderIndex = -1);
     ///< @brief 将指定子元素从列表中移除，并返回其智能指针
     std::unique_ptr<UiElementBase> removeChild(UiElementBase* child);
+    ///< @brief 根据 ID 移除子元素, 并返回其智能指针
+    std::unique_ptr<UiElementBase> removeChildById(entt::id_type id);
     ///< @brief 移除所有子元素
     void removeAllChildren();
+
+    ///< @brief 按排序索引排序子元素
+    void sortChildrenByOrderIndex();
 
     // --- Getters and Setters ---
     ///< @brief 获取元素位置(相对于父元素)
@@ -59,10 +66,16 @@ public:
     bool isVisible() const { return m_isVisible; }
     ///< @brief 检查元素是否需要移除
     bool shouldRemove() const { return m_shouldRemove; }
+    ///< @brief 获取元素的排序索引
+    int orderIndex() const { return m_orderIndex; }
+    ///< @brief 获取元素的 ID
+    entt::id_type id() const { return m_id; }
     ///< @brief 获取父元素
     UiElementBase* parent() const { return m_parent; }
     ///< @brief 获取子元素列表
     const std::vector<std::unique_ptr<UiElementBase>>& children() const { return m_children; }
+    ///< @brief 根据 ID 获取子元素
+    UiElementBase* getChildById(entt::id_type id) const;
 
     ///< @brief 设置元素位置(相对于父元素)
     void setLocalPosition(glm::vec2 localPosition) { m_localPosition = std::move(localPosition); }
@@ -70,6 +83,10 @@ public:
     void setVisible(bool visible) { m_isVisible = visible; }   ///< @brief 设置元素的可见性
     ///< @brief 设置元素是否需要移除
     void setShouldRemove(bool shouldRemove) { m_shouldRemove = shouldRemove; }
+    ///< @brief 设置元素的排序索引
+    void setOrderIndex(int orderIndex) { m_orderIndex = orderIndex; }
+    ///< @brief 设置元素的 ID
+    void setId(entt::id_type id) { m_id = id; }
     void setParent(UiElementBase* parent) { m_parent = parent; } ///< @brief 设置父元素
 
     // --- 辅助方法 ---
@@ -78,10 +95,12 @@ public:
     bool isPointInside(const glm::vec2& point) const; ///< @brief 检查给定点是否在元素的边界内
 
 protected:
-    glm::vec2 m_localPosition;    ///< @brief 相对于父元素的局部位置
-    glm::vec2 m_size;             ///< @brief 元素大小
-    bool m_isVisible{ true };     ///< @brief 元素当前是否可见
-    bool m_shouldRemove{ false }; ///< @brief 是否需要移除(延迟删除)
+    glm::vec2 m_localPosition;        ///< @brief 相对于父元素的局部位置
+    glm::vec2 m_size;                 ///< @brief 元素大小
+    bool m_isVisible{ true };         ///< @brief 元素当前是否可见
+    bool m_shouldRemove{ false };     ///< @brief 是否需要移除(延迟删除)
+    int m_orderIndex{ 0 };            ///< @brief 用于排序的索引
+    entt::id_type m_id{ entt::null }; ///< @brief 用于标记或查找元素的 ID
 
     UiElementBase* m_parent{ nullptr };                     ///< @brief 指向父元素的非拥有指针
     std::vector<std::unique_ptr<UiElementBase>> m_children; ///< @brief 子元素列表(容器)
