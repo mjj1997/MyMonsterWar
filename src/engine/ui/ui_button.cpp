@@ -12,11 +12,11 @@ UiButton::UiButton(engine::core::Context& context,
                    engine::render::Image normalImage,
                    engine::render::Image hoverImage,
                    engine::render::Image pressedImage,
-                   glm::vec2 localPosition = { 0.0F, 0.0F },
-                   glm::vec2 size = { 0.0F, 0.0F },
-                   std::function<void()> clickedCallback = nullptr,
-                   std::function<void()> hoverEnteredCallback = nullptr,
-                   std::function<void()> hoverLeftCallback = nullptr)
+                   glm::vec2 localPosition,
+                   glm::vec2 size,
+                   std::function<void()> clickedCallback,
+                   std::function<void()> hoverEnteredCallback,
+                   std::function<void()> hoverLeftCallback)
     : UiInteractiveElementBase{ context, localPosition, size }
     , m_clickedCallback{ std::move(clickedCallback) }
     , m_hoverEnteredCallback{ std::move(hoverEnteredCallback) }

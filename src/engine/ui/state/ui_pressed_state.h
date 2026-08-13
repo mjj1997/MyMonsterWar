@@ -20,7 +20,7 @@ public:
 private:
     void enter() override;
 
-    void onMouseReleased();
+    bool onMouseReleased();
 };
 
 } // namespace engine::ui::state
