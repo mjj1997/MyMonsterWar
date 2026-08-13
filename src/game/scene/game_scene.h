@@ -7,10 +7,19 @@
 #include "../../engine/scene/scene_base.h"
 #include "../../engine/system/fwd.h"
 
+namespace engine::ui {
+class UiElementBase;
+}
+
 namespace game::factory {
 class EntityFactory;
 class BlueprintManager;
 } // namespace game::factory
+
+namespace game::data {
+class SessionData;
+class UiConfig;
+} // namespace game::data
 
 namespace game::scene {
 
@@ -26,16 +35,27 @@ public:
     void clean() override;
 
 private:
+    [[nodiscard]] bool initSessionData();
+    [[nodiscard]] bool initUiConfig();
     [[nodiscard]] bool loadLevel();
     [[nodiscard]] bool initEventConnections();
     [[nodiscard]] bool initInputConnections();
     [[nodiscard]] bool initEntityFactory();
     [[nodiscard]] bool initSystems();
 
+    ///< @brief 创建位于画面下方的玩家单位肖像 UI
+    void createPlayerUnitPortraitUi();
+
+    ///< @brief 排列位于画面下方的玩家单位肖像UI (肖像增/减时调用)
+    void arrangePlayerUnitPortraitUi(engine::ui::UiElementBase* anchorPanel,
+                                     glm::vec2 frameSize,
+                                     float padding);
+
     // 事件回调函数
     void onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event);
 
     // 测试函数
+    void testSessionData();
     void createTestEnemy();
     bool createTestPlayerMelee();
     bool createTestPlayerRanged();
@@ -68,6 +88,11 @@ private:
     std::unique_ptr<game::factory::EntityFactory> m_entityFactory; // 实体工厂, 负责创建和管理实体
     /* 管理数据的实例很可能同时被多个场景使用,因此使用共享指针 */
     std::shared_ptr<game::factory::BlueprintManager> m_blueprintManager; // 蓝图管理器, 负责管理蓝图数据
+    std::shared_ptr<game::data::SessionData> m_sessionData; // 会话数据, 负责管理跨关卡传递的数据
+    std::shared_ptr<game::data::UiConfig> m_uiConfig;       // UI 配置数据，负责管理 UI 数据
+
+    // --- 跨场景数据 ---
+    int m_level{ 1 }; // 当前关卡号
 };
 
 } // namespace game::scene
