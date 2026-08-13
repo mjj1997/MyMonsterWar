@@ -57,7 +57,7 @@ void UiInteractiveElementBase::addImage(entt::id_type nameId, engine::render::Im
     }
 
     // 添加图片
-    m_images.emplace(nameId, std::move(image));
+    m_images.insert_or_assign(nameId, std::move(image));
 }
 
 void UiInteractiveElementBase::setCurrentImage(entt::id_type nameId)
