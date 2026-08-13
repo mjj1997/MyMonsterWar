@@ -17,19 +17,15 @@ void UiHoverState::enter()
     m_owner->setImage("hover"_hs);
 }
 
-std::unique_ptr<UiStateBase> UiHoverState::handleInput(engine::core::Context& context)
+void UiHoverState::update(float deltaTime, engine::core::Context& context)
 {
     const auto& inputManager = context.inputManager();
     const auto& mousePos = inputManager.logicalMousePosition();
     if (!m_owner->isPointInside(mousePos)) { // 如果鼠标不在 UI 元素内，切换到正常状态
-        return std::make_unique<UiNormalState>(m_owner);
+        m_owner->hoverLeft();
+        m_owner->setNextState(std::make_unique<UiNormalState>(m_owner));
     }
 
-    if (inputManager.isActionPressed("mouse_left"_hs)) { // 如果鼠标点击了左键，切换到按下状态
-        return std::make_unique<UiPressedState>(m_owner);
-    }
-
-    return nullptr;
 }
 
 } // namespace engine::ui::state
