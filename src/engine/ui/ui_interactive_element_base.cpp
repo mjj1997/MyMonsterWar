@@ -58,7 +58,7 @@ void UiInteractiveElementBase::addImage(entt::id_type nameId, engine::render::Im
     m_images.emplace(nameId, std::move(image));
 }
 
-void UiInteractiveElementBase::setImage(entt::id_type nameId)
+void UiInteractiveElementBase::setCurrentImage(entt::id_type nameId)
 {
     if (auto iter = m_images.find(nameId); iter != m_images.end()) {
         m_currentImageId = nameId;
@@ -79,6 +79,11 @@ void UiInteractiveElementBase::playSound(entt::id_type nameId)
     } else {
         spdlog::warn("Sound '{}' 未找到。", nameId);
     }
+}
+
+void UiInteractiveElementBase::setNextState(std::unique_ptr<engine::ui::state::UiStateBase> state)
+{
+    m_nextState = std::move(state);
 }
 
 void UiInteractiveElementBase::setCurrentState(std::unique_ptr<engine::ui::state::UiStateBase> state)

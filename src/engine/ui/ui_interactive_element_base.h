@@ -44,16 +44,23 @@ public:
     void update(float deltaTime, engine::core::Context& context) override;
     void render(engine::core::Context& context) override;
 
-    ///< @brief 添加状态名称-图片对
+    ///< @brief 添加/替换状态名称-图片对
     void addImage(entt::id_type nameId, engine::render::Image image);
     ///< @brief 通过状态名称 ID，设置当前显示的图片
-    void setImage(entt::id_type nameId);
+    void setCurrentImage(entt::id_type nameId);
+
     ///< @brief 添加状态名称-音效对
     void addSound(entt::id_type nameId, entt::hashed_string hashedPath);
     ///< @brief 通过状态名称 ID，播放音效
     void playSound(entt::id_type nameId);
 
     // --- Getters and Setters ---
+    ///< @brief 获取上下文引用
+    engine::core::Context& context() const { return m_context; }
+
+    ///< @brief 设置下一个状态
+    void setNextState(std::unique_ptr<engine::ui::state::UiStateBase> state);
+
     ///< @brief 设置当前状态
     void setCurrentState(std::unique_ptr<engine::ui::state::UiStateBase> state);
     ///< @brief 获取当前状态
