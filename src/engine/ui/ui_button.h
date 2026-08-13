@@ -38,12 +38,35 @@ public:
 
     void clicked() override; ///< @brief 重写基类方法，当按钮被点击时调用回调函数
 
+    /*  --- getters & setters --- */
     ///< @brief 设置点击回调函数
-    void setCallback(std::function<void()> callback) { m_callback = std::move(callback); }
-    std::function<void()> callback() const { return m_callback; } ///< @brief 获取点击回调函数
+    void setClickedCallback(std::function<void()> callback)
+    {
+        m_clickedCallback = std::move(callback);
+    }
+    ///< @brief 获取点击回调函数
+    std::function<void()> clickedCallback() const { return m_clickedCallback; }
+
+    ///< @brief 设置悬停进入回调函数
+    void setHoverEnteredCallback(std::function<void()> callback)
+    {
+        m_hoverEnteredCallback = std::move(callback);
+    }
+    ///< @brief 获取悬停进入回调函数
+    std::function<void()> hoverEnteredCallback() const { return m_hoverEnteredCallback; }
+
+    ///< @brief 设置悬停离开回调函数
+    void setHoverLeftCallback(std::function<void()> callback)
+    {
+        m_hoverLeftCallback = std::move(callback);
+    }
+    ///< @brief 获取悬停离开回调函数
+    std::function<void()> hoverLeftCallback() const { return m_hoverLeftCallback; }
 
 private:
-    std::function<void()> m_callback; ///< @brief 可自定义的函数（函数包装器）
+    std::function<void()> m_clickedCallback;      ///< @brief 点击回调函数
+    std::function<void()> m_hoverEnteredCallback; ///< @brief 悬停进入回调函数
+    std::function<void()> m_hoverLeftCallback;    ///< @brief 悬停离开回调函数
 };
 
 } // namespace engine::ui
