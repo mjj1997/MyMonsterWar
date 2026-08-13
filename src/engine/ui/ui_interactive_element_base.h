@@ -38,7 +38,9 @@ public:
     UiInteractiveElementBase& operator=(UiInteractiveElementBase&&) = delete;
 
     // --- 事件处理方法 ---
-    virtual void clicked() {} ///< @brief 如果有点击事件，则重写该方法
+    virtual void clicked() {}      ///< @brief 如果有点击事件，则重写该方法
+    virtual void hoverEntered() {} ///< @brief 如果有悬停进入事件，则重写该方法
+    virtual void hoverLeft() {}    ///< @brief 如果有悬停离开事件，则重写该方法
 
     // --- 核心方法 ---
     void update(float deltaTime, engine::core::Context& context) override;
