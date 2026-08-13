@@ -39,7 +39,7 @@ void UiPressedState::enter()
     spdlog::debug("切换到按下状态");
 }
 
-void UiPressedState::onMouseReleased()
+bool UiPressedState::onMouseReleased()
 {
     const auto& inputManager = m_owner->context().inputManager();
     const auto& mousePos = inputManager.logicalMousePosition();
@@ -51,6 +51,8 @@ void UiPressedState::onMouseReleased()
         // 触发点击事件
         m_owner->clicked();
     }
+
+    return true;
 }
 
 } // namespace engine::ui::state
