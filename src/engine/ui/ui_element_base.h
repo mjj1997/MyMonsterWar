@@ -39,7 +39,6 @@ public:
     UiElementBase& operator=(UiElementBase&&) = delete;
 
     // --- 核心虚循环方法 --- (没有使用init和clean，注意构造函数和析构函数的使用)
-    virtual bool handleInput(engine::core::Context& context);
     virtual void update(float deltaTime, engine::core::Context& context);
     virtual void render(engine::core::Context& context);
 

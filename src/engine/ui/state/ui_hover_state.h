@@ -14,13 +14,14 @@ class UiHoverState final : public UiStateBase
     friend class engine::ui::UiInteractiveElementBase;
 
 public:
-    explicit UiHoverState(engine::ui::UiInteractiveElementBase* owner)
-        : UiStateBase{ owner }
-    {}
+    explicit UiHoverState(engine::ui::UiInteractiveElementBase* owner);
+    ~UiHoverState();
 
 private:
     void enter() override;
-    std::unique_ptr<UiStateBase> handleInput(engine::core::Context& context) override;
+    void update(float deltaTime, engine::core::Context& context) override;
+
+    bool onMousePressed();
 };
 
 } // namespace engine::ui::state

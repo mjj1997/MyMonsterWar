@@ -35,7 +35,6 @@ public:
     // 核心循环函数
     void update(float deltaTime);
     void render();
-    void handleInput() const;
     void clean();
 
 private:
