@@ -11,6 +11,23 @@ using namespace entt::literals;
 
 namespace engine::ui::state {
 
+UiPressedState::UiPressedState(engine::ui::UiInteractiveElementBase* owner)
+    : UiStateBase{ owner }
+{
+    m_owner->context()
+        .inputManager()
+        .actionSink("mouse_left"_hs, engine::input::ActionState::Released)
+        .connect<&UiPressedState::onMouseReleased>(this);
+}
+
+UiPressedState::~UiPressedState()
+{
+    m_owner->context()
+        .inputManager()
+        .actionSink("mouse_left"_hs, engine::input::ActionState::Released)
+        .disconnect<&UiPressedState::onMouseReleased>(this);
+}
+
 void UiPressedState::enter()
 {
     // 设置 UI 为按下状态的图片

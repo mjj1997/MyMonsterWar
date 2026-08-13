@@ -14,9 +14,8 @@ class UiPressedState final : public UiStateBase
     friend class engine::ui::UiInteractiveElementBase;
 
 public:
-    explicit UiPressedState(engine::ui::UiInteractiveElementBase* owner)
-        : UiStateBase{ owner }
-    {}
+    explicit UiPressedState(engine::ui::UiInteractiveElementBase* owner);
+    ~UiPressedState();
 
 private:
     void enter() override;
