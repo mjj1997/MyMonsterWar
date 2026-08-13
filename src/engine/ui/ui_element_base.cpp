@@ -79,6 +79,17 @@ void UiElementBase::removeAllChildren()
     m_children.clear();
 }
 
+void UiElementBase::sortChildrenByOrderIndex()
+{
+    // 使用 stable_sort 避免破坏相等元素的顺序
+    std::stable_sort(m_children.begin(),
+                     m_children.end(),
+                     [](const std::unique_ptr<UiElementBase>& a,
+                        const std::unique_ptr<UiElementBase>& b) {
+                         return a->orderIndex() < b->orderIndex();
+                     });
+}
+
 glm::vec2 UiElementBase::screenPosition() const
 {
     if (m_parent != nullptr) {

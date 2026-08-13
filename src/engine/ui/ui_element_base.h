@@ -50,6 +50,9 @@ public:
     ///< @brief 移除所有子元素
     void removeAllChildren();
 
+    ///< @brief 按排序索引排序子元素
+    void sortChildrenByOrderIndex();
+
     // --- Getters and Setters ---
     ///< @brief 获取元素位置(相对于父元素)
     const glm::vec2& localPosition() const { return m_localPosition; }
