@@ -43,10 +43,13 @@ void UiElementBase::render(engine::core::Context& context)
     }
 }
 
-void UiElementBase::addChild(std::unique_ptr<UiElementBase> child)
+void UiElementBase::addChild(std::unique_ptr<UiElementBase> child, int orderIndex)
 {
     if (child) {
         child->setParent(this); // 设置子元素指向父元素的指针
+        if (orderIndex >= 0) {
+            child->setOrderIndex(orderIndex);
+        }
         m_children.push_back(std::move(child));
     }
 }

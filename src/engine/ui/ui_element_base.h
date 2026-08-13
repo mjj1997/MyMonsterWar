@@ -43,8 +43,8 @@ public:
     virtual void render(engine::core::Context& context);
 
     // --- 层次结构管理 ---
-    ///< @brief 添加子元素
-    void addChild(std::unique_ptr<UiElementBase> child);
+    ///< @brief 添加子元素, 可指定子元素的排序索引（默认为 -1，不设置排序索引）
+    void addChild(std::unique_ptr<UiElementBase> child, int orderIndex = -1);
     ///< @brief 将指定子元素从列表中移除，并返回其智能指针
     std::unique_ptr<UiElementBase> removeChild(UiElementBase* child);
     ///< @brief 移除所有子元素
