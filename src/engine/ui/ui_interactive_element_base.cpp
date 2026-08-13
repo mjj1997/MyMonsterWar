@@ -6,6 +6,8 @@
 
 #include <spdlog/spdlog.h>
 
+using namespace entt::literals;
+
 namespace engine::ui {
 
 UiInteractiveElementBase::UiInteractiveElementBase(engine::core::Context& context,
@@ -70,6 +72,18 @@ void UiInteractiveElementBase::setCurrentImage(entt::id_type nameId)
 void UiInteractiveElementBase::addSound(entt::id_type nameId, entt::hashed_string hashedPath)
 {
     m_sounds.emplace(nameId, hashedPath.value());
+}
+
+void UiInteractiveElementBase::setClickSound(entt::id_type soundPathId, std::string_view soundPath)
+{
+    m_context.resourceManager().loadSound(soundPathId, soundPath);
+    m_sounds.emplace("ui_click"_hs, soundPathId);
+}
+
+void UiInteractiveElementBase::setHoverSound(entt::id_type soundPathId, std::string_view soundPath)
+{
+    m_context.resourceManager().loadSound(soundPathId, soundPath);
+    m_sounds.emplace("ui_hover"_hs, soundPathId);
 }
 
 void UiInteractiveElementBase::playSound(entt::id_type nameId)

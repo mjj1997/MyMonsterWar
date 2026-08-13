@@ -53,6 +53,10 @@ public:
 
     ///< @brief 添加状态名称-音效对
     void addSound(entt::id_type nameId, entt::hashed_string hashedPath);
+    ///< @brief 设置点击音效
+    void setClickSound(entt::id_type soundPathId, std::string_view soundPath = "");
+    ///< @brief 设置悬停音效
+    void setHoverSound(entt::id_type soundPathId, std::string_view soundPath = "");
     ///< @brief 通过状态名称 ID，播放音效
     void playSound(entt::id_type nameId);
 
@@ -77,7 +81,7 @@ protected:
 
     ///< @brief 状态和图片的映射，key 为状态名称 ID，value 为图片
     std::unordered_map<entt::id_type, engine::render::Image> m_images;
-    ///< @brief 状态和音效的映射，key 为状态名称 ID，value 为音效文件 ID
+    ///< @brief 状态和音效的映射，key 为状态名称 ID，value 为音效路径 ID
     std::unordered_map<entt::id_type, entt::id_type> m_sounds;
 
     std::unique_ptr<engine::ui::state::UiStateBase> m_nextState;    ///< @brief 下一个状态
