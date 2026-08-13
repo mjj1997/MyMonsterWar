@@ -67,6 +67,7 @@ void GameScene::init()
         return;
     }
     if (!loadLevel()) {
+        spdlog::error("加载关卡失败");
         return;
     }
     if (!initEventConnections()) {
