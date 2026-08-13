@@ -11,6 +11,23 @@ using namespace entt::literals;
 
 namespace engine::ui::state {
 
+UiHoverState::UiHoverState(engine::ui::UiInteractiveElementBase* owner)
+    : UiStateBase{ owner }
+{
+    m_owner->context()
+        .inputManager()
+        .actionSink("mouse_left"_hs)
+        .connect<&UiHoverState::onMousePressed>(this);
+}
+
+UiHoverState::~UiHoverState()
+{
+    m_owner->context()
+        .inputManager()
+        .actionSink("mouse_left"_hs)
+        .disconnect<&UiHoverState::onMousePressed>(this);
+}
+
 void UiHoverState::enter()
 {
     // 设置 UI 为悬停状态的图片

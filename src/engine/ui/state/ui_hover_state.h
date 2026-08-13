@@ -14,9 +14,8 @@ class UiHoverState final : public UiStateBase
     friend class engine::ui::UiInteractiveElementBase;
 
 public:
-    explicit UiHoverState(engine::ui::UiInteractiveElementBase* owner)
-        : UiStateBase{ owner }
-    {}
+    explicit UiHoverState(engine::ui::UiInteractiveElementBase* owner);
+    ~UiHoverState();
 
 private:
     void enter() override;
