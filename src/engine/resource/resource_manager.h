@@ -49,20 +49,20 @@ public:
 
     // --- 统一资源访问接口 ---
     // -- Texture --
-    ///< @brief 载入纹理资源(通过id + 文件路径)
-    SDL_Texture* loadTexture(entt::id_type id, std::string_view filePath);
-    ///< @brief 载入纹理资源(通过字符串哈希值)
-    SDL_Texture* loadTexture(entt::hashed_string hs);
-    ///< @brief 尝试获取已加载纹理的指针，如果未加载则尝试加载(通过id + 文件路径)
-    SDL_Texture* getTexture(entt::id_type id, std::string_view filePath = "");
-    ///< @brief 尝试获取已加载纹理的指针，如果未加载则尝试加载(通过字符串哈希值)
-    SDL_Texture* getTexture(entt::hashed_string hs);
+    ///< @brief 载入纹理资源(通过纹理路径 ID + 纹理路径)
+    SDL_Texture* loadTexture(entt::id_type texturePathId, std::string_view texturePath);
+    ///< @brief 载入纹理资源(通过纹理路径的哈希字符串形式)
+    SDL_Texture* loadTexture(entt::hashed_string hashedTexturePath);
+    ///< @brief 尝试获取已加载纹理的指针，如果未加载则尝试加载(通过纹理路径 ID + 纹理路径)
+    SDL_Texture* getTexture(entt::id_type texturePathId, std::string_view texturePath = "");
+    ///< @brief 尝试获取已加载纹理的指针，如果未加载则尝试加载(通过纹理路径的哈希字符串形式)
+    SDL_Texture* getTexture(entt::hashed_string hashedTexturePath);
     ///< @brief 卸载指定的纹理资源
-    void unloadTexture(entt::id_type id);
-    ///< @brief 获取指定纹理的尺寸(通过id + 文件路径)
-    glm::vec2 getTextureSize(entt::id_type id, std::string_view filePath = "");
-    ///< @brief 获取指定纹理的尺寸(通过字符串哈希值)
-    glm::vec2 getTextureSize(entt::hashed_string hs);
+    void unloadTexture(entt::id_type texturePathId);
+    ///< @brief 获取指定纹理的尺寸(通过纹理路径 ID + 纹理路径)
+    glm::vec2 getTextureSize(entt::id_type texturePathId, std::string_view texturePath = "");
+    ///< @brief 获取指定纹理的尺寸(通过纹理路径的哈希字符串形式)
+    glm::vec2 getTextureSize(entt::hashed_string hashedTexturePath);
     ///< @brief 清空所有纹理资源
     void clearTextures();
 
@@ -97,16 +97,16 @@ public:
     MIX_Mixer* mixer() const; ///< @brief 获取 SDL_mixer 混音器指针
 
     // -- Fonts --
-    ///< @brief 载入字体资源(通过id + 文件路径)
-    TTF_Font* loadFont(entt::id_type id, int pointSize, std::string_view filePath);
-    ///< @brief 载入字体资源(通过字符串哈希值)
-    TTF_Font* loadFont(entt::hashed_string hs, int pointSize);
-    ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载(通过id + 文件路径)
-    TTF_Font* getFont(entt::id_type id, int pointSize, std::string_view filePath = "");
-    ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载(通过字符串哈希值)
-    TTF_Font* getFont(entt::hashed_string hs, int pointSize);
+    ///< @brief 载入字体资源(通过字体路径 ID + 字体路径)
+    TTF_Font* loadFont(entt::id_type fontPathId, int fontSize, std::string_view fontPath);
+    ///< @brief 载入字体资源(通过字体路径的哈希字符串形式)
+    TTF_Font* loadFont(entt::hashed_string hashedFontPath, int fontSize);
+    ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载(通过字体路径 ID + 字体路径)
+    TTF_Font* getFont(entt::id_type fontPathId, int fontSize, std::string_view fontPath = "");
+    ///< @brief 尝试获取已加载字体的指针，如果未加载则尝试加载(通过字体路径的哈希字符串形式)
+    TTF_Font* getFont(entt::hashed_string hashedFontPath, int fontSize);
     ///< @brief 卸载指定的字体资源
-    void unloadFont(entt::id_type id, int pointSize);
+    void unloadFont(entt::id_type fontPathId, int fontSize);
     ///< @brief 清空所有字体资源
     void clearFonts();
 
