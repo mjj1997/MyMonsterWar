@@ -70,6 +70,21 @@ std::unique_ptr<UiElementBase> UiElementBase::removeChild(UiElementBase* child)
     return nullptr;
 }
 
+std::unique_ptr<UiElementBase> UiElementBase::removeChildById(entt::id_type id)
+{
+    auto it = std::find_if(m_children.begin(),
+                           m_children.end(),
+                           [id](const std::unique_ptr<UiElementBase>& p) { return p->id() == id; });
+    if (it != m_children.end()) {
+        std::unique_ptr<UiElementBase> removedChild{ std::move(*it) };
+        m_children.erase(it);
+        removedChild->setParent(nullptr); // 清除父指针
+        return removedChild;              // 返回被移除的子元素（可以挂载到别的父 UI 元素下）
+    }
+
+    return nullptr;
+}
+
 void UiElementBase::removeAllChildren()
 {
     for (auto& child : m_children) {
@@ -88,6 +103,18 @@ void UiElementBase::sortChildrenByOrderIndex()
                         const std::unique_ptr<UiElementBase>& b) {
                          return a->orderIndex() < b->orderIndex();
                      });
+}
+
+UiElementBase* UiElementBase::getChildById(entt::id_type id) const
+{
+    auto it = std::find_if(m_children.begin(),
+                           m_children.end(),
+                           [id](const std::unique_ptr<UiElementBase>& p) { return p->id() == id; });
+    if (it != m_children.end()) {
+        return it->get();
+    }
+
+    return nullptr;
 }
 
 glm::vec2 UiElementBase::screenPosition() const

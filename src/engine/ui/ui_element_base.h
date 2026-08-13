@@ -49,6 +49,8 @@ public:
     void addChild(std::unique_ptr<UiElementBase> child, int orderIndex = -1);
     ///< @brief 将指定子元素从列表中移除，并返回其智能指针
     std::unique_ptr<UiElementBase> removeChild(UiElementBase* child);
+    ///< @brief 根据 ID 移除子元素, 并返回其智能指针
+    std::unique_ptr<UiElementBase> removeChildById(entt::id_type id);
     ///< @brief 移除所有子元素
     void removeAllChildren();
 
@@ -72,6 +74,8 @@ public:
     UiElementBase* parent() const { return m_parent; }
     ///< @brief 获取子元素列表
     const std::vector<std::unique_ptr<UiElementBase>>& children() const { return m_children; }
+    ///< @brief 根据 ID 获取子元素
+    UiElementBase* getChildById(entt::id_type id) const;
 
     ///< @brief 设置元素位置(相对于父元素)
     void setLocalPosition(glm::vec2 localPosition) { m_localPosition = std::move(localPosition); }
