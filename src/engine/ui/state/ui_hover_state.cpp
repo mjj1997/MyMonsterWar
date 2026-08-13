@@ -32,6 +32,7 @@ void UiHoverState::enter()
 {
     // 设置 UI 为悬停状态的图片
     m_owner->setImage("hover"_hs);
+    m_owner->hoverEntered();
 }
 
 void UiHoverState::update(float deltaTime, engine::core::Context& context)
