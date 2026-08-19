@@ -83,6 +83,10 @@ void GameScene::init()
         spdlog::error("初始化注册表上下文失败");
         return;
     }
+    if (!initPlayerUnitPortraitUi()) {
+        spdlog::error("初始化玩家单位肖像 UI 失败");
+        return;
+    }
     if (!initSystems()) { // 需要在可能的依赖模块（如实体工厂）初始化完成后再调用
         spdlog::error("初始化系统失败");
         return;
@@ -117,6 +121,8 @@ void GameScene::update(float deltaTime)
     m_ySortSystem->update(m_registry); // 调用顺序要放到移动系统之后
     m_animationSystem->update(deltaTime);
 
+    // 场景中其他更新函数
+    m_playerUnitPortraitUi->update(deltaTime);
     SceneBase::update(deltaTime);
 }
 
