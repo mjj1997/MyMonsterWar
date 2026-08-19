@@ -39,6 +39,9 @@ private:
     void createPortraitUi();
     ///< @brief 排列位于画面下方的玩家单位肖像UI (肖像增/减时调用)
     void arrangePortraitUi();
+    ///< @brief 更新肖像遮盖
+    void updatePortraitCover();
+
     // --- 构造函数传入的外部组件引用 ---
     entt::registry& m_registry;
     engine::ui::UiManager& m_uiManager;

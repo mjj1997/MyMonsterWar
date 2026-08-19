@@ -144,4 +144,21 @@ void PlayerUnitPortraitUi::arrangePortraitUi()
                    frameSize.y + 2 * padding });
 }
 
+void PlayerUnitPortraitUi::updatePortraitCover()
+{
+    // 获取场景内的游戏统计数据
+    auto& gameStats = m_registry.ctx().get<game::data::GameStats&>();
+
+    // 获取锚定面板中的所有子元素（肖像框面板）
+    auto& framePanels = m_anchorPanel->children();
+    for (auto& framePanel : framePanels) {
+        // 获取肖像框面板中的遮盖面板
+        auto coverPanel = framePanel->getChildById("cover_panel"_hs);
+        // 设置遮盖面板的可见性(肖像框面板的排列顺序值已经设置为出击所需的 cost)
+        if (coverPanel != nullptr) {
+            coverPanel->setVisible(gameStats.m_costAvailable < framePanel->orderIndex());
+        }
+    }
+}
+
 } // namespace game::ui
