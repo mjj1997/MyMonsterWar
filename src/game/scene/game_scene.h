@@ -19,6 +19,7 @@ class BlueprintManager;
 namespace game::data {
 class SessionData;
 class UiConfig;
+struct GameStats;
 } // namespace game::data
 
 namespace game::scene {
@@ -41,6 +42,7 @@ private:
     [[nodiscard]] bool initEventConnections();
     [[nodiscard]] bool initInputConnections();
     [[nodiscard]] bool initEntityFactory();
+    [[nodiscard]] bool initRegistryContext();
     [[nodiscard]] bool initSystems();
 
     ///< @brief 创建位于画面下方的玩家单位肖像 UI
@@ -84,6 +86,7 @@ private:
 
     std::unordered_map<int, game::data::PathNode> m_pathNodes; // 路径节点ID -> 路径节点
     std::vector<int> m_startpointIds;                          // 起点ID列表
+    game::data::GameStats m_gameStats;                         // 场景内的游戏统计数据
 
     std::unique_ptr<game::factory::EntityFactory> m_entityFactory; // 实体工厂, 负责创建和管理实体
     /* 管理数据的实例很可能同时被多个场景使用,因此使用共享指针 */

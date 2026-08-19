@@ -2,6 +2,7 @@
 #include "../component/player_component.h"
 #include "../component/stats_component.h"
 #include "../data/entity_blueprint.h"
+#include "../data/game_stats.h"
 #include "../data/session_data.h"
 #include "../data/ui_config.h"
 #include "../defs/tags.h"
@@ -80,6 +81,10 @@ void GameScene::init()
     }
     if (!initEntityFactory()) {
         spdlog::error("初始化实体工厂失败");
+        return;
+    }
+    if (!initRegistryContext()) {
+        spdlog::error("初始化注册表上下文失败");
         return;
     }
     if (!initSystems()) { // 需要在可能的依赖模块（如实体工厂）初始化完成后再调用
@@ -226,6 +231,18 @@ bool GameScene::initEntityFactory()
     m_entityFactory = std::make_unique<game::factory::EntityFactory>(m_registry,
                                                                      *m_blueprintManager);
     spdlog::info("实体工厂初始化完成");
+    return true;
+}
+
+bool GameScene::initRegistryContext()
+{
+    // 让注册表存储数据类型实例作为上下文，方便使用
+    m_registry.ctx().emplace<std::shared_ptr<game::factory::BlueprintManager>>(m_blueprintManager);
+    m_registry.ctx().emplace<std::shared_ptr<game::data::SessionData>>(m_sessionData);
+    m_registry.ctx().emplace<std::shared_ptr<game::data::UiConfig>>(m_uiConfig);
+    m_registry.ctx().emplace<game::data::GameStats>(m_gameStats);
+
+    spdlog::info("注册表上下文初始化完成");
     return true;
 }
 
