@@ -36,4 +36,10 @@ struct HasHealthBarTag // 血量条标签，用于标记实体有血量条
 struct OneShotRemovalTag /// 一次性移除标签，用于标记实体一次性移除（如死亡特效）
 {};
 
+struct MeleePlaceTag /// 近战出击区域标签
+{};
+
+struct RangedPlaceTag /// 远程出击区域标签
+{};
+
 } // namespace game::defs
