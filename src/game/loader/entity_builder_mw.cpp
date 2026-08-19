@@ -26,6 +26,7 @@ EntityBuilderMW* EntityBuilderMW::build()
         buildPath();
     } else {
         BasicEntityBuilder::build();
+        buildPlace();
     }
 
     return this;
