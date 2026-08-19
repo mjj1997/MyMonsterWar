@@ -44,14 +44,6 @@ private:
     [[nodiscard]] bool initRegistryContext();
     [[nodiscard]] bool initSystems();
 
-    ///< @brief 创建位于画面下方的玩家单位肖像 UI
-    void createPlayerUnitPortraitUi();
-
-    ///< @brief 排列位于画面下方的玩家单位肖像UI (肖像增/减时调用)
-    void arrangePlayerUnitPortraitUi(engine::ui::UiElementBase* anchorPanel,
-                                     glm::vec2 frameSize,
-                                     float padding);
-
     // 测试函数
     void testSessionData();
     void createTestEnemy();

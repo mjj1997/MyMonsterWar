@@ -35,6 +35,10 @@ public:
     engine::ui::UiPanel* anchorPanel() const { return m_anchorPanel; }
 
 private:
+    ///< @brief 创建位于画面下方的玩家单位肖像 UI
+    void createPortraitUi();
+    ///< @brief 排列位于画面下方的玩家单位肖像UI (肖像增/减时调用)
+    void arrangePortraitUi();
     // --- 构造函数传入的外部组件引用 ---
     entt::registry& m_registry;
     engine::ui::UiManager& m_uiManager;
