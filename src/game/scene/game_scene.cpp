@@ -197,9 +197,7 @@ bool GameScene::loadLevel()
 
 bool GameScene::initEventConnections()
 {
-    auto& dispatcher = m_context.dispatcher();
-    // 连接敌人到达基地事件
-    dispatcher.sink<game::defs::EnemyArriveBaseEvent>().connect<&GameScene::onEnemyArriveBase>(this);
+    // auto& dispatcher = m_context.dispatcher();
 
     return true;
 }
@@ -376,12 +374,6 @@ void GameScene::arrangePlayerUnitPortraitUi(engine::ui::UiElementBase* anchorPan
     anchorPanel->setSize(
         glm::vec2{ padding + anchorPanel->children().size() * (frameSize.x + padding),
                    frameSize.y + 2 * padding });
-}
-
-void GameScene::onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event)
-{
-    spdlog::info("敌人到达基地");
-    // TODO: 处理敌人到达基地的逻辑
 }
 
 void GameScene::testSessionData()

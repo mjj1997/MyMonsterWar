@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../data/path_node.h"
-#include "../defs/events.h"
 #include "../system/fwd.h"
 
 #include "../../engine/scene/scene_base.h"
@@ -52,9 +51,6 @@ private:
     void arrangePlayerUnitPortraitUi(engine::ui::UiElementBase* anchorPanel,
                                      glm::vec2 frameSize,
                                      float padding);
-
-    // 事件回调函数
-    void onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event);
 
     // 测试函数
     void testSessionData();

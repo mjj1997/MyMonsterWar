@@ -3,6 +3,10 @@
 #include <entt/entity/fwd.hpp>
 #include <entt/signal/fwd.hpp>
 
+namespace game::defs {
+struct EnemyArriveBaseEvent;
+}
+
 namespace game::system {
 
 /**
@@ -19,6 +23,9 @@ public:
     void update(float deltaTime);
 
 private:
+    /* --- 回调函数 --- */
+    void handleEnemyArriveBaseEvent(const game::defs::EnemyArriveBaseEvent& event);
+
     entt::registry& m_registry;
     entt::dispatcher& m_dispatcher;
 };
