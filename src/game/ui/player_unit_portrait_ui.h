@@ -32,6 +32,8 @@ public:
                          engine::core::Context& context);
     ~PlayerUnitPortraitUi();
 
+    void update(float deltaTime);
+
     engine::ui::UiPanel* anchorPanel() const { return m_anchorPanel; }
 
 private:

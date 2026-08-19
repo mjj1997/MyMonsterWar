@@ -28,10 +28,17 @@ PlayerUnitPortraitUi::PlayerUnitPortraitUi(entt::registry& registry,
     , m_uiManager{ uiManager }
     , m_context{ context }
 {
+    // 构造函数中直接初始化（创建玩家单位肖像UI），可省去init函数
+    createPortraitUi();
     spdlog::trace("PlayerUnitPortraitUi 构造完成");
 }
 
 PlayerUnitPortraitUi::~PlayerUnitPortraitUi() = default;
+
+void PlayerUnitPortraitUi::update(float deltaTime)
+{
+    updatePortraitCover();
+}
 
 void PlayerUnitPortraitUi::createPortraitUi()
 {
