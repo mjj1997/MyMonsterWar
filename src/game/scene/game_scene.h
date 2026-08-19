@@ -79,6 +79,7 @@ private:
     std::unique_ptr<game::system::ProjectileSystem> m_projectileSystem;
     std::unique_ptr<game::system::HealthBarSystem> m_healthBarSystem;
     std::unique_ptr<game::system::EffectSystem> m_effectSystem;
+    std::unique_ptr<game::system::GameRuleSystem> m_gameRuleSystem;
 
     std::unordered_map<int, game::data::PathNode> m_pathNodes; // 路径节点ID -> 路径节点
     std::vector<int> m_startpointIds;                          // 起点ID列表

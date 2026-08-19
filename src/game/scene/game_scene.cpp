@@ -16,6 +16,7 @@
 #include "../system/combat_resolve_system.h"
 #include "../system/effect_system.h"
 #include "../system/follow_path_system.h"
+#include "../system/game_rule_system.h"
 #include "../system/health_bar_system.h"
 #include "../system/orientation_system.h"
 #include "../system/projectile_system.h"
@@ -108,6 +109,7 @@ void GameScene::update(float deltaTime)
 
     /* 注意系统更新顺序 */
     m_timerSystem->update(m_registry, deltaTime);
+    m_gameRuleSystem->update(deltaTime);
     // 注意阻挡要发生在移动之前，否则敌人本帧会先移动一段距离再被停下，表现会“滑一下”
     m_blockSystem->update(m_registry, dispatcher);
     m_setTargetSystem->update(m_registry);
@@ -275,6 +277,7 @@ bool GameScene::initSystems()
     m_effectSystem = std::make_unique<game::system::EffectSystem>(m_registry,
                                                                   dispatcher,
                                                                   *m_entityFactory);
+    m_gameRuleSystem = std::make_unique<game::system::GameRuleSystem>(m_registry, dispatcher);
 
     spdlog::info("系统初始化完成");
     return true;
