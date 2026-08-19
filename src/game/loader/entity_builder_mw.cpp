@@ -1,5 +1,8 @@
 #include "entity_builder_mw.h"
 #include "../data/path_node.h"
+#include "../defs/tags.h"
+
+#include "../../engine/component/tilelayer_component.h"
 
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
@@ -64,6 +67,25 @@ void EntityBuilderMW::buildPath()
     m_pathNodes.emplace(id, game::data::PathNode{ id, position, std::move(nextNodeIds) });
 
     spdlog::trace("pathNodes size: {}", m_pathNodes.size());
+}
+
+void EntityBuilderMW::buildPlace()
+{
+    if (m_tileInfo != nullptr && m_tileInfo->m_properties != std::nullopt) {
+        const auto& properties = m_tileInfo->m_properties.value();
+        for (const auto& property : properties) {
+            if (property.value("name", "") == "place") {
+                auto type = property.value("value", "");
+                if (type == "melee") {
+                    m_registry.emplace<game::defs::MeleePlaceTag>(m_entityId);
+                } else if (type == "range") {
+                    m_registry.emplace<game::defs::RangedPlaceTag>(m_entityId);
+                }
+
+                // TODO: 未来如果有关其他类型可以继续添加
+            }
+        }
+    }
 }
 
 } // namespace game::loader
