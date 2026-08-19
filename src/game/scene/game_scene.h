@@ -21,6 +21,10 @@ class UiConfig;
 struct GameStats;
 } // namespace game::data
 
+namespace game::ui {
+class PlayerUnitPortraitUi;
+}
+
 namespace game::scene {
 
 class GameScene final : public engine::scene::SceneBase
@@ -42,6 +46,7 @@ private:
     [[nodiscard]] bool initInputConnections();
     [[nodiscard]] bool initEntityFactory();
     [[nodiscard]] bool initRegistryContext();
+    [[nodiscard]] bool initPlayerUnitPortraitUi();
     [[nodiscard]] bool initSystems();
 
     // 测试函数
@@ -72,6 +77,9 @@ private:
     std::unique_ptr<game::system::HealthBarSystem> m_healthBarSystem;
     std::unique_ptr<game::system::EffectSystem> m_effectSystem;
     std::unique_ptr<game::system::GameRuleSystem> m_gameRuleSystem;
+
+    // 封装的玩家单位肖像 UI，负责管理肖像 UI 的创建、更新和排列
+    std::unique_ptr<game::ui::PlayerUnitPortraitUi> m_playerUnitPortraitUi;
 
     std::unordered_map<int, game::data::PathNode> m_pathNodes; // 路径节点ID -> 路径节点
     std::vector<int> m_startpointIds;                          // 起点ID列表

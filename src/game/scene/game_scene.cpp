@@ -23,6 +23,7 @@
 #include "../system/remove_dead_system.h"
 #include "../system/set_target_system.h"
 #include "../system/timer_system.h"
+#include "../ui/player_unit_portrait_ui.h"
 
 #include "../../engine/component/render_component.h"
 #include "../../engine/component/sprite_component.h"
@@ -236,6 +237,20 @@ bool GameScene::initRegistryContext()
     m_registry.ctx().emplace<game::data::GameStats>(m_gameStats);
 
     spdlog::info("注册表上下文初始化完成");
+    return true;
+}
+
+bool GameScene::initPlayerUnitPortraitUi()
+{
+    try {
+        m_playerUnitPortraitUi = std::make_unique<game::ui::PlayerUnitPortraitUi>(m_registry,
+                                                                                  *m_uiManager,
+                                                                                  m_context);
+    } catch (const std::exception& e) {
+        spdlog::error("初始化玩家单位肖像 UI 失败: {}", e.what());
+        return false;
+    }
+
     return true;
 }
 
