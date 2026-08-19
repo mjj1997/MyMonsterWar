@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../data/game_stats.h"
 #include "../data/path_node.h"
-#include "../defs/events.h"
 #include "../system/fwd.h"
 
 #include "../../engine/scene/scene_base.h"
@@ -20,6 +20,10 @@ namespace game::data {
 class SessionData;
 class UiConfig;
 } // namespace game::data
+
+namespace game::ui {
+class PlayerUnitPortraitUi;
+}
 
 namespace game::scene {
 
@@ -41,18 +45,9 @@ private:
     [[nodiscard]] bool initEventConnections();
     [[nodiscard]] bool initInputConnections();
     [[nodiscard]] bool initEntityFactory();
+    [[nodiscard]] bool initRegistryContext();
+    [[nodiscard]] bool initPlayerUnitPortraitUi();
     [[nodiscard]] bool initSystems();
-
-    ///< @brief 创建位于画面下方的玩家单位肖像 UI
-    void createPlayerUnitPortraitUi();
-
-    ///< @brief 排列位于画面下方的玩家单位肖像UI (肖像增/减时调用)
-    void arrangePlayerUnitPortraitUi(engine::ui::UiElementBase* anchorPanel,
-                                     glm::vec2 frameSize,
-                                     float padding);
-
-    // 事件回调函数
-    void onEnemyArriveBase(const game::defs::EnemyArriveBaseEvent& event);
 
     // 测试函数
     void testSessionData();
@@ -81,9 +76,14 @@ private:
     std::unique_ptr<game::system::ProjectileSystem> m_projectileSystem;
     std::unique_ptr<game::system::HealthBarSystem> m_healthBarSystem;
     std::unique_ptr<game::system::EffectSystem> m_effectSystem;
+    std::unique_ptr<game::system::GameRuleSystem> m_gameRuleSystem;
+
+    // 封装的玩家单位肖像 UI，负责管理肖像 UI 的创建、更新和排列
+    std::unique_ptr<game::ui::PlayerUnitPortraitUi> m_playerUnitPortraitUi;
 
     std::unordered_map<int, game::data::PathNode> m_pathNodes; // 路径节点ID -> 路径节点
     std::vector<int> m_startpointIds;                          // 起点ID列表
+    game::data::GameStats m_gameStats;                         // 场景内的游戏统计数据
 
     std::unique_ptr<game::factory::EntityFactory> m_entityFactory; // 实体工厂, 负责创建和管理实体
     /* 管理数据的实例很可能同时被多个场景使用,因此使用共享指针 */

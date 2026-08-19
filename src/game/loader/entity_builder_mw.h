@@ -38,7 +38,8 @@ public:
     EntityBuilderMW* build() override;
 
 private:
-    void buildPath(); ///< @brief 生成路径节点
+    void buildPath();  ///< @brief 生成路径节点
+    void buildPlace(); ///< @brief 添加玩家角色放置区域的标签
 
     // 保存路径节点和起点数据（非拥有）
     std::unordered_map<int, game::data::PathNode>& m_pathNodes;

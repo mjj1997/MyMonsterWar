@@ -15,5 +15,6 @@ class CombatResolveSystem;
 class ProjectileSystem;
 class HealthBarSystem;
 class EffectSystem;
+class GameRuleSystem;
 
 } // namespace game::system

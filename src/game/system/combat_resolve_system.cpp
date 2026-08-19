@@ -5,6 +5,7 @@
 #include "../component/enemy_component.h"
 #include "../component/player_component.h"
 #include "../component/stats_component.h"
+#include "../data/game_stats.h"
 #include "../defs/tags.h"
 
 #include "../../engine/component/sprite_component.h"
@@ -86,7 +87,14 @@ void CombatResolveSystem::handleAttackEvent(const game::defs::AttackEvent& event
             m_dispatcher.enqueue(game::defs::EnemyDeadEffectEvent{
                 className.m_classId, transform.m_position, sprite.m_sprite.m_isFlipped });
 
-            // TODO: 更新统计信息
+            // 更新统计信息
+            auto& gameStats = m_registry.ctx().get<game::data::GameStats&>();
+            ++gameStats.m_killedEnemyCount; // 被击杀敌人数量 + 1
+            if ((gameStats.m_killedEnemyCount + gameStats.m_arrivedEnemyCount)
+                >= gameStats.m_totalEnemyCount) {
+                spdlog::warn("敌人全部死亡");
+                // TODO: 切换场景
+            }
 
             // 如果敌人死亡时处于被阻挡状态，减少阻挡者的阻挡计数
             if (auto* blockedByComponent = m_registry.try_get<game::component::BlockedByComponent>(
