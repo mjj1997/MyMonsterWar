@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../data/game_stats.h"
 #include "../data/path_node.h"
 #include "../system/fwd.h"
 
@@ -18,7 +19,6 @@ class BlueprintManager;
 namespace game::data {
 class SessionData;
 class UiConfig;
-struct GameStats;
 } // namespace game::data
 
 namespace game::ui {
