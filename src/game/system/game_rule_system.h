@@ -16,6 +16,8 @@ public:
     GameRuleSystem(entt::registry& registry, entt::dispatcher& dispatcher);
     ~GameRuleSystem();
 
+    void update(float deltaTime);
+
 private:
     entt::registry& m_registry;
     entt::dispatcher& m_dispatcher;
