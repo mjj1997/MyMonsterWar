@@ -7,6 +7,7 @@ class Context;
 }
 
 namespace engine::ui {
+class UiPanel;
 class UiManager;
 } // namespace engine::ui
 
@@ -31,11 +32,16 @@ public:
                          engine::core::Context& context);
     ~PlayerUnitPortraitUi();
 
+    engine::ui::UiPanel* anchorPanel() const { return m_anchorPanel; }
+
 private:
     // --- 构造函数传入的外部组件引用 ---
     entt::registry& m_registry;
     engine::ui::UiManager& m_uiManager;
     engine::core::Context& m_context;
+
+    ///< @brief 保存玩家单位肖像 UI 的根面板(非拥有指针)，方便使用
+    engine::ui::UiPanel* m_anchorPanel;
 };
 
 } // namespace game::ui
